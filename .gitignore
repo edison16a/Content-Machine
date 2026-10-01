@@ -1,0 +1,29 @@
+# Dependencies and build output
+node_modules/
+dist/
+*.tsbuildinfo
+coverage/
+
+# User projects and machine state (never commit footage or schedules)
+projects/*
+!projects/.gitkeep
+schedule-ledger.json
+schedule-ledger.json.lock
+config/local.json
+
+# Media safety net
+*.mp4
+*.mov
+*.mkv
+*.webm
+*.m4a
+*.wav
+
+# Test and tooling output
+playwright-report/
+test-results/
+.vitest/
+*.log
+.DS_Store
+.env
+.env.*

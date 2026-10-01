@@ -1,0 +1,9 @@
+node_modules
+dist
+coverage
+projects
+docs/schemas
+docs/images
+playwright-report
+test-results
+*.min.*

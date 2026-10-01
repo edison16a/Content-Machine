@@ -1,0 +1,25 @@
+{
+  "name": "@content-machine/core",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Pure logic for Content Machine: schemas, transcripts, plans, layout, scheduling.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "zod": "^4.6.5"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "noEmit": true,
+    "rootDir": ".",
+    "paths": {
+      "@content-machine/core": ["./packages/core/src/index.ts"],
+      "@content-machine/render": ["./packages/render/src/index.ts"],
+      "@content-machine/dashboard": ["./packages/dashboard/src/index.ts"]
+    }
+  },
+  "include": [
+    "packages/*/test/**/*.ts",
+    "test/**/*.ts",
+    "scripts/**/*.ts",
+    "packages/dashboard/e2e/**/*.ts",
+    "vitest.config.ts",
+    "playwright.config.ts"
+  ]
+}

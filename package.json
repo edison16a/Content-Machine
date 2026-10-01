@@ -1,0 +1,50 @@
+{
+  "name": "content-machine",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Turns one long video into a consistent, scheduled stream of short vertical videos, driven by Claude.",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/edison16a/Content-Machine.git"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "workspaces": [
+    "packages/core",
+    "packages/render",
+    "packages/dashboard",
+    "packages/cli"
+  ],
+  "scripts": {
+    "cm": "node packages/cli/dist/bin.js",
+    "build": "tsc -b && node packages/dashboard/scripts/bundle-client.mjs",
+    "typecheck": "tsc -b && tsc -p packages/dashboard/tsconfig.client.json && tsc -p tsconfig.tests.json",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write .",
+    "test": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "check": "npm run lint && npm run typecheck && npm run build && npm test",
+    "demo": "node packages/cli/dist/bin.js demo",
+    "docs:images": "tsx scripts/screenshots.ts",
+    "docs:schemas": "tsx scripts/export-schemas.ts",
+    "docs:accounts": "tsx scripts/update-readme-accounts.ts",
+    "prepare": "npm run build"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^22.20.5",
+    "esbuild": "^0.28.2",
+    "eslint": "^9.39.5",
+    "globals": "^17.13.0",
+    "prettier": "^3.9.9",
+    "tsx": "^4.23.15",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.71.0",
+    "vitest": "^4.1.11",
+    "@vitest/coverage-v8": "^4.1.11"
+  }
+}
