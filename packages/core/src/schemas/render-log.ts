@@ -11,6 +11,8 @@ export const renderLogEntrySchema = z.object({
   end: z.number().positive(),
   startSnapped: z.boolean(),
   endSnapped: z.boolean(),
+  /** The planned cut and text, frozen once rendered. Changing it needs --force. */
+  planKey: z.string(),
   /** Hash of everything that shapes the output. A mismatch means re-render. */
   fingerprint: z.string(),
   output: z.string(),
