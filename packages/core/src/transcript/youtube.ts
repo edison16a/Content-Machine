@@ -15,7 +15,8 @@ const UI_LINES = new Set([
 ]);
 
 /** Screen reader duration text such as "2 minutes, 5 seconds". */
-const SPOKEN_DURATION = /^\d+\s+(hours?|minutes?|seconds?)(,\s*\d+\s+(hours?|minutes?|seconds?))*$/i;
+const SPOKEN_DURATION =
+  /^\d+\s+(hours?|minutes?|seconds?)(,\s*\d+\s+(hours?|minutes?|seconds?))*$/i;
 
 const INLINE_STAMP = /^((?:\d{1,2}:)?\d{1,2}:\d{2})\s+(.+)$/;
 

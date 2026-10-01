@@ -15,7 +15,9 @@ export function splitWords(text: string): string[] {
  */
 export function findAccentRange(title: string, accent: string): [number, number] | undefined {
   const titleWords = splitWords(title).map(normalizeWord);
-  const accentWords = splitWords(accent).map(normalizeWord).filter((w) => w !== '');
+  const accentWords = splitWords(accent)
+    .map(normalizeWord)
+    .filter((w) => w !== '');
   if (accentWords.length === 0) return undefined;
   for (let start = 0; start + accentWords.length <= titleWords.length; start += 1) {
     if (accentWords.every((word, offset) => titleWords[start + offset] === word)) {

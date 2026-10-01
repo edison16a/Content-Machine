@@ -34,7 +34,11 @@ export function findLockedChanges(plan: Plan, locked: readonly LockedItem[]): Is
 }
 
 /** Throws when locked items changed. Pass `force` to allow it deliberately. */
-export function assertNoLockedChanges(plan: Plan, locked: readonly LockedItem[], force: boolean): void {
+export function assertNoLockedChanges(
+  plan: Plan,
+  locked: readonly LockedItem[],
+  force: boolean,
+): void {
   const issues = findLockedChanges(plan, locked);
   if (issues.length > 0 && !force) {
     throw new ValidationError('E_PLAN_LOCKED', `${issues.length} rendered item(s) changed.`, {

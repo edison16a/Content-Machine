@@ -90,7 +90,8 @@ describe('fitTitle', () => {
     const fit = fitTitle('How We Built A Tiny House In Thirty Days', measure);
     expect(fit.lines).toHaveLength(2);
     expect(fit.fontSize).toBeLessThan(88);
-    for (const line of fit.lines) expect(measure(line.words.join(' '), fit.fontSize)).toBeLessThanOrEqual(918);
+    for (const line of fit.lines)
+      expect(measure(line.words.join(' '), fit.fontSize)).toBeLessThanOrEqual(918);
   });
 
   it('keeps one word and short titles on one line', () => {
@@ -112,8 +113,13 @@ describe('fitTitle', () => {
   it('fails with the maximum length when nothing fits', () => {
     const long = 'This Title Is Far Too Long To Ever Fit On Two Lines Of The Video';
     expect(() => fitTitle(long, measure)).toThrow(
-      expect.objectContaining({ code: 'E_TITLE_TOO_LONG', hint: expect.stringMatching(/about \d+ characters/) }),
+      expect.objectContaining({ code: 'E_TITLE_TOO_LONG' }),
     );
+    try {
+      fitTitle(long, measure);
+    } catch (error) {
+      expect((error as { hint: string }).hint).toMatch(/about \d+ characters/);
+    }
   });
 });
 
@@ -125,7 +131,11 @@ describe('toTitleCase', () => {
 
 describe('fitCredit', () => {
   it('uses 52px when the name fits', () => {
-    expect(fitCredit('Example Channel', measure, 56)).toEqual({ fontSize: 52, text: 'Example Channel', truncated: false });
+    expect(fitCredit('Example Channel', measure, 56)).toEqual({
+      fontSize: 52,
+      text: 'Example Channel',
+      truncated: false,
+    });
   });
 
   it('shrinks, then truncates with an ellipsis', () => {

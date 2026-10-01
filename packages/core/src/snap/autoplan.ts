@@ -24,7 +24,9 @@ function resplit(parts: AutoPart[], midpoints: readonly number[], duration: numb
   const previous = parts.pop();
   if (previous === undefined) return;
   const middle = (previous.start + duration) / 2;
-  const valid = midpoints.filter((m) => m - previous.start <= MAX_ITEM_SECONDS && duration - m <= MAX_ITEM_SECONDS);
+  const valid = midpoints.filter(
+    (m) => m - previous.start <= MAX_ITEM_SECONDS && duration - m <= MAX_ITEM_SECONDS,
+  );
   const cut = valid.reduce<number | undefined>(
     (best, m) => (best === undefined || Math.abs(m - middle) < Math.abs(best - middle) ? m : best),
     undefined,
@@ -43,7 +45,8 @@ export function autoplan(duration: number, silences: readonly Silence[]): AutoPa
   const parts: AutoPart[] = [];
   let position = 0;
   while (duration - position > MAX_ITEM_SECONDS) {
-    const cut = latestCut(midpoints, position, PREFERRED_MIN) ?? latestCut(midpoints, position, WIDEST_MIN);
+    const cut =
+      latestCut(midpoints, position, PREFERRED_MIN) ?? latestCut(midpoints, position, WIDEST_MIN);
     const end = cut ?? position + HARD_CUT;
     parts.push({ start: position, end, hardCut: cut === undefined });
     position = end;

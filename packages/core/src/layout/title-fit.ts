@@ -20,7 +20,9 @@ export interface TitleFit {
 /** Capitalizes each lowercase word, leaving words like "iPhone" or "NASA" alone. */
 export function toTitleCase(title: string): string {
   return splitWords(title)
-    .map((word) => (word === word.toLowerCase() ? word.charAt(0).toUpperCase() + word.slice(1) : word))
+    .map((word) =>
+      word === word.toLowerCase() ? word.charAt(0).toUpperCase() + word.slice(1) : word,
+    )
     .join(' ');
 }
 
@@ -28,7 +30,11 @@ export function toTitleCase(title: string): string {
  * Splits words into the most balanced two lines. A single word is never left
  * alone on the last line unless the title only has two words.
  */
-export function balancedSplit(words: readonly string[], size: number, measure: Measure): string[][] {
+export function balancedSplit(
+  words: readonly string[],
+  size: number,
+  measure: Measure,
+): string[][] {
   if (words.length < 2) return [[...words]];
   let best: string[][] = [[...words.slice(0, -1)], [...words.slice(-1)]];
   let bestDiff = Number.POSITIVE_INFINITY;
@@ -45,7 +51,12 @@ export function balancedSplit(words: readonly string[], size: number, measure: M
   return best;
 }
 
-function linesFor(words: readonly string[], size: number, measure: Measure, maxWidth: number): string[][] {
+function linesFor(
+  words: readonly string[],
+  size: number,
+  measure: Measure,
+  maxWidth: number,
+): string[][] {
   const oneLine = measure(words.join(' '), size);
   if (words.length === 1 || oneLine <= maxWidth * TITLE.singleLineRatio) return [[...words]];
   if (words.length === 2 && oneLine <= maxWidth) return [[...words]];
@@ -56,10 +67,14 @@ function linesFor(words: readonly string[], size: number, measure: Measure, maxW
  * Picks the font size and line breaks for a title: starts at 88px and steps
  * down by 2px to 60px until every line fits 85% of the canvas width.
  */
-export function fitTitle(title: string, measure: Measure, canvasWidth = DEFAULT_LAYOUT.canvasWidth): TitleFit {
+export function fitTitle(
+  title: string,
+  measure: Measure,
+  canvasWidth = DEFAULT_LAYOUT.canvasWidth,
+): TitleFit {
   const words = splitWords(title);
   const maxWidth = canvasWidth * TITLE.maxWidthRatio;
-  for (let size = TITLE.maxSize; size >= TITLE.minSize; size -= TITLE.step) {
+  for (let size: number = TITLE.maxSize; size >= TITLE.minSize; size -= TITLE.step) {
     const lines = linesFor(words, size, measure, maxWidth);
     if (lines.every((line) => measure(line.join(' '), size) <= maxWidth)) {
       let firstWord = 0;

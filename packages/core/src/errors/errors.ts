@@ -26,7 +26,12 @@ export class ContentMachineError extends Error {
   readonly hint: string | undefined;
   readonly issues: readonly Issue[];
 
-  constructor(code: ErrorCode, message: string, exitCode: ExitCodeValue, options: ErrorOptions = {}) {
+  constructor(
+    code: ErrorCode,
+    message: string,
+    exitCode: ExitCodeValue,
+    options: ErrorOptions = {},
+  ) {
     super(message, options.cause === undefined ? undefined : { cause: options.cause });
     this.name = new.target.name;
     this.code = code;

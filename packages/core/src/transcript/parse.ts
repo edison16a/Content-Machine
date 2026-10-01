@@ -9,7 +9,7 @@ const INCOMPLETE_THRESHOLD = 0.9;
 
 /** Picks the format from the text itself so users never have to say. */
 export function detectFormat(text: string): TranscriptFormat {
-  const trimmed = text.replace(/^﻿/, '').trimStart();
+  const trimmed = text.replace(/^\uFEFF/, '').trimStart();
   if (trimmed.startsWith('WEBVTT')) return 'vtt';
   if (/\d{1,2}:\d{2}:\d{2},\d{1,3}\s+-->/.test(text)) return 'srt';
   return 'youtube';
@@ -34,9 +34,13 @@ export function parseTranscript(text: string, duration: number): Transcript {
   const format = detectFormat(text);
   const cues = format === 'youtube' ? parseYouTube(text) : parseTimedCues(text);
   if (cues.length === 0) {
-    throw new ValidationError('E_TRANSCRIPT_EMPTY', 'No timestamped lines were found in the transcript.', {
-      hint: 'On YouTube open "Show transcript", select everything in the panel, copy, and paste it again.',
-    });
+    throw new ValidationError(
+      'E_TRANSCRIPT_EMPTY',
+      'No timestamped lines were found in the transcript.',
+      {
+        hint: 'On YouTube open "Show transcript", select everything in the panel, copy, and paste it again.',
+      },
+    );
   }
   const segments = toSegments(cues, duration);
   const first = segments[0]?.start ?? 0;
@@ -52,7 +56,13 @@ export function parseTranscript(text: string, duration: number): Transcript {
   return {
     format,
     segments,
-    stats: { segments: segments.length, firstTimestamp: first, lastTimestamp: last, videoDuration: duration, coverage },
+    stats: {
+      segments: segments.length,
+      firstTimestamp: first,
+      lastTimestamp: last,
+      videoDuration: duration,
+      coverage,
+    },
     warnings,
   };
 }

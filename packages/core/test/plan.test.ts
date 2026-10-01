@@ -123,9 +123,13 @@ describe('validatePlan: Clip', () => {
 describe('assertValidPlan', () => {
   it('throws with the shared code and all issues', () => {
     const plan = sequentialPlan([{ id: 1, source: 'video1.mp4', start: 0, end: 40 }]);
-    expect(() => assertValidPlan(plan, durations)).toThrow(expect.objectContaining({ code: 'E_PLAN_GAP' }));
+    expect(() => assertValidPlan(plan, durations)).toThrow(
+      expect.objectContaining({ code: 'E_PLAN_GAP' }),
+    );
     const mixed = sequentialPlan([{ id: 1, source: 'video1.mp4', start: 5, end: 70 }]);
-    expect(() => assertValidPlan(mixed, durations)).toThrow(expect.objectContaining({ code: 'E_PLAN_INVALID' }));
+    expect(() => assertValidPlan(mixed, durations)).toThrow(
+      expect.objectContaining({ code: 'E_PLAN_INVALID' }),
+    );
   });
 
   it('returns warnings when valid', () => {
@@ -138,9 +142,14 @@ describe('resolveItemText and locks', () => {
     const seq = sequentialPlan();
     expect(resolveItemText(seq, seq.items[1]!)?.title).toBe('How We Built A Tiny House In 30 Days');
     const clip = clipPlan();
-    expect(resolveItemText(clip, clip.items[0]!)).toMatchObject({ accent: 'One Inch', platform: 'twitch' });
+    expect(resolveItemText(clip, clip.items[0]!)).toMatchObject({
+      accent: 'One Inch',
+      platform: 'twitch',
+    });
     expect(resolveItemText(clip, { ...clip.items[0]!, source: 'missing.mp4' })).toBeUndefined();
-    expect(resolveItemText(clip, { id: 9, source: 'stream.mp4', start: 0, end: 9 })).toBeUndefined();
+    expect(
+      resolveItemText(clip, { id: 9, source: 'stream.mp4', start: 0, end: 9 }),
+    ).toBeUndefined();
   });
 
   it('refuses edits to rendered items unless forced', () => {
@@ -152,7 +161,11 @@ describe('resolveItemText and locks', () => {
       { id: 3, source: 'video1.mp4', start: 40, end: 100 },
     ]);
     expect(findLockedChanges(edited, locked).map((i) => i.itemId)).toEqual([1, 2]);
-    expect(() => assertNoLockedChanges(edited, locked, false)).toThrow(/2 rendered item/);
-    expect(() => assertNoLockedChanges(edited, locked, true)).not.toThrow();
+    expect(() => {
+      assertNoLockedChanges(edited, locked, false);
+    }).toThrow(/2 rendered item/);
+    expect(() => {
+      assertNoLockedChanges(edited, locked, true);
+    }).not.toThrow();
   });
 });

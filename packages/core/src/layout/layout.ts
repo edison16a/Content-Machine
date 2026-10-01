@@ -1,5 +1,11 @@
 import type { LayoutConstants } from '../schemas/index.js';
-import { CREDIT, DEFAULT_LAYOUT, PORTRAIT_THRESHOLD, PORTRAIT_TITLE_OFFSET, TITLE_BLOCK_HEIGHT } from './constants.js';
+import {
+  CREDIT,
+  DEFAULT_LAYOUT,
+  PORTRAIT_THRESHOLD,
+  PORTRAIT_TITLE_OFFSET,
+  TITLE_BLOCK_HEIGHT,
+} from './constants.js';
 
 export interface Rect {
   x: number;
@@ -47,8 +53,18 @@ function bandLayout(width: number, height: number, c: LayoutConstants): Layout {
   return {
     kind: 'band',
     canvas: { width: c.canvasWidth, height: c.canvasHeight },
-    foreground: { x: Math.round((c.canvasWidth - fgWidth) / 2), y: fgY, width: fgWidth, height: fgHeight },
-    title: { x: 0, y: fgY - c.gap - TITLE_BLOCK_HEIGHT, width: c.canvasWidth, height: TITLE_BLOCK_HEIGHT },
+    foreground: {
+      x: Math.round((c.canvasWidth - fgWidth) / 2),
+      y: fgY,
+      width: fgWidth,
+      height: fgHeight,
+    },
+    title: {
+      x: 0,
+      y: fgY - c.gap - TITLE_BLOCK_HEIGHT,
+      width: c.canvasWidth,
+      height: TITLE_BLOCK_HEIGHT,
+    },
     credit: creditRect(fgY + fgHeight + c.gap),
   };
 }
@@ -59,7 +75,12 @@ function coverLayout(c: LayoutConstants): Layout {
     kind: 'cover',
     canvas: { width: c.canvasWidth, height: c.canvasHeight },
     foreground: { x: 0, y: 0, width: c.canvasWidth, height: c.canvasHeight },
-    title: { x: 0, y: c.safeTop + PORTRAIT_TITLE_OFFSET, width: c.canvasWidth, height: TITLE_BLOCK_HEIGHT },
+    title: {
+      x: 0,
+      y: c.safeTop + PORTRAIT_TITLE_OFFSET,
+      width: c.canvasWidth,
+      height: TITLE_BLOCK_HEIGHT,
+    },
     credit: creditRect(c.safeBottom - CREDIT.blockHeight),
   };
 }
@@ -68,7 +89,13 @@ function coverLayout(c: LayoutConstants): Layout {
  * Computes the layout for a source of the given display size. The same aspect
  * ratio always produces the same layout, which keeps a project consistent.
  */
-export function computeLayout(width: number, height: number, constants: LayoutConstants = DEFAULT_LAYOUT): Layout {
+export function computeLayout(
+  width: number,
+  height: number,
+  constants: LayoutConstants = DEFAULT_LAYOUT,
+): Layout {
   if (!(width > 0 && height > 0)) throw new RangeError(`Invalid source size ${width}x${height}`);
-  return width / height < PORTRAIT_THRESHOLD ? coverLayout(constants) : bandLayout(width, height, constants);
+  return width / height < PORTRAIT_THRESHOLD
+    ? coverLayout(constants)
+    : bandLayout(width, height, constants);
 }

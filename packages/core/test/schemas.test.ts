@@ -19,9 +19,12 @@ describe('projectNameSchema', () => {
     expect(projectNameSchema.safeParse(name).success).toBe(true);
   });
 
-  it.each(['Bees', '-bees', 'bees_2', '../etc', 'a/b', '', 'x'.repeat(65)])('rejects %s', (name) => {
-    expect(projectNameSchema.safeParse(name).success).toBe(false);
-  });
+  it.each(['Bees', '-bees', 'bees_2', '../etc', 'a/b', '', 'x'.repeat(65)])(
+    'rejects %s',
+    (name) => {
+      expect(projectNameSchema.safeParse(name).success).toBe(false);
+    },
+  );
 });
 
 describe('fileNameSchema', () => {

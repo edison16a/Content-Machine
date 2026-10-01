@@ -31,7 +31,10 @@ export const PROJECT_NAME_PATTERN = /^[a-z0-9][a-z0-9-]*$/;
 export const projectNameSchema = z
   .string()
   .max(64, 'Project names are at most 64 characters.')
-  .regex(PROJECT_NAME_PATTERN, 'Use lowercase letters, digits and hyphens, starting with a letter or digit.');
+  .regex(
+    PROJECT_NAME_PATTERN,
+    'Use lowercase letters, digits and hyphens, starting with a letter or digit.',
+  );
 
 /** "HH:MM" on a 24 hour clock. */
 export const slotTimeSchema = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'Use 24 hour HH:MM.');
@@ -39,7 +42,9 @@ export const slotTimeSchema = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'Use
 /** A calendar date with no time zone, "YYYY-MM-DD". */
 export const localDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Use YYYY-MM-DD.');
 
-export const hexColorSchema = z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Use a hex color like #FF8A1F.');
+export const hexColorSchema = z
+  .string()
+  .regex(/^#[0-9A-Fa-f]{6}$/, 'Use a hex color like #FF8A1F.');
 
 /** True when the runtime knows this IANA time zone name. */
 export function isValidTimeZone(name: string): boolean {

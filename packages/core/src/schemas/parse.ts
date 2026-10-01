@@ -27,7 +27,11 @@ function itemIdAt(value: unknown, path: readonly PropertyKey[]): number | undefi
  * Validates parsed data against a schema. On failure every zod issue becomes
  * one of our Issues, so the user sees all problems at once with their paths.
  */
-export function parseWith<S extends z.ZodType>(schema: S, value: unknown, label: string): z.output<S> {
+export function parseWith<S extends z.ZodType>(
+  schema: S,
+  value: unknown,
+  label: string,
+): z.output<S> {
   const result = schema.safeParse(value);
   if (result.success) return result.data;
   const issues: Issue[] = result.error.issues.map((issue) => {
@@ -47,7 +51,11 @@ export function parseWith<S extends z.ZodType>(schema: S, value: unknown, label:
 }
 
 /** Parses JSON text, then validates it. Bad JSON gets its own error code. */
-export function parseJsonText<S extends z.ZodType>(schema: S, text: string, label: string): z.output<S> {
+export function parseJsonText<S extends z.ZodType>(
+  schema: S,
+  text: string,
+  label: string,
+): z.output<S> {
   let value: unknown;
   try {
     value = JSON.parse(text);

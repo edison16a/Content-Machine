@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { detectFormat, formatClock, parseClock, parseCueTime, parseTranscript } from '@content-machine/core';
+import {
+  detectFormat,
+  formatClock,
+  parseClock,
+  parseCueTime,
+  parseTranscript,
+} from '@content-machine/core';
 
 const YOUTUBE_TWO_LINE = `Transcript
 Search in video
@@ -70,7 +76,7 @@ describe('detectFormat', () => {
   it('detects each format', () => {
     expect(detectFormat(YOUTUBE_TWO_LINE)).toBe('youtube');
     expect(detectFormat(SRT)).toBe('srt');
-    expect(detectFormat(`﻿${VTT}`)).toBe('vtt');
+    expect(detectFormat(`\uFEFF${VTT}`)).toBe('vtt');
   });
 });
 

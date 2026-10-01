@@ -33,7 +33,10 @@ export function assertValidPlan(plan: Plan, durations: SourceDurations): PlanRep
     throw new ValidationError(
       summaryCode(report.errors, 'E_PLAN_INVALID'),
       `The plan has ${report.errors.length} problem(s).`,
-      { hint: 'Fix each listed item in plan/plan.json, then run the command again.', issues: report.errors },
+      {
+        hint: 'Fix each listed item in plan/plan.json, then run the command again.',
+        issues: report.errors,
+      },
     );
   }
   return report;
