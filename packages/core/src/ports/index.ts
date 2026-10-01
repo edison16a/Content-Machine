@@ -29,6 +29,8 @@ export interface FileSystem {
   stat(path: string): Promise<FileStat>;
   remove(path: string): Promise<void>;
   copyFile(from: string, to: string): Promise<void>;
+  /** Moves a file, replacing the target. Used to publish finished outputs atomically. */
+  rename(from: string, to: string): Promise<void>;
 }
 
 /** Result of a finished child process. Output is decoded as UTF-8. */
