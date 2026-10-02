@@ -33,7 +33,14 @@ function even(value: number): number {
 
 /** Tallest band that still leaves room for the title, credit and both gaps. */
 export function foregroundMaxHeight(c: LayoutConstants = DEFAULT_LAYOUT): number {
-  return c.safeBottom - c.safeTop - TITLE_BLOCK_HEIGHT - CREDIT.blockHeight - 2 * c.gap;
+  return (
+    c.safeBottom -
+    c.safeTop -
+    TITLE_BLOCK_HEIGHT -
+    CREDIT.topPadding -
+    CREDIT.blockHeight -
+    2 * c.gap
+  );
 }
 
 /** The credit block is centered horizontally and never wider than CREDIT.maxWidth. */
@@ -54,7 +61,7 @@ function bandLayout(width: number, height: number, c: LayoutConstants): Layout {
   let fgY = Math.round((c.canvasHeight - fgHeight) / 2);
   const titleTop = fgY - c.gap - TITLE_BLOCK_HEIGHT;
   if (titleTop < c.safeTop) fgY += c.safeTop - titleTop;
-  const creditBottom = fgY + fgHeight + c.gap + CREDIT.blockHeight;
+  const creditBottom = fgY + fgHeight + c.gap + CREDIT.topPadding + CREDIT.blockHeight;
   if (creditBottom > c.safeBottom) fgY -= creditBottom - c.safeBottom;
   return {
     kind: 'band',
@@ -71,7 +78,7 @@ function bandLayout(width: number, height: number, c: LayoutConstants): Layout {
       width: c.canvasWidth,
       height: TITLE_BLOCK_HEIGHT,
     },
-    credit: creditRect(fgY + fgHeight + c.gap, c.canvasWidth),
+    credit: creditRect(fgY + fgHeight + c.gap + CREDIT.topPadding, c.canvasWidth),
   };
 }
 
