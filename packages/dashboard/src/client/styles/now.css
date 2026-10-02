@@ -57,20 +57,3 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
-/* Project switcher on the live index. Hidden when there is only one project. */
-.project-picker {
-  display: block;
-  margin-top: var(--space-4);
-}
-
-.project-select {
-  height: 40px;
-  padding: 0 12px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--card);
-  color: var(--text);
-  font: inherit;
-  font-weight: 600;
-}

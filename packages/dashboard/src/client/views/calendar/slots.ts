@@ -7,8 +7,9 @@ import { emptySlot, videoCard } from '../card.js';
 /**
  * A day's slots in order, each with its time and its videos (or an empty
  * placeholder). A slot usually holds one video; on the combined calendar
- * two projects can share one, and both cards show. A platform tab shows that platform's staggered time; the All
- * tab shows the base slot time, since the three platforms post minutes apart.
+ * two projects can share one, and both cards show. A platform tab shows
+ * that platform's staggered time; the All tab shows the base slot time,
+ * since the three platforms post minutes apart.
  */
 export function slotList(ctx: Context, date: string): HTMLOListElement {
   const { data } = ctx;

@@ -1,4 +1,8 @@
-/* The statistics video picker: a button that opens a panel with search. */
+/*
+ * The shared dropdown (views/common/dropdown.ts): a button that opens a
+ * panel with an optional search box and a list. Used by the statistics
+ * video picker and the project picker in Settings.
+ */
 .picker {
   position: relative;
 }
