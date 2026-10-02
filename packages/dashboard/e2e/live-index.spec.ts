@@ -9,19 +9,56 @@ const DATA = join(ROOT, 'projects', 'dashboard-data.js');
 const INDEX = `file://${join(ROOT, 'index.html')}#project=demo`;
 
 test.describe('live index.html', () => {
-  test('shows every project, with no clock strip when nothing is due', async ({ page }) => {
+  test('shows every project on one calendar by default, picked in Settings', async ({ page }) => {
     const errors: string[] = [];
     page.on('pageerror', (error) => errors.push(error.message));
     await page.clock.setFixedTime(await demoNow());
-    await page.goto(INDEX);
+    await page.goto(`file://${join(ROOT, 'index.html')}`);
     await expect(page.locator('.week .day').first()).toBeVisible();
-    await expect(page.locator('.project-select')).toHaveValue('demo');
-    await expect(page.locator('.project-select option')).toHaveCount(2);
     await expect(page.locator('.now')).toBeHidden();
-    await expect(page.locator('.card img').first()).toHaveAttribute('src', /^projects\/demo\//);
-    await page.selectOption('.project-select', 'demo-clips');
+    await expect(page.locator('.card img').first()).toHaveAttribute('src', /^projects\/demo/);
+
+    // The stats picker lists every video from both projects.
+    await page.locator('.stats-section .picker-button').click();
+    await expect(page.locator('.stats-section .picker-option')).toHaveCount(28);
+    await page.keyboard.press('Escape');
+
+    await page.getByRole('button', { name: 'Settings' }).click();
+    const projectPicker = page.locator('.settings-panel .picker-button');
+    await expect(projectPicker).toHaveText(/All projects/);
+    await projectPicker.click();
+    await expect(page.locator('.settings-panel .picker-option')).toHaveCount(3);
+    await page.locator('.settings-panel .picker-option', { hasText: 'demo-clips' }).click();
+    await expect(page.locator('.card')).toHaveCount(3);
+    await page.reload();
     await expect(page.locator('.card')).toHaveCount(3);
     expect(errors).toEqual([]);
+  });
+
+  test('three clicks on Settings open the admin panel for custom numbers', async ({ page }) => {
+    await page.clock.setFixedTime(await demoNow());
+    await page.goto(INDEX);
+    const gear = page.getByRole('button', { name: 'Settings' });
+    await gear.click();
+    await gear.click();
+    await gear.click();
+    await expect(page.locator('.admin')).toBeVisible();
+    await page.locator('#admin-views').fill('30k');
+    await page.locator('.admin-slider').nth(0).fill('60');
+    await page.locator('.admin-slider').nth(1).fill('10');
+    await page.locator('.admin-slider').nth(2).fill('30');
+    await expect(page.locator('.admin-total')).toHaveText('$7.860000');
+    await page.getByRole('button', { name: 'Show these numbers' }).click();
+    await expect(page.locator('.admin')).toBeHidden();
+    await page.locator('.tab[data-platform="tiktok"]').click();
+    await expect(page.locator('.stat-tile.metric-views .stat-tile-value')).toHaveText('18,000');
+    await expect(page.locator('.sample-badge', { hasText: 'Custom numbers' })).toBeVisible();
+
+    await gear.click();
+    await gear.click();
+    await gear.click();
+    await page.getByRole('button', { name: 'Use recorded numbers' }).click();
+    await expect(page.locator('.sample-badge', { hasText: 'Custom numbers' })).toBeHidden();
   });
 
   test('lists posts that are due once their time has passed', async ({ page }) => {
@@ -104,18 +141,18 @@ test.describe('live index.html', () => {
     await expect(page.locator('.chip.metric-likes')).toHaveAttribute('aria-pressed', 'false');
 
     const total = await page.locator('.stat-tile.metric-views .stat-tile-value').textContent();
-    await page.locator('.picker-button').click();
-    await page.locator('.picker-search').fill('#1 tiny');
-    await expect(page.locator('.picker-option')).toHaveCount(1);
+    await page.locator('.stats-section .picker-button').click();
+    await page.locator('.stats-section .picker-search').fill('#1 tiny');
+    await expect(page.locator('.stats-section .picker-option')).toHaveCount(1);
     await page.keyboard.press('Enter');
-    await expect(page.locator('.picker-panel')).toBeHidden();
-    await expect(page.locator('.picker-label')).toHaveText(/^#001 /);
+    await expect(page.locator('.stats-section .picker-panel')).toBeHidden();
+    await expect(page.locator('.stats-section .picker-label')).toHaveText(/^#001 /);
     await expect(page.locator('.stat-tile.metric-views .stat-tile-value')).not.toHaveText(
       total ?? '',
     );
-    await page.locator('.picker-button').click();
+    await page.locator('.stats-section .picker-button').click();
     await page.mouse.click(5, 5);
-    await expect(page.locator('.picker-panel')).toBeHidden();
+    await expect(page.locator('.stats-section .picker-panel')).toBeHidden();
 
     await page.getByRole('button', { name: 'Show table' }).click();
     await expect(page.locator('.stats-table tbody tr').first()).toBeVisible();
