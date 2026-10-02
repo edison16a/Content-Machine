@@ -1,8 +1,4 @@
-const fold = (value: string): string =>
-  value
-    .normalize('NFKD')
-    .replace(/[̀-ͯ]/g, '')
-    .toLowerCase();
+const fold = (value: string): string => value.normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
 /**
  * Loose text matching for the video picker: every word typed must appear
