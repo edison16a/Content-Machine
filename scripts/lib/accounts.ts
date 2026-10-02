@@ -26,13 +26,19 @@ export function isPlaceholder(accounts: Accounts): boolean {
 export function accountsBlock(accounts: Accounts): string {
   const badges = (Object.keys(STYLE) as Array<keyof Accounts>).map((key) => {
     const { label, color, logo } = STYLE[key];
-    const handle = accounts[key].handle.startsWith('@') || key === 'instagram' ? accounts[key].handle : `@${accounts[key].handle}`;
+    const handle =
+      accounts[key].handle.startsWith('@') || key === 'instagram'
+        ? accounts[key].handle
+        : `@${accounts[key].handle}`;
     const image = `https://img.shields.io/badge/${badgeText(label)}-${badgeText(handle)}-${color}?style=for-the-badge&logo=${logo}&logoColor=white`;
     return `[![${label}: ${handle}](${image})](${accounts[key].url})`;
   });
   const lines = ['**Real accounts running on Content Machine:**', '', badges.join(' ')];
   if (isPlaceholder(accounts)) {
-    lines.push('', '_These are placeholders. Put your handles and links in `docs/accounts.json`, then run `npm run docs:accounts`._');
+    lines.push(
+      '',
+      '_These are placeholders. Put your handles and links in `docs/accounts.json`, then run `npm run docs:accounts`._',
+    );
   }
   return lines.join('\n');
 }
@@ -42,5 +48,6 @@ export function replaceBlock(readme: string, block: string): string {
   const start = readme.indexOf(START);
   const end = readme.indexOf(END);
   if (start < 0 || end < start) throw new Error(`README.md needs ${START} and ${END} markers.`);
-  return `${readme.slice(0, start + START.length)}\n${block}\n${readme.slice(end)}`;
+  // Blank lines around the block match what Prettier produces.
+  return `${readme.slice(0, start + START.length)}\n\n${block}\n\n${readme.slice(end)}`;
 }
