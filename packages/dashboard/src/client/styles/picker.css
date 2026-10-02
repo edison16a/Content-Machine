@@ -131,12 +131,31 @@
 }
 
 .picker-text {
+  display: flex;
   flex: 1;
+  flex-direction: column;
   min-width: 0;
+}
+
+.picker-option-label,
+.picker-detail {
   overflow: hidden;
-  font-size: 14px;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.picker-option-label {
+  font-size: 14px;
+}
+
+.picker-detail {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.picker-list:focus {
+  outline: none;
 }
 
 .picker-check {
