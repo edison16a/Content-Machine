@@ -116,8 +116,8 @@ export function createPlayer(ctx: Context): Player {
     refresh() {
       if (current === undefined) return;
       // New data may have changed this video's status or captions, or removed it.
-      const id = current.id;
-      const latest = ctx.data.items.find((item) => item.id === id);
+      const key = current.key;
+      const latest = ctx.data.items.find((item) => item.key === key);
       if (latest === undefined) {
         api.close();
         return;

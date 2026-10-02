@@ -14,7 +14,10 @@ export type View = 'all' | DashboardPlatform;
 export const VIEWS: readonly View[] = ['all', ...DASHBOARD_PLATFORMS];
 
 export interface State {
-  /** Which project is on screen. Only the live index has more than one. */
+  /**
+   * Which project is on screen: a project's name, or ALL_PROJECTS for every
+   * project on one calendar (the default). Chosen in Settings.
+   */
   project: string;
   platform: View;
   /** Day, week or month. Week by default; the choice is remembered. */
@@ -25,12 +28,12 @@ export interface State {
    */
   anchor: string;
   theme: Theme;
-  /** Item whose card should take focus after the next render. */
-  focusId: number | null;
+  /** Key of the item whose card should take focus after the next render. */
+  focusKey: string | null;
   /** Which graphs the statistics section shows. */
   metrics: StatMetric[];
-  /** Statistics for one video, or for every video. */
-  statsItem: number | 'all';
+  /** Statistics for one video (its key), or "all" for every video. */
+  statsItem: string;
 }
 
 type Listener = (state: State, previous: State) => void;
@@ -65,7 +68,7 @@ export function initialState(anchor: string, project: string): State {
     calendar: loadChoice<CalendarView>('calendar', CALENDAR_VIEWS, 'week'),
     anchor,
     theme: loadChoice<Theme>('theme', ['light', 'dark'], 'dark'),
-    focusId: null,
+    focusKey: null,
     metrics: loadMetrics(),
     statsItem: 'all',
   };
@@ -83,7 +86,7 @@ export function createStore(initial: State): Store {
       if (patch.platform !== undefined) save('platform', state.platform);
       if (patch.theme !== undefined) save('theme', state.theme);
       if (patch.calendar !== undefined) save('calendar', state.calendar);
-      if (patch.project !== undefined) save('project', state.project);
+      if (patch.project !== undefined) save('selected-project', state.project);
       if (patch.metrics !== undefined) save('metrics', state.metrics.join(','));
       for (const listener of listeners) listener(state, previous);
     },

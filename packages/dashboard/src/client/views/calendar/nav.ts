@@ -68,7 +68,7 @@ export function renderCalendarNav(ctx: Context): { element: HTMLElement; update:
     h('button', { type: 'button', class: 'text-button', on: { click: onClick } }, label);
   const jump = (): void => {
     const item = firstUnposted(ctx.data.items, focusPlatform(store.get().platform));
-    if (item !== undefined) store.set({ anchor: item.date, focusId: item.id });
+    if (item !== undefined) store.set({ anchor: item.date, focusKey: item.key });
   };
   const element = h(
     'div',

@@ -29,6 +29,7 @@ export function videoCard(ctx: Context, item: DashboardItem, view: View): HTMLBu
       type: 'button',
       class: `card${view === 'all' ? '' : ` status-${item.platforms[view].status}`}`,
       'data-id': item.id,
+      'data-key': item.key,
       title: item.postTitle,
       'aria-label': `Play ${itemLabel(item.id)}, ${item.postTitle}, ${status}`,
       on: { click: () => ctx.openItem(item, card) },

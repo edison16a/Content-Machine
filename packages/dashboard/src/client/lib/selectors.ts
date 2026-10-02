@@ -14,21 +14,39 @@ export function countsFor(items: readonly DashboardItem[], platform: DashboardPl
   return { ...counts, total: items.length };
 }
 
-/** Items in posting order. */
-export function byId(items: readonly DashboardItem[]): DashboardItem[] {
-  return [...items].sort((a, b) => a.id - b.id);
+/**
+ * Items in posting order: by date, then slot. Ties only happen when several
+ * projects share a slot, and are broken by project and number so the order
+ * never shuffles between refreshes.
+ */
+export function inPostingOrder(items: readonly DashboardItem[]): DashboardItem[] {
+  return [...items].sort(
+    (a, b) =>
+      a.date.localeCompare(b.date) ||
+      a.slot - b.slot ||
+      a.project.localeCompare(b.project) ||
+      a.id - b.id,
+  );
 }
 
-/** Lookup from "date#slot" to the item posted there. */
-export function slotIndex(items: readonly DashboardItem[]): Map<string, DashboardItem> {
-  return new Map(items.map((item) => [`${item.date}#${item.slot}`, item]));
+/**
+ * Lookup from "date#slot" to the videos posted there. Usually one, but on
+ * the combined calendar two projects can post in the same slot.
+ */
+export function slotIndex(items: readonly DashboardItem[]): Map<string, DashboardItem[]> {
+  const index = new Map<string, DashboardItem[]>();
+  for (const item of inPostingOrder(items)) {
+    const key = `${item.date}#${item.slot}`;
+    index.set(key, [...(index.get(key) ?? []), item]);
+  }
+  return index;
 }
 
 export function firstUnposted(
   items: readonly DashboardItem[],
   platform: DashboardPlatform,
 ): DashboardItem | undefined {
-  return byId(items).find((item) => item.platforms[platform].status !== 'posted');
+  return inPostingOrder(items).find((item) => item.platforms[platform].status !== 'posted');
 }
 
 /** The next post on this platform that has not happened yet. */
@@ -71,17 +89,6 @@ export function dueNow(
 export function timePassed(item: DashboardItem, platform: DashboardPlatform, now: Date): boolean {
   const entry = item.platforms[platform];
   return entry.status === 'scheduled' && Date.parse(entry.iso) < now.getTime();
-}
-
-/** The item before or after this one in posting order. */
-export function neighbor(
-  items: readonly DashboardItem[],
-  id: number,
-  step: 1 | -1,
-): DashboardItem | undefined {
-  const sorted = byId(items);
-  const index = sorted.findIndex((item) => item.id === id);
-  return index < 0 ? undefined : sorted[index + step];
 }
 
 /**

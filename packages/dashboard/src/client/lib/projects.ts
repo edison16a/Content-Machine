@@ -1,4 +1,5 @@
 import type { DashboardData } from '../../shared/types.js';
+import { ALL_PROJECTS, mergeProjects } from './merge.js';
 
 /** "#project=tiny-house" in the address picks a project, so links can point at one. */
 export function projectFromHash(hash: string): string | undefined {
@@ -7,17 +8,16 @@ export function projectFromHash(hash: string): string | undefined {
 }
 
 /**
- * Which project to show. The one asked for wins; otherwise the one that
- * changed most recently, because that is almost always what you are
- * working on right now.
+ * What the dashboard shows for a selection: one named project, or every
+ * project on one calendar (the default, and the fallback when a remembered
+ * project no longer exists). With no projects at all it is the empty
+ * placeholder, so the page still looks like itself.
  */
-export function chooseProject(
-  projects: readonly DashboardData[],
-  wanted: string | undefined,
-): DashboardData | undefined {
-  const named = projects.find((project) => project.project === wanted);
-  if (named !== undefined) return named;
-  return [...projects].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0];
+export function dataFor(projects: readonly DashboardData[], selection: string): DashboardData {
+  if (projects.length === 0) return placeholderProject();
+  const named =
+    selection === ALL_PROJECTS ? undefined : projects.find((p) => p.project === selection);
+  return named ?? mergeProjects(projects);
 }
 
 /**

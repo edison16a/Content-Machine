@@ -5,8 +5,9 @@ import { slotIndex } from '../../lib/selectors.js';
 import { emptySlot, videoCard } from '../card.js';
 
 /**
- * A day's slots in order, each with its time and its video (or an empty
- * placeholder). A platform tab shows that platform's staggered time; the All
+ * A day's slots in order, each with its time and its videos (or an empty
+ * placeholder). A slot usually holds one video; on the combined calendar
+ * two projects can share one, and both cards show. A platform tab shows that platform's staggered time; the All
  * tab shows the base slot time, since the three platforms post minutes apart.
  */
 export function slotList(ctx: Context, date: string): HTMLOListElement {
@@ -17,16 +18,17 @@ export function slotList(ctx: Context, date: string): HTMLOListElement {
     'ol',
     { class: 'slots' },
     ...data.slots.map((slot, i) => {
-      const item = index.get(`${date}#${i}`);
+      const items = index.get(`${date}#${i}`) ?? [];
+      const first = items[0];
       const time =
         view === 'all'
           ? slot
-          : (item?.platforms[view].time ?? platformSlotTime(slot, data.stagger[view]));
+          : (first?.platforms[view].time ?? platformSlotTime(slot, data.stagger[view]));
       return h(
         'li',
         { class: 'slot' },
         h('span', { class: 'slot-time', text: time12(time) }),
-        item === undefined ? emptySlot() : videoCard(ctx, item, view),
+        ...(items.length === 0 ? [emptySlot()] : items.map((item) => videoCard(ctx, item, view))),
       );
     }),
   );

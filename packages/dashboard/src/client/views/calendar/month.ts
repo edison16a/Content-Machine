@@ -50,9 +50,7 @@ export function monthView(ctx: Context, today: string): HTMLElement[] {
     h('span', { class: 'month-weekday', text: dayName(date) }),
   );
   const cells = weeks.flat().map((date) => {
-    const items = ctx.data.slots
-      .map((_, i) => index.get(`${date}#${i}`))
-      .filter((item): item is DashboardItem => item !== undefined);
+    const items = ctx.data.slots.flatMap((_, i) => index.get(`${date}#${i}`) ?? []);
     const classes = ['month-cell'];
     if (date.slice(0, 7) !== month) classes.push('is-other');
     if (date === today) classes.push('is-today');
