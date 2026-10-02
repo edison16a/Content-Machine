@@ -1,4 +1,9 @@
-import { PLATFORM_NAMES, type DashboardItem } from '../../shared/types.js';
+import {
+  DASHBOARD_PLATFORMS,
+  PLATFORM_NAMES,
+  type DashboardItem,
+  type DashboardPlatform,
+} from '../../shared/types.js';
 import type { Context } from '../context.js';
 import { longDate, todayIn } from '../lib/dates.js';
 import { h, replace } from '../lib/dom.js';
@@ -16,18 +21,27 @@ function itemButton(ctx: Context, item: DashboardItem, when: string): HTMLButton
   );
 }
 
+/** "due 12:00 PM, 3 h ago", with the platform named on the All tab. */
+function dueText(item: DashboardItem, platform: DashboardPlatform, now: Date, named: boolean) {
+  const entry = item.platforms[platform];
+  const prefix = named ? `${PLATFORM_NAMES[platform]}, ` : '';
+  return `${prefix}due ${time12(entry.time)}, ${agoText(now.getTime() - Date.parse(entry.iso))}`;
+}
+
 /**
  * The live strip above the calendar: the time where the project posts and
  * what to post right now if anything is overdue. It is redrawn every few
- * seconds, so it is always current. What posts next lives in the stats panel
- * below it, so it is not repeated here.
+ * seconds, so it is always current. On the All tab the due list covers every
+ * platform.
  */
 export function renderNow(ctx: Context, container: HTMLElement): void {
-  const { platform } = ctx.store.get();
+  const view = ctx.store.get().platform;
   const { items, timezone } = ctx.data;
   const now = ctx.now();
-  const name = PLATFORM_NAMES[platform];
-  const due = dueNow(items, platform, now);
+  const platforms = view === 'all' ? DASHBOARD_PLATFORMS : [view];
+  const due = platforms.flatMap((platform) =>
+    dueNow(items, platform, now).map((item) => ({ item, platform })),
+  );
   const zone = timezone.replace(/_/g, ' ');
 
   const clock = h(
@@ -37,19 +51,16 @@ export function renderNow(ctx: Context, container: HTMLElement): void {
     h('span', { class: 'now-date', text: `${longDate(todayIn(timezone, now))}, ${zone}` }),
   );
 
+  const heading = view === 'all' ? 'Post now' : `Post on ${PLATFORM_NAMES[view]} now`;
   const duePanel =
     due.length === 0
       ? null
       : h(
           'div',
           { class: 'now-due', role: 'status' },
-          h('h3', { text: `Post on ${name} now` }),
-          ...due.map((item) =>
-            itemButton(
-              ctx,
-              item,
-              `due ${time12(item.platforms[platform].time)}, ${agoText(now.getTime() - Date.parse(item.platforms[platform].iso))}`,
-            ),
+          h('h3', { text: heading }),
+          ...due.map(({ item, platform }) =>
+            itemButton(ctx, item, dueText(item, platform, now, view === 'all')),
           ),
         );
 

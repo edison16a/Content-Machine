@@ -1,0 +1,90 @@
+/* Shared heading row for the Videos and Statistics sections. */
+.section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.section-title {
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.section-meta {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.section-spacer {
+  flex: 1;
+}
+
+.section-empty {
+  padding: 32px 24px;
+  border-radius: var(--radius-lg);
+  background: var(--panel);
+  color: var(--muted);
+  text-align: center;
+}
+
+/* The All tab: every video with its status on all three platforms. */
+.videos {
+  margin-top: var(--space-5);
+}
+
+.video-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-3);
+}
+
+.video-tile {
+  background: var(--panel);
+}
+
+.video-tile:hover {
+  background: var(--card-hover);
+}
+
+.video-date {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.video-platforms {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.video-platform {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.video-platform .row-logo {
+  width: auto;
+  height: 14px;
+}
+
+.video-platform.status-scheduled .dot {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--accent);
+}
+
+.video-platform.status-posted .dot {
+  background: var(--accent);
+  box-shadow: none;
+}
+
+.video-platform.status-failed .dot {
+  background: var(--text);
+  box-shadow: none;
+}

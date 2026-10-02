@@ -1,4 +1,5 @@
 import type { Context } from '../context.js';
+import { focusPlatform } from '../state.js';
 import { addDays, startOfWeek, todayIn, weekRange } from '../lib/dates.js';
 import { h } from '../lib/dom.js';
 import { icon } from '../lib/icons.js';
@@ -29,7 +30,7 @@ export function renderWeekNav(ctx: Context): { element: HTMLElement; update: () 
   const text = (label: string, onClick: () => void): HTMLButtonElement =>
     h('button', { type: 'button', class: 'text-button', on: { click: onClick } }, label);
   const jump = (): void => {
-    const item = firstUnposted(ctx.data.items, store.get().platform);
+    const item = firstUnposted(ctx.data.items, focusPlatform(store.get().platform));
     if (item !== undefined)
       store.set({ weekStart: startOfWeek(item.date, ctx.data.weekStartsOn), focusId: item.id });
   };

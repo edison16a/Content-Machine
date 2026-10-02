@@ -1,5 +1,6 @@
 import { DASHBOARD_PLATFORMS, PLATFORM_NAMES, type DashboardItem } from '../../shared/types.js';
 import type { Context } from '../context.js';
+import { focusPlatform } from '../state.js';
 import { longDate, monthDay } from '../lib/dates.js';
 import { copyText, flashLabel, h, img } from '../lib/dom.js';
 import { absolutePath, time12 } from '../lib/format.js';
@@ -50,7 +51,7 @@ function platformRows(ctx: Context, item: DashboardItem): HTMLElement {
  * where it stands on each platform, and the two things you can do with it.
  */
 export function playerDetails(ctx: Context, item: DashboardItem): HTMLElement {
-  const { platform } = ctx.store.get();
+  const platform = focusPlatform(ctx.store.get().platform);
   const caption = item.captions[platform];
   const fileName = item.video.split('/').pop() ?? item.video;
   return h(

@@ -33,6 +33,13 @@
 .tab-logo {
   width: auto;
   height: 18px;
+  /* The TikTok mark is an app icon on a black square; round it like one. */
+  border-radius: 4px;
+}
+
+.tab-icon {
+  width: 18px;
+  height: 18px;
 }
 
 /* The only motion on the page: the underline glides to the active tab. */

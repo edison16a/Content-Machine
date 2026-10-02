@@ -1,4 +1,5 @@
 import type { Context } from '../context.js';
+import { focusPlatform } from '../state.js';
 import { dayName, monthDay, todayIn, weekDates } from '../lib/dates.js';
 import { h, replace } from '../lib/dom.js';
 import { platformSlotTime, time12 } from '../lib/format.js';
@@ -8,7 +9,7 @@ import { emptySlot, videoCard } from './card.js';
 
 function dayColumn(ctx: Context, date: string, today: string): HTMLElement {
   const { data } = ctx;
-  const { platform } = ctx.store.get();
+  const platform = focusPlatform(ctx.store.get().platform);
   const index = slotIndex(data.items);
   const isToday = date === today;
   const slots = data.slots.map((slot, i) => {
@@ -40,14 +41,17 @@ function dayColumn(ctx: Context, date: string, today: string): HTMLElement {
 
 /** Shown instead of the grid when nothing has been scheduled. */
 function emptyState(project: string): HTMLElement {
+  // An empty project name is the live index before any project exists.
+  const text =
+    project === ''
+      ? 'Ask Claude to make your first videos. Keep this page open: it fills in by itself.'
+      : `Render and schedule videos, then this calendar fills in: npm run cm -- schedule ${project}`;
   return h(
     'div',
     { class: 'empty' },
     icon('film', 'icon icon-xl'),
-    h('h2', { text: 'Nothing scheduled yet' }),
-    h('p', {
-      text: `Render and schedule videos, then this calendar fills in: npm run cm -- schedule ${project}`,
-    }),
+    h('h2', { text: project === '' ? 'No projects yet' : 'Nothing scheduled yet' }),
+    h('p', { text }),
   );
 }
 

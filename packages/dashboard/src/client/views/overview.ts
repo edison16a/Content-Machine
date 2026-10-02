@@ -1,5 +1,6 @@
 import { PLATFORM_NAMES } from '../../shared/types.js';
 import type { Context } from '../context.js';
+import { focusPlatform } from '../state.js';
 import { dayName, monthDay } from '../lib/dates.js';
 import { h, replace } from '../lib/dom.js';
 import { time12 } from '../lib/format.js';
@@ -39,7 +40,7 @@ function progress(counts: Counts): HTMLElement {
 
 /** The stats panel for the selected platform, with what posts next. */
 export function renderOverview(ctx: Context, container: HTMLElement): void {
-  const { platform } = ctx.store.get();
+  const platform = focusPlatform(ctx.store.get().platform);
   const counts = countsFor(ctx.data.items, platform);
   const next = nextUp(ctx.data.items, platform, ctx.now());
   const nextText =
