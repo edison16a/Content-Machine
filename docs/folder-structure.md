@@ -9,7 +9,7 @@ projects/<project-name>/
 ├── README.txt          what each folder is for
 ├── source/             INPUTS (yours): long videos, <video>.transcript.txt, brief.txt
 │   └── downloads/      videos and captions saved by `fetch` from a link
-├── plan/               DECISIONS: plan.json, metadata.json, schedule.json, stats.json, schedule-history.log, report.md
+├── plan/               DECISIONS: plan.json, metadata.json, schedule.json, stats.json, sample-stats.json (test data, only while on), schedule-history.log, report.md
 ├── videos/             FINAL: 001.mp4, 002.mp4 and so on (what gets posted; the dashboard plays these)
 ├── thumbs/             001.jpg and so on (posters)
 └── work/               DISPOSABLE: cache, QA images, logs. Safe to delete at any time.
