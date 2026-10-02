@@ -4,7 +4,7 @@ import { shiftAnchor } from './lib/calendar.js';
 import { todayIn } from './lib/dates.js';
 import { h } from './lib/dom.js';
 import { stopPreview } from './lib/hover-preview.js';
-import { dataFor } from './lib/projects.js';
+import { dataFor, resolveSelection } from './lib/projects.js';
 import { initialAnchor } from './lib/selectors.js';
 import { createStore, initialState, type State, type Store } from './state.js';
 import { renderCalendar } from './views/calendar/index.js';
@@ -39,10 +39,13 @@ export interface MountOptions {
 const anchorFor = (data: DashboardData, now: Date): string =>
   initialAnchor(data.items, todayIn(data.timezone, now), data.weekStartsOn);
 
-/** Left and right arrows page through the calendar, unless a control wants the keys. */
-function bindWeekKeys(store: Store, playerOpen: () => boolean): void {
+/**
+ * Left and right arrows page through the calendar, unless a dialog is open
+ * or a control wants the keys.
+ */
+function bindWeekKeys(store: Store, dialogOpen: () => boolean): void {
   document.addEventListener('keydown', (event) => {
-    if (playerOpen() || event.altKey || event.ctrlKey || event.metaKey) return;
+    if (dialogOpen() || event.altKey || event.ctrlKey || event.metaKey) return;
     if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
     const target = event.target instanceof HTMLElement ? event.target : null;
     if (
@@ -59,9 +62,14 @@ function bindWeekKeys(store: Store, playerOpen: () => boolean): void {
 /** Builds the page once, then re-renders only the parts a state change touches. */
 export function mountApp(root: HTMLElement, options: MountOptions): App {
   let projects = options.projects;
-  const first = dataFor(projects, options.selection);
+  const selection = resolveSelection(projects, options.selection);
+  const first = dataFor(projects, selection);
   const now = (): Date => new Date();
-  const store = createStore(initialState(anchorFor(first, now()), options.selection));
+  // Only the live index remembers the project: a project's own snapshot
+  // always shows itself, and must not change what index.html opens on.
+  const store = createStore(initialState(anchorFor(first, now()), selection), {
+    rememberProject: options.live,
+  });
   const ctx: Context = {
     data: first,
     live: options.live,
@@ -75,7 +83,11 @@ export function mountApp(root: HTMLElement, options: MountOptions): App {
   const tabs = renderTabs(ctx);
   const nav = renderCalendarNav(ctx);
   const stats = renderStatsSection(ctx);
-  const admin = createAdminPanel(ctx, () => stats.update());
+  const admin = createAdminPanel(ctx, () => {
+    // Custom numbers are totals for every video, so show every video.
+    if (store.get().statsItem === 'all') stats.update();
+    else store.set({ statsItem: 'all' });
+  });
   const settings = renderSettings(ctx, () => projects, {
     // Picking a project also jumps the calendar to where its videos are.
     pickProject: (selection) =>
@@ -155,12 +167,18 @@ export function mountApp(root: HTMLElement, options: MountOptions): App {
     }
   }, TICK_MS);
   window.setInterval(() => void ctx.refresh().then(stats.update), STATS_MS);
-  bindWeekKeys(store, () => player.isOpen());
+  bindWeekKeys(store, () => player.isOpen() || admin.isOpen());
 
   return {
     setProjects(next) {
       projects = next;
-      ctx.data = dataFor(projects, store.get().project);
+      const selection = resolveSelection(projects, store.get().project);
+      if (selection !== store.get().project) {
+        // The project on screen is gone; the store change redraws everything.
+        store.set({ project: selection, anchor: anchorFor(dataFor(projects, selection), now()) });
+        return;
+      }
+      ctx.data = dataFor(projects, selection);
       settings.update();
       renderData();
     },

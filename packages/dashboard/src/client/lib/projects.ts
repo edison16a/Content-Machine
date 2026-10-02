@@ -8,6 +8,18 @@ export function projectFromHash(hash: string): string | undefined {
 }
 
 /**
+ * The selection that is really on screen. A remembered or linked project
+ * that no longer exists means every project, and saying so here keeps the
+ * Settings dropdown, the custom numbers and the calendar in agreement. With
+ * no projects at all the selection is kept, so a remembered pick survives a
+ * moment when the data file is empty.
+ */
+export function resolveSelection(projects: readonly DashboardData[], selection: string): string {
+  if (projects.length === 0 || selection === ALL_PROJECTS) return selection;
+  return projects.some((p) => p.project === selection) ? selection : ALL_PROJECTS;
+}
+
+/**
  * What the dashboard shows for a selection: one named project, or every
  * project on one calendar (the default, and the fallback when a remembered
  * project no longer exists). With no projects at all it is the empty

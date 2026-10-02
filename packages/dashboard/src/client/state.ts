@@ -75,7 +75,7 @@ export function initialState(anchor: string, project: string): State {
 }
 
 /** A tiny observable store. Remembers the tab, the calendar view, the theme and the graphs. */
-export function createStore(initial: State): Store {
+export function createStore(initial: State, options: { rememberProject: boolean }): Store {
   let state = initial;
   const listeners: Listener[] = [];
   return {
@@ -86,7 +86,8 @@ export function createStore(initial: State): Store {
       if (patch.platform !== undefined) save('platform', state.platform);
       if (patch.theme !== undefined) save('theme', state.theme);
       if (patch.calendar !== undefined) save('calendar', state.calendar);
-      if (patch.project !== undefined) save('selected-project', state.project);
+      if (patch.project !== undefined && options.rememberProject)
+        save('selected-project', state.project);
       if (patch.metrics !== undefined) save('metrics', state.metrics.join(','));
       for (const listener of listeners) listener(state, previous);
     },
