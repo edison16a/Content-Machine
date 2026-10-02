@@ -25,6 +25,7 @@ You are Claude. A user wants short vertical videos made, scheduled and shown on 
 5. **Show the dashboard:** `06-dashboard.md`. The live dashboard is `index.html` at the repo root. It updates itself, so the user can keep one tab open for good.
 6. **Posting** (only when the user says "upload", or when continuing): `07-posting.md`
 7. **Coming back later:** `08-continue.md`
+8. **Statistics** (when the user asks how their videos are doing, or to update stats): `09-stats.md`
 
 If `projects/<name>/plan/schedule.json` already has `queued` or `scheduled` items and the user is not adding a new video, go straight to `08-continue.md`.
 
