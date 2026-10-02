@@ -2,7 +2,8 @@
  * Number formatting for the statistics section. Counts get thousands
  * separators, money keeps six decimals (the estimate is a fraction of a cent
  * per view, and watching it tick is half the fun), and chart axes use short
- * forms so labels never crowd.
+ * forms so labels never crowd. parseAmount reads what people type into the
+ * admin panel ("30,000", "1.5k", "2M").
  */
 
 export function count(value: number): string {
@@ -50,5 +51,7 @@ export function parseAmount(text: string): number | undefined {
   if (match === null) return undefined;
   const value = Number((match[1] ?? '').replace(/,/g, ''));
   const scale = { k: 1e3, m: 1e6 }[(match[2] ?? '').toLowerCase()] ?? 1;
-  return Number.isFinite(value) ? value * scale : undefined;
+  // Check after scaling: a very long number times a thousand can overflow.
+  const result = value * scale;
+  return Number.isFinite(result) && result <= Number.MAX_SAFE_INTEGER ? result : undefined;
 }
