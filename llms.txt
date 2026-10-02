@@ -1,0 +1,10 @@
+# Content Machine
+> Turns one long video into a consistent, scheduled stream of short vertical videos for TikTok, Instagram Reels and YouTube Shorts, driven by Claude.
+
+## Start here
+- [Run playbook](playbook/run.md): what Claude does when a user says "Using Content Machine: <link>"
+- [README](README.md): overview, screenshots, quick start
+## Reference
+- [Architecture](docs/architecture.md)
+- [Specs](docs/specs/)
+- [Responsible use](docs/responsible-use.md)
