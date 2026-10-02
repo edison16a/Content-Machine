@@ -45,6 +45,10 @@ npm run cm -- stats <project> --import projects/<project>/work/stats-<YYYY-MM-DD
 
 It prints which rows it recorded and which it could not place. For each "no video matches" or "fits items 4, 5", check the post and fix the row (add `postedOn` or `item`), then import only the fixed rows again. Never guess an id.
 
+## Test data
+
+To try the statistics before there are real numbers, `npm run cm -- testdata <project> on` writes 30 days of made-up readings (adding up to about $30,000 across the platforms, split randomly) to `plan/sample-stats.json`. Change it with `--income 5k`, `--views 30000` or `--days 14`. While it is on, the dashboard shows only the test data with a "Test data" label, and `stats` says so. `npm run cm -- testdata <project> off` deletes it; real readings are never changed. Turn it off before recording real numbers so the user sees them.
+
 ## Tell the user
 
 In two or three lines: total views per platform, the estimated income (it is an estimate from the rates in `config/defaults.json`, overridable in `config/local.json`), and which videos are doing best. Their open `index.html` picks up the numbers within a few seconds.
