@@ -3,8 +3,7 @@ import type { Context } from '../context.js';
 import { h, replace } from '../lib/dom.js';
 import { stopPreview } from '../lib/hover-preview.js';
 import { icon } from '../lib/icons.js';
-import { neighbor } from '../lib/selectors.js';
-import { loadNumber, save, load } from '../lib/storage.js';
+import { load, loadNumber, save } from '../lib/storage.js';
 import { playerDetails } from './player-details.js';
 
 export const MISSING_VIDEO =
@@ -44,31 +43,15 @@ export function createPlayer(ctx: Context): Player {
     h('p', { text: MISSING_VIDEO }),
   );
   const details = h('div', { class: 'side-body' });
-  const autoplay = h('input', { type: 'checkbox', class: 'switch-input', id: 'autoplay-next' });
   const close = h(
     'button',
-    { type: 'button', class: 'icon-button', 'aria-label': 'Close player', title: 'Close (Esc)' },
+    {
+      type: 'button',
+      class: 'icon-button close',
+      'aria-label': 'Close player',
+      title: 'Close (Esc)',
+    },
     icon('close'),
-  );
-  const prev = h(
-    'button',
-    {
-      type: 'button',
-      class: 'icon-button',
-      'aria-label': 'Previous video',
-      title: 'Previous (Left arrow)',
-    },
-    icon('previous'),
-  );
-  const next = h(
-    'button',
-    {
-      type: 'button',
-      class: 'icon-button',
-      'aria-label': 'Next video',
-      title: 'Next (Right arrow)',
-    },
-    icon('next'),
   );
   const element = h(
     'div',
@@ -84,19 +67,7 @@ export function createPlayer(ctx: Context): Player {
       'div',
       { class: 'player-panel' },
       h('div', { class: 'player-media' }, h('div', { class: 'frame' }, video, bigPlay, error)),
-      h(
-        'div',
-        { class: 'player-side' },
-        h('div', { class: 'side-top' }, h('div', { class: 'side-nav' }, prev, next), close),
-        details,
-        h(
-          'label',
-          { class: 'switch', for: 'autoplay-next' },
-          autoplay,
-          h('span', { class: 'switch-track', 'aria-hidden': 'true' }),
-          h('span', { text: 'Auto-play next' }),
-        ),
-      ),
+      h('div', { class: 'player-side' }, close, details),
     ),
   );
   let current: DashboardItem | undefined;
@@ -108,23 +79,13 @@ export function createPlayer(ctx: Context): Player {
       if (error.hidden) bigPlay.hidden = false;
     });
   };
-  const step = (dir: 1 | -1): void => {
-    const item = current === undefined ? undefined : neighbor(ctx.data.items, current.id, dir);
-    if (item !== undefined) api.open(item);
-  };
   bigPlay.addEventListener('click', play);
   video.addEventListener('error', () => {
     if (!video.hasAttribute('src')) return;
     error.hidden = false;
     bigPlay.hidden = true;
   });
-  video.addEventListener('ended', () => {
-    if (ctx.store.get().autoplay) step(1);
-  });
-  autoplay.addEventListener('change', () => ctx.store.set({ autoplay: autoplay.checked }));
   close.addEventListener('click', () => api.close());
-  prev.addEventListener('click', () => step(-1));
-  next.addEventListener('click', () => step(1));
 
   const api: Player = {
     element,
@@ -136,12 +97,10 @@ export function createPlayer(ctx: Context): Player {
       error.hidden = true;
       video.poster = item.thumb;
       video.src = item.video;
-      prev.disabled = neighbor(ctx.data.items, item.id, -1) === undefined;
-      next.disabled = neighbor(ctx.data.items, item.id, 1) === undefined;
       api.refresh();
       element.hidden = false;
       document.body.classList.add('no-scroll');
-      if (!element.contains(document.activeElement)) close.focus();
+      close.focus();
       play();
     },
     close() {
@@ -155,19 +114,17 @@ export function createPlayer(ctx: Context): Player {
       current = undefined;
     },
     refresh() {
-      autoplay.checked = ctx.store.get().autoplay;
       if (current !== undefined) replace(details, playerDetails(ctx, current));
     },
   };
-  bindKeys(api, video, step);
+  bindKeys(api, video);
   return api;
 }
 
-/** Space, M, F, arrows and Esc while the player is open. */
-function bindKeys(player: Player, video: HTMLVideoElement, step: (dir: 1 | -1) => void): void {
+/** Space, M, F and Esc while the player is open. */
+function bindKeys(player: Player, video: HTMLVideoElement): void {
   document.addEventListener('keydown', (event) => {
     if (!player.isOpen() || event.altKey || event.ctrlKey || event.metaKey) return;
-    const onVideo = event.target === video;
     const handlers: Record<string, () => void> = {
       ' ': () => (video.paused ? void video.play().catch(() => undefined) : video.pause()),
       m: () => (video.muted = !video.muted),
@@ -175,12 +132,10 @@ function bindKeys(player: Player, video: HTMLVideoElement, step: (dir: 1 | -1) =
         void (document.fullscreenElement === null
           ? video.requestFullscreen().catch(() => undefined)
           : document.exitFullscreen()),
-      ArrowLeft: () => step(-1),
-      ArrowRight: () => step(1),
       Escape: () => (document.fullscreenElement === null ? player.close() : undefined),
     };
     const handler = handlers[event.key.length === 1 ? event.key.toLowerCase() : event.key];
-    if (handler === undefined || (onVideo && event.key === ' ')) return;
+    if (handler === undefined || (event.target === video && event.key === ' ')) return;
     event.preventDefault();
     event.stopPropagation();
     handler();

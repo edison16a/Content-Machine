@@ -62,7 +62,6 @@ function boot(): void {
       nav.update();
       renderWeek(ctx, week);
     }
-    if (state.autoplay !== previous?.autoplay) player.refresh();
     if (state.focusId !== null) {
       const card = week.querySelector<HTMLElement>(`.card[data-id="${state.focusId}"]`);
       card?.scrollIntoView({ block: 'nearest' });
