@@ -15,3 +15,4 @@ export async function generateDashboard(
 export { loadClientBundle, type ClientBundle } from './bundle.js';
 export { toDashboardData, type DashboardExtras } from './data.js';
 export { escapeHtml, jsonForScript, renderDashboardHtml, type HtmlInput } from './html.js';
+export { clientBuildId, renderLiveData, withMediaBase } from './live.js';

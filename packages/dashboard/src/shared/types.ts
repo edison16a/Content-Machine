@@ -65,3 +65,25 @@ export const PLATFORM_NAMES: Record<DashboardPlatform, string> = {
 
 /** id of the script tag holding the JSON data. */
 export const DATA_ELEMENT_ID = 'cm-data';
+
+/**
+ * The live index (index.html at the repo root) reads every project from one
+ * script file instead of embedded JSON. A classic <script src> is the only
+ * way a page opened from file:// can pick up new data without a server,
+ * since browsers block fetch() there.
+ */
+export const LIVE_DATA_GLOBAL = '__CONTENT_MACHINE__';
+
+/** Where that file lives, relative to the repo root and to index.html. */
+export const LIVE_DATA_FILE = 'projects/dashboard-data.js';
+
+export interface LiveData {
+  /**
+   * Fingerprint of the dashboard client that wrote this file. When it
+   * changes, the open page reloads itself to pick up the new client.
+   */
+  build: string;
+  updatedAt: string;
+  /** Media paths in here are relative to the repo root. */
+  projects: DashboardData[];
+}
