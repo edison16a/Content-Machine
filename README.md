@@ -103,6 +103,8 @@ npm run demo
 npm run cm -- open
 ```
 
+Done with it? `npm run cm -- demo --remove` deletes the demo projects and frees the posting slots they held.
+
 ## How it looks in Claude
 
 The conversation from the screenshot at the top, as text:
