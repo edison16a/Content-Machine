@@ -1,0 +1,49 @@
+<!doctype html>
+<!--
+  Content Machine dashboard. Open this file and leave it open.
+
+  It never needs to be regenerated. The CLI rewrites projects/dashboard-data.js
+  whenever a project changes, and this page rereads that file every few
+  seconds, so new videos, dates and statuses show up on their own.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <title>Content Machine</title>
+    <link rel="icon" href="assets/brand/content-machine.svg" />
+    <script>
+      (function () {
+        var t = null;
+        try {
+          t = localStorage.getItem('content-machine:theme');
+        } catch (e) {}
+        document.documentElement.dataset.theme = t === 'light' ? 'light' : 'dark';
+      })();
+    </script>
+    <link rel="stylesheet" href="packages/dashboard/dist/client/client.css" />
+    <style>
+      .cm-setup {
+        max-width: 560px;
+        margin: 15vh auto;
+        padding: 0 24px;
+        font-family: system-ui, sans-serif;
+        line-height: 1.5;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="cm-setup">
+        <h1>Content Machine is not set up yet</h1>
+        <p>
+          Open Claude in this folder and say <strong>"Set up Content Machine"</strong>. Keep this
+          page open: once setup finishes, refresh it once and it stays up to date from then on.
+        </p>
+      </div>
+    </div>
+    <script src="projects/dashboard-data.js"></script>
+    <script src="packages/dashboard/dist/client/client.js"></script>
+  </body>
+</html>
