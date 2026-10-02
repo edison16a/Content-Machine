@@ -20,8 +20,8 @@ export async function runNew(
   const { paths, project } = await createProject(ctx, name, options);
   ctx.out.result('new', { project, path: paths.root, dashboard: paths.dashboard }, () => [
     `Created ${display(ctx, paths.root)}`,
-    `Put the long video and its transcript in ${display(ctx, paths.sourceDir)}/`,
-    `Dashboard: ${display(ctx, paths.dashboard)}`,
+    `Put the long video and its transcript in ${display(ctx, paths.sourceDir)}/, or fetch it from a link`,
+    `Live dashboard: index.html (keep it open; it updates itself)`,
   ]);
 }
 

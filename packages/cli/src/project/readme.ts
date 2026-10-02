@@ -2,7 +2,8 @@
 export function projectReadme(name: string): string {
   return `Content Machine project: ${name}
 
-Open dashboard.html to see the posting calendar. Click any video to watch it with sound.
+Open index.html at the top of the Content Machine folder and keep it open. It shows every
+project and updates itself. This folder's dashboard.html is a snapshot you can zip and share.
 
 Folders (each has one job):
 
