@@ -1,3 +1,4 @@
+import { join } from 'node:path';
 import type { Command } from 'commander';
 import { Option } from 'commander';
 import { PLATFORMS, addDays, type Schedule } from '@content-machine/core';
@@ -86,6 +87,8 @@ export async function runDemo(ctx: CommandContext, flags: DemoFlags): Promise<vo
   await runCheck(quiet, 'demo');
   const scheduled = await runSchedule(shiftedContext(quiet, PAST_DAYS + 1), 'demo', {});
   await markStatuses(quiet, scheduled.schedule);
+  // Browser tests and screenshots freeze the page clock at this moment.
+  await writeJson(ctx.fs, join(demo.workDir, 'demo-clock.json'), { now: ctx.clock.now().toISOString() });
 
   const clips = await prepareDemoProject(
     ctx,
