@@ -44,7 +44,7 @@ _These are placeholders. Put your handles and links in `docs/accounts.json`, the
 
 ## What it is
 
-You give Claude a long video you have the rights to, plus its transcript. Claude reads the transcript and decides where to cut. A local engine renders the cuts as 1080x1920 videos with the same layout every time, gives each one a fixed posting slot (three a day per platform) and builds a dashboard where you can watch every video with sound. When you are ready, Claude can enter the videos into each platform's own scheduler through your logged-in browser.
+You give Claude a link to a long video you have the rights to (or the file and its transcript). Claude downloads it with its captions, reads the transcript and decides where to cut. A local engine renders the cuts as 1080x1920 videos with the same layout every time, gives each one a fixed posting slot (three a day per platform) and fills in a live dashboard where you can watch every video with sound. When you are ready, Claude can enter the videos into each platform's own scheduler through your logged-in browser.
 
 Two modes, one plan format:
 
@@ -59,28 +59,36 @@ Two modes, one plan format:
 
 ```mermaid
 flowchart LR
-  A["Long video and transcript<br/>(your files)"] --> B["Claude plans the cuts<br/>plan.json"]
+  L["Video link"] -- "fetch (yt-dlp)" --> A
+  A["Long video and transcript<br/>source/"] --> B["Claude plans the cuts<br/>plan.json"]
   B --> C["Engine renders<br/>snaps cuts to pauses, 1080x1920"]
   C --> D["Fixed schedule<br/>3 a day per platform"]
-  D --> E["dashboard.html<br/>watch every video with sound"]
+  D --> E["index.html<br/>live calendar, plays every video"]
   E -. "optional" .-> F["Claude enters posts in each<br/>platform's scheduler"]
 ```
 
 ## Quick start
 
-**You need:** Node 20 or newer, ffmpeg (`brew install ffmpeg` or `sudo apt install ffmpeg`) and [Claude Code](https://claude.com/claude-code). Optional: the Claude in Chrome extension, for hands-off uploading.
+**You need:** [Claude Code](https://claude.com/claude-code). Claude installs the rest (Node 20 or newer, ffmpeg and yt-dlp) during setup. Optional: the Claude in Chrome extension, for hands-off uploading.
 
 ```bash
 git clone https://github.com/edison16a/Content-Machine.git
 cd Content-Machine
-npm install
 ```
 
 Open Claude Code in that folder and say:
 
 ```text
-Use Content Machine to help me create a video
+Set up Content Machine
 ```
+
+Claude follows [`playbook/setup.md`](playbook/setup.md): it installs the tools, builds everything, asks your time zone and opens your dashboard. Then give it a video:
+
+```text
+Use Content Machine: https://www.youtube.com/watch?v=...
+```
+
+**Your dashboard is [`index.html`](index.html)**, right next to this README. Open it once and leave it open: it updates itself as videos are made, scheduled and posted.
 
 Starting somewhere else? Give Claude the link and it clones the repository itself, following [`playbook/run.md`](playbook/run.md):
 
@@ -92,7 +100,7 @@ Want to see it before using your own footage? Build the demo (synthetic video, a
 
 ```bash
 npm run demo
-npm run cm -- open demo
+npm run cm -- open
 ```
 
 ## How it looks in Claude
@@ -118,7 +126,7 @@ The conversation from the screenshot at the top, as text:
 
 ## The dashboard
 
-One HTML file per project. It works straight from your disk, makes no network requests, and plays the real files next to it. Dark mode is the default; there is a light mode too.
+`index.html` at the top of the folder shows every project. It works straight from your disk with no server, plays the real video files, and rereads its data every few seconds, so one open tab is always current. Dark mode is the default; there is a light mode too. Each project also gets a self-contained `dashboard.html` snapshot you can zip and share.
 
 <table>
   <tr>
@@ -127,6 +135,8 @@ One HTML file per project. It works straight from your disk, makes no network re
   </tr>
 </table>
 
+- **Live strip.** The time where you post, anything due to post right now, and a countdown to the next post.
+- **Every project in one place.** A picker appears when you have more than one.
 - **Play every video with sound.** Click a card and it plays right away. Space, M, F and Esc work as you would expect.
 - **Stats at a glance** for the selected platform: posted, scheduled, queued, failed and what posts next.
 - **Platform tabs** with the official logos. Each tab shows that platform's times, statuses and caption.
@@ -138,10 +148,11 @@ One HTML file per project. It works straight from your disk, makes no network re
 
 ```
 projects/<project-name>/
-├── dashboard.html      open this: calendar, click any video to watch it with sound
+├── dashboard.html      a shareable snapshot (the live view is index.html at the root)
 ├── project.json
 ├── README.txt          what each folder is for
 ├── source/             INPUTS (yours): long videos, <video>.transcript.txt, brief.txt
+│   └── downloads/      videos and captions saved from a link by fetch
 ├── plan/               DECISIONS: plan.json, metadata.json, schedule.json, schedule-history.log, report.md
 ├── videos/             FINAL: 001.mp4, 002.mp4 and so on (what gets posted)
 ├── thumbs/             posters for the dashboard
@@ -172,20 +183,21 @@ When a scheduler refuses a date, Claude stops that platform, leaves the rest que
 
 ## Responsible use
 
-Only use footage you own or have permission to use: your own videos, an official clipping program, or a creator who agreed. Sequential re-posts a whole video, so it needs permission that covers that. **There is no downloader in this repository and there never will be.** Audio is never changed, titles must be true to the footage, and every video credits its source. Follow each platform's rules. See [docs/responsible-use.md](docs/responsible-use.md).
+Only use footage you own or have permission to use: your own videos, an official clipping program, or a creator who agreed. Sequential re-posts a whole video, so it needs permission that covers that. Being able to download a link does not mean you may re-post it: `fetch` is for videos you have permission to use. Audio is never changed, titles must be true to the footage, and every video credits its source. Follow each platform's rules. See [docs/responsible-use.md](docs/responsible-use.md).
 
 ## The repository
 
 ```
-packages/core        pure logic: schemas, transcripts, plans, snapping, layout, scheduling, statuses
+packages/core        pure logic: schemas, transcripts, fetch rules, plans, snapping, layout, scheduling, statuses
 packages/render      ffmpeg rendering, canvas text overlays, thumbnails, QA
-packages/dashboard   the dashboard.html generator and its client UI
-packages/cli         the content-machine command
+packages/dashboard   the dashboard client, the dashboard.html generator and the live data file
+packages/cli         the content-machine command, including yt-dlp downloads
+index.html           the live dashboard
 playbook/            what Claude reads at runtime
 docs/                specs, architecture, ADRs, JSON Schemas
 ```
 
-Every command: `npm run cm -- <command>`. Run `npm run cm -- --help` for the list (`doctor`, `new`, `transcript`, `render`, `preview`, `check`, `schedule`, `mark`, `dashboard`, `open`, `status`, `autoplan`, `demo`, `schema`). Each one takes `--json` for machine-readable output. Read [docs/architecture.md](docs/architecture.md) for how it fits together.
+Every command: `npm run cm -- <command>`. Run `npm run cm -- --help` for the list (`doctor`, `new`, `fetch`, `transcript`, `render`, `preview`, `check`, `schedule`, `mark`, `dashboard`, `open`, `status`, `autoplan`, `demo`, `schema`). Each one takes `--json` for machine-readable output. Read [docs/architecture.md](docs/architecture.md) for how it fits together.
 
 ## Development
 
