@@ -28,7 +28,7 @@ npm run test:e2e
 - **Small files.** Aim for functions under 50 lines and files under about 200. Explain non-obvious code with a comment that says why.
 - **Schemas first.** Every JSON file on disk has a zod schema in `packages/core/src/schemas`. After changing one, run `npm run docs:schemas` and commit the result (CI fails on drift).
 - **Specs and code move together.** If you change behavior described in `docs/specs/`, update the spec in the same pull request.
-- **Never** add a video downloader, process audio, or hand-edit generated files (`plan/schedule.json`, `dashboard.html`).
+- **Never** add another way to download video (everything goes through `fetch` and yt-dlp), process audio, or hand-edit generated files (`plan/schedule.json`, `dashboard.html`, `projects/dashboard-data.js`).
 - **Writing style** for docs and UI text: short sentences and plain words. No em dashes or arrows standing in for words.
 
 ## Tests
