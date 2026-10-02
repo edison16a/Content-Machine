@@ -4,7 +4,6 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3) var(--space-4);
-  border-bottom: 1px solid var(--line);
 }
 
 .tabs {
@@ -39,7 +38,7 @@
 /* The only motion on the page: the underline glides to the active tab. */
 .tab-underline {
   position: absolute;
-  bottom: -1px;
+  bottom: 0;
   left: 0;
   height: 2px;
   border-radius: 2px;
