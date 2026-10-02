@@ -56,4 +56,40 @@ test.describe('live index.html', () => {
       await writeFile(DATA, original);
     }
   });
+
+  test('All tab shows every video, then statistics with graphs', async ({ page }) => {
+    const errors: string[] = [];
+    page.on('pageerror', (error) => errors.push(error.message));
+    await page.clock.setFixedTime(await demoNow());
+    await page.goto(INDEX);
+    await page.locator('.tab[data-platform="all"]').click();
+    await expect(page.locator('.week')).toBeHidden();
+    await expect(page.locator('.video-tile')).toHaveCount(24);
+    await expect(page.locator('.video-tile').first().locator('.video-platform')).toHaveCount(3);
+    await expect(page.locator('.stat-tile')).toHaveCount(5);
+    await expect(page.locator('.stat-tile.metric-income .stat-tile-value')).toHaveText(
+      /^\$[\d,]+\.\d{6}$/,
+    );
+    await expect(page.locator('.chart-card')).toHaveCount(5);
+
+    await page.locator('.chip.metric-likes').click();
+    await expect(page.locator('.chart-card')).toHaveCount(4);
+    await expect(page.locator('.chip.metric-likes')).toHaveAttribute('aria-pressed', 'false');
+
+    const total = await page.locator('.stat-tile.metric-views .stat-tile-value').textContent();
+    await page.selectOption('.stats-video', '1');
+    await expect(page.locator('.stat-tile.metric-views .stat-tile-value')).not.toHaveText(
+      total ?? '',
+    );
+
+    await page.getByRole('button', { name: 'Show table' }).click();
+    await expect(page.locator('.stats-table tbody tr').first()).toBeVisible();
+    await page.getByRole('button', { name: 'Refresh' }).click();
+    await expect(page.getByRole('button', { name: 'Refresh' })).toBeEnabled();
+
+    await page.locator('.tab[data-platform="youtube"]').click();
+    await expect(page.locator('.week')).toBeVisible();
+    await expect(page.locator('.stats-section')).toBeVisible();
+    expect(errors).toEqual([]);
+  });
 });
