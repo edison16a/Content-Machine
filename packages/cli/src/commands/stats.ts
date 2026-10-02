@@ -48,7 +48,11 @@ export async function runStats(
   const { paths, project } = await openProject(ctx, name);
   const schedule = await loadSchedule(ctx.fs, paths);
   const config = await ctx.config();
-  const recording = flags.import !== undefined || flags.views !== undefined;
+  // Any reading flag means "record"; only a bare command prints totals.
+  const { import: file, platform, title, item, postedOn, views, likes, comments, shares } = flags;
+  const recording = [file, platform, title, item, postedOn, views, likes, comments, shares].some(
+    (value) => value !== undefined,
+  );
   let outcomes: RowOutcome[] = [];
   if (recording) {
     if (schedule === undefined) {
