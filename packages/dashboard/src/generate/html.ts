@@ -23,13 +23,12 @@ function guard(code: string, tag: 'script' | 'style'): string {
 }
 
 /**
- * Sets the theme before the first paint so dark mode users never see a white
- * flash. Mirrors the storage key and fallback used by the client.
+ * Sets the theme before the first paint so there is never a flash of the
+ * wrong theme. Dark is the default; a remembered choice wins.
  */
 const THEME_BOOT =
   "(function(){var t=null;try{t=localStorage.getItem('content-machine:theme')}catch(e){}" +
-  "if(t!=='light'&&t!=='dark'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}" +
-  'document.documentElement.dataset.theme=t})();';
+  "document.documentElement.dataset.theme=t==='light'?'light':'dark'})();";
 
 export interface HtmlInput {
   data: DashboardData;
@@ -49,7 +48,7 @@ export function renderDashboardHtml(input: HtmlInput): string {
     '<head>',
     '<meta charset="utf-8">',
     '<meta name="viewport" content="width=device-width, initial-scale=1">',
-    '<meta name="color-scheme" content="light dark">',
+    '<meta name="color-scheme" content="dark light">',
     '<meta name="generator" content="Content Machine">',
     `<title>${escapeHtml(title)}</title>`,
     `<link rel="icon" href="${escapeHtml(input.data.logos.brand)}">`,
