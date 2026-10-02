@@ -47,6 +47,7 @@ export async function createProject(
   };
   for (const dir of [
     paths.sourceDir,
+    paths.downloadsDir,
     paths.planDir,
     paths.videosDir,
     paths.thumbsDir,
