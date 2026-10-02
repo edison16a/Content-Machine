@@ -10,4 +10,5 @@
 - [Architecture](docs/architecture.md)
 - [Specs](docs/specs/)
 - [Fetching from a link](docs/specs/fetch.md)
+- [Statistics](docs/specs/stats.md)
 - [Responsible use](docs/responsible-use.md)
