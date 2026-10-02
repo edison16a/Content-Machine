@@ -18,6 +18,9 @@ All notable changes to this project are documented here. The format is based on 
 - A searchable video picker in the statistics section, and a spinning Refresh icon while it works.
 - `testdata` command: switch 30 days of made-up statistics on or off (about $30,000 by default, split randomly across platforms and videos), kept apart from real readings and labeled on the dashboard.
 - Empty graphs and an empty table before any readings, instead of a note.
+- Every project on one calendar by default, with pooled statistics; videos and readings carry a key that is unique across projects.
+- A Settings gear with a custom project dropdown (each project shows its first video's poster). The visible project picker is gone.
+- A hidden admin panel (click Settings three times) to type a number of views and its platform split, see the estimated income, and show those as the current totals in this browser.
 - Payout rates per 1,000 views in config (`rates`), used only for the income estimate.
 - `playbook/steps/09-stats.md`: how Claude reads each platform's analytics and records them.
 - The demo records sample statistics so the graphs have data.
