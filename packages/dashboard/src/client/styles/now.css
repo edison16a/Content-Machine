@@ -1,0 +1,132 @@
+/* The live strip: the clock, what to post now and what posts next. */
+.now {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr;
+  gap: var(--space-4) var(--space-5);
+  align-items: start;
+  margin-top: var(--space-5);
+  padding: 16px 24px;
+  border-radius: var(--radius-lg);
+  background: var(--panel);
+}
+
+.now-clock {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 180px;
+}
+
+.now-time {
+  font-size: 28px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.now-date {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* A small dot that tells you the page is updating by itself. */
+.now-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: var(--space-1);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.now-live::before {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  content: '';
+}
+
+.now h3 {
+  margin-bottom: var(--space-2);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.now-due h3 {
+  color: var(--accent);
+}
+
+.now-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--space-3);
+  align-items: baseline;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--card);
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+
+.now-item + .now-item {
+  margin-top: var(--space-1);
+}
+
+.now-item:hover {
+  background: var(--card-hover);
+}
+
+.now-due .now-item {
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.now-id,
+.now-when {
+  color: var(--muted);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.now-title {
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.now-none {
+  color: var(--muted);
+}
+
+/* Project switcher on the live index. Hidden when there is only one project. */
+.project-picker {
+  display: block;
+  margin-top: var(--space-4);
+}
+
+.project-select {
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+}
+
+@media (max-width: 860px) {
+  .now {
+    grid-template-columns: 1fr;
+  }
+}
