@@ -165,4 +165,72 @@ test.describe('live index.html', () => {
     await expect(page.locator('.stats-section')).toBeVisible();
     expect(errors).toEqual([]);
   });
+
+  test('Settings closes on outside click, Escape and Tab; slow clicks never open admin', async ({
+    page,
+  }) => {
+    await page.clock.setFixedTime(await demoNow());
+    await page.goto(INDEX);
+    const gear = page.getByRole('button', { name: 'Settings' });
+    const panel = page.locator('.settings-panel');
+    await gear.click();
+    await expect(panel).toBeVisible();
+    await expect(page.locator('.settings-panel .picker-button')).toBeFocused();
+    await page.mouse.click(5, 400);
+    await expect(panel).toBeHidden();
+    // Space the clicks out so they never count as the secret triple click.
+    await page.waitForTimeout(1300);
+    await gear.click();
+    await page.keyboard.press('Escape');
+    await expect(panel).toBeHidden();
+    await expect(gear).toBeFocused();
+    await page.waitForTimeout(1300);
+    await gear.click();
+    await page.keyboard.press('Tab');
+    await expect(panel).toBeHidden();
+    await page.waitForTimeout(1300);
+    for (let i = 0; i < 3; i += 1) {
+      await gear.click();
+      await page.waitForTimeout(700);
+    }
+    await expect(page.locator('.admin')).toBeHidden();
+  });
+
+  test('admin panel keeps focus inside, returns it, and shows every video', async ({ page }) => {
+    await page.clock.setFixedTime(await demoNow());
+    await page.goto(INDEX);
+    await page.locator('.stats-section .picker-button').click();
+    await page.locator('.stats-section .picker-search').fill('#2 tiny');
+    await page.keyboard.press('Enter');
+    await expect(page.locator('.stats-section .picker-label')).toHaveText(/^#002 /);
+
+    const gear = page.getByRole('button', { name: 'Settings' });
+    await gear.click();
+    await gear.click();
+    await gear.click();
+    await expect(page.locator('#admin-views')).toBeFocused();
+    for (let i = 0; i < 12; i += 1) await page.keyboard.press('Tab');
+    const inside = await page.evaluate(() =>
+      document.querySelector('.admin-panel')?.contains(document.activeElement),
+    );
+    expect(inside).toBe(true);
+    await page.locator('#admin-views').fill('12k');
+    await page.locator('#admin-views').press('Enter');
+    await expect(page.locator('.admin')).toBeHidden();
+    await expect(page.locator('.stats-section .picker-label')).toHaveText('All videos');
+    await expect(page.locator('.sample-badge', { hasText: 'Custom numbers' })).toBeVisible();
+    await expect(page.locator('.stat-tile.metric-views .stat-tile-value')).not.toHaveText('0');
+  });
+
+  test('the combined calendar opens the right video when numbers repeat', async ({ page }) => {
+    await page.clock.setFixedTime(await demoNow());
+    await page.goto(`file://${join(ROOT, 'index.html')}`);
+    await page.locator('.segment[data-view="month"]').click();
+    await page.getByRole('button', { name: 'Next month' }).click();
+    await page.getByRole('button', { name: 'Previous month' }).click();
+    const clip = page.locator('.mini-poster[title="He Missed The Jump By One Inch"]');
+    if ((await clip.count()) === 0) await page.getByRole('button', { name: 'Next month' }).click();
+    await clip.first().click();
+    await expect(page.locator('#player-title')).toHaveText('He Missed The Jump By One Inch');
+  });
 });
