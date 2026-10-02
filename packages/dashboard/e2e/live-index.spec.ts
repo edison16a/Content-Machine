@@ -154,6 +154,11 @@ test.describe('live index.html', () => {
     await page.mouse.click(5, 5);
     await expect(page.locator('.stats-section .picker-panel')).toBeHidden();
 
+    await page.locator('.segment[data-mode="daily"]').click();
+    await expect(page.locator('.chart-title').first()).toHaveText('Views per day');
+    await page.locator('.segment[data-mode="total"]').click();
+    await expect(page.locator('.chart-title').first()).toHaveText('Views over time');
+
     await page.getByRole('button', { name: 'Show table' }).click();
     await expect(page.locator('.stats-table tbody tr').first()).toBeVisible();
     const refresh = page.locator('.stats-section .section-head .button');
