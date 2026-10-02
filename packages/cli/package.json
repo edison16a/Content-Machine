@@ -23,6 +23,10 @@
     "content-machine": "./dist/bin.js"
   },
   "dependencies": {
-    "commander": "^14.0.3"
+    "@content-machine/core": "^0.1.0",
+    "@content-machine/dashboard": "^0.1.0",
+    "@content-machine/render": "^0.1.0",
+    "commander": "^14.0.3",
+    "zod": "^4.6.5"
   }
 }
