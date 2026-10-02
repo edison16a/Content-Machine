@@ -6,6 +6,7 @@ import { planSchema } from './plan.js';
 import { projectSchema } from './project.js';
 import { checkReportSchema, renderLogSchema } from './render-log.js';
 import { scheduleSchema } from './schedule.js';
+import { statsImportSchema, statsSchema } from './stats.js';
 
 /** Every on-disk JSON format, by the name used in `docs/schemas/<name>.schema.json`. */
 export const SCHEMAS = {
@@ -18,6 +19,8 @@ export const SCHEMAS = {
   'local-config': localConfigSchema,
   'render-log': renderLogSchema,
   check: checkReportSchema,
+  stats: statsSchema,
+  'stats-import': statsImportSchema,
 } as const;
 
 export type SchemaName = keyof typeof SCHEMAS;

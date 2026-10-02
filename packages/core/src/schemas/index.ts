@@ -8,3 +8,4 @@ export * from './project.js';
 export * from './registry.js';
 export * from './render-log.js';
 export * from './schedule.js';
+export * from './stats.js';
