@@ -44,6 +44,7 @@ function project(name: string, updatedAt: string, items: DashboardItem[] = []): 
     items,
     logos: { brand: '', platforms: { tiktok: null, instagram: null, youtube: null }, source: null },
     repoUrl: '',
+    stats: { rates: { tiktok: 0, instagram: 0, youtube: 0 }, snapshots: [] },
   };
 }
 

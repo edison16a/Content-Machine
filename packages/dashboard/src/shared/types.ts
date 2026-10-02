@@ -41,6 +41,27 @@ export interface DashboardLogos {
   source: string | null;
 }
 
+/** What the statistics section measures, in the order it shows them. */
+export const STAT_METRICS = ['views', 'income', 'likes', 'comments', 'shares'] as const;
+export type StatMetric = (typeof STAT_METRICS)[number];
+
+/** One recorded reading, as plan/stats.json stores it, minus the platform's title. */
+export interface DashboardSnapshot {
+  at: string;
+  platform: DashboardPlatform;
+  itemId: number;
+  views: number;
+  likes: number;
+  comments: number;
+  shares: number;
+}
+
+export interface DashboardStats {
+  /** Estimated US dollars paid per 1,000 views, from config. */
+  rates: Record<DashboardPlatform, number>;
+  snapshots: DashboardSnapshot[];
+}
+
 export interface DashboardData {
   project: string;
   channel: string;
@@ -54,6 +75,7 @@ export interface DashboardData {
   items: DashboardItem[];
   logos: DashboardLogos;
   repoUrl: string;
+  stats: DashboardStats;
 }
 
 /** Display names, kept here so the generator and client agree. */

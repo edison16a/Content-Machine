@@ -52,6 +52,7 @@ const extras = {
     source: null,
   },
   repoUrl: 'https://github.com/edison16a/Content-Machine',
+  stats: { rates: { tiktok: 0.4, instagram: 0.01, youtube: 0.07 }, snapshots: [] },
 };
 
 describe('toDashboardData', () => {

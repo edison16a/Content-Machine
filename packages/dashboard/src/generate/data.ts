@@ -1,10 +1,11 @@
 import type { Schedule } from '@content-machine/core';
-import type { DashboardData, DashboardLogos } from '../shared/types.js';
+import type { DashboardData, DashboardLogos, DashboardStats } from '../shared/types.js';
 
 export interface DashboardExtras {
   sourcePlatform: string;
   logos: DashboardLogos;
   repoUrl: string;
+  stats: DashboardStats;
 }
 
 /**
@@ -45,5 +46,6 @@ export function toDashboardData(schedule: Schedule, extras: DashboardExtras): Da
     })),
     logos: extras.logos,
     repoUrl: extras.repoUrl,
+    stats: extras.stats,
   };
 }
