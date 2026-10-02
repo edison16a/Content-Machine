@@ -1,0 +1,34 @@
+name: Bug report
+description: Something does not work as described.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for reporting. Please never attach footage you do not have the rights to share.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you ran, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Command output
+      description: Run the command again with --json or --verbose and paste the output.
+      render: shell
+  - type: textarea
+    id: doctor
+    attributes:
+      label: Output of `npm run cm -- doctor`
+      render: shell
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      placeholder: macOS 15.1, Ubuntu 24.04
+    validations:
+      required: true
