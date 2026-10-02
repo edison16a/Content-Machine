@@ -2,8 +2,11 @@ import type { Context } from '../context.js';
 import { h, img } from '../lib/dom.js';
 import { icon } from '../lib/icons.js';
 
-/** Top bar: the Content Machine mark and name, a theme toggle and GitHub. */
-export function renderHeader(ctx: Context): { element: HTMLElement; update: () => void } {
+/** Top bar: the Content Machine mark and name, Settings, a theme toggle and GitHub. */
+export function renderHeader(
+  ctx: Context,
+  settings: HTMLElement,
+): { element: HTMLElement; update: () => void } {
   const { data, store } = ctx;
   const themeButton = h('button', {
     type: 'button',
@@ -22,6 +25,7 @@ export function renderHeader(ctx: Context): { element: HTMLElement; update: () =
     h(
       'div',
       { class: 'actions' },
+      settings,
       themeButton,
       h(
         'a',
