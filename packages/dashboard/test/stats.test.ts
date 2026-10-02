@@ -6,7 +6,14 @@ import {
   type DashboardSnapshot,
   type DashboardStats,
 } from '@content-machine/dashboard';
-import { compact, compactMoney, count, money, niceTicks } from '../src/client/lib/numbers.js';
+import {
+  compact,
+  compactMoney,
+  count,
+  money,
+  niceTicks,
+  parseAmount,
+} from '../src/client/lib/numbers.js';
 import { placeholderProject } from '../src/client/lib/projects.js';
 
 function reading(
@@ -98,6 +105,23 @@ describe('number formatting', () => {
     expect(niceTicks(447)).toEqual([0, 200, 400, 600]);
     expect(niceTicks(0.03)).toEqual([0, 0.01, 0.02, 0.03]);
     expect(niceTicks(0)).toEqual([0, 1]);
+  });
+});
+
+describe('parseAmount', () => {
+  it('reads plain, comma, k and M amounts', () => {
+    expect(parseAmount('30000')).toBe(30000);
+    expect(parseAmount('30,000')).toBe(30000);
+    expect(parseAmount(' 30k ')).toBe(30000);
+    expect(parseAmount('1.5M')).toBe(1500000);
+    expect(parseAmount('$2.5k')).toBe(2500);
+  });
+
+  it('refuses words, blanks and numbers too big to count exactly', () => {
+    expect(parseAmount('lots')).toBeUndefined();
+    expect(parseAmount('')).toBeUndefined();
+    expect(parseAmount(`${'9'.repeat(400)}k`)).toBeUndefined();
+    expect(parseAmount('99999999999999999k')).toBeUndefined();
   });
 });
 

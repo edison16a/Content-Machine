@@ -1,92 +1,12 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { StatsPoint } from '@content-machine/dashboard';
-import type { DashboardData, DashboardItem } from '../src/shared/types.js';
+import { describe, expect, it } from 'vitest';
+import { statsTimeline, statsTotals } from '@content-machine/dashboard';
+import type { DashboardData } from '../src/shared/types.js';
 import { ALL_PROJECTS, mergeProjects } from '../src/client/lib/merge.js';
-import { parseAmount } from '../src/client/lib/numbers.js';
-import {
-  applyOverride,
-  clearOverride,
-  loadOverride,
-  overrideIncome,
-  saveOverride,
-  splitViews,
-  startingOverride,
-} from '../src/client/lib/override.js';
+import { dataFor, resolveSelection } from '../src/client/lib/projects.js';
 import { inPostingOrder, slotIndex } from '../src/client/lib/selectors.js';
+import { withKeys } from '../src/client/lib/upgrade.js';
 import { projectOptions } from '../src/client/views/settings/project-options.js';
-
-function item(project: string, id: number, date: string, slot: number): DashboardItem {
-  const entry = { time: '12:00', iso: `${date}T12:00:00Z`, status: 'queued' as const, note: '' };
-  return {
-    id,
-    key: `${project}#${id}`,
-    project,
-    video: `projects/${project}/videos/00${id}.mp4`,
-    thumb: `projects/${project}/thumbs/00${id}.jpg`,
-    duration: 30,
-    postTitle: `${project} ${id}`,
-    captions: { tiktok: '', instagram: '', youtube: '' },
-    source: 'a.mp4',
-    sourceStart: 0,
-    sourceEnd: 30,
-    note: '',
-    date,
-    slot,
-    platforms: { tiktok: entry, instagram: entry, youtube: entry },
-  };
-}
-
-function project(
-  name: string,
-  slots: string[],
-  items: DashboardItem[],
-  updatedAt: string,
-  sample = false,
-): DashboardData {
-  return {
-    project: name,
-    channel: `${name} channel`,
-    sourcePlatform: 'youtube',
-    timezone: name === 'bees' ? 'Europe/Berlin' : 'UTC',
-    weekStartsOn: 'monday',
-    slots,
-    stagger: { tiktok: 0, instagram: 15, youtube: 30 },
-    handles: { tiktok: `@${name}` },
-    updatedAt,
-    items,
-    logos: { brand: '', platforms: { tiktok: null, instagram: null, youtube: null }, source: null },
-    repoUrl: '',
-    stats: {
-      rates: { tiktok: 0.4, instagram: 0.01, youtube: 0.07 },
-      sample,
-      snapshots: items.map((i) => ({
-        at: '2026-10-02T00:00:00Z',
-        platform: 'tiktok' as const,
-        itemId: i.id,
-        itemKey: i.key,
-        views: 1000,
-        likes: 10,
-        comments: 1,
-        shares: 1,
-      })),
-    },
-  };
-}
-
-// Two projects with different slot times, and both posting on Oct 2 at 12:00.
-const ants = project(
-  'ants',
-  ['12:00', '17:00'],
-  [item('ants', 1, '2026-10-02', 0), item('ants', 2, '2026-10-02', 1)],
-  '2026-10-01T00:00:00Z',
-);
-const bees = project(
-  'bees',
-  ['09:00', '12:00'],
-  [item('bees', 1, '2026-10-02', 1), item('bees', 2, '2026-10-03', 0)],
-  '2026-10-02T00:00:00Z',
-  true,
-);
+import { ants, bees, item, project } from './fixtures.js';
 
 describe('mergeProjects', () => {
   const merged = mergeProjects([ants, bees]);
@@ -102,6 +22,18 @@ describe('mergeProjects', () => {
       'bees#2': '09:00',
     });
     expect(new Set(merged.items.map((i) => i.key)).size).toBe(4);
+  });
+
+  it('puts an item past the end of its slots on the first slot', () => {
+    const odd = project(
+      'odd',
+      ['17:00'],
+      [item('odd', 1, '2026-10-02', 5)],
+      '2026-09-01T00:00:00Z',
+    );
+    const withOdd = mergeProjects([ants, odd]);
+    const placed = withOdd.items.find((i) => i.key === 'odd#1');
+    expect(withOdd.slots[placed?.slot ?? -1]).toBe('17:00');
   });
 
   it('keeps two projects that share a slot side by side', () => {
@@ -121,115 +53,75 @@ describe('mergeProjects', () => {
     expect(merged.stats.snapshots).toHaveLength(4);
     expect(merged.stats.sample).toBe(true);
   });
+
+  it('pools statistics even when item numbers repeat across projects', () => {
+    expect(statsTimeline(merged.stats, { platform: 'all', itemKey: 'all' }).at(-1)?.views).toBe(
+      4000,
+    );
+    expect(statsTotals(merged.stats, { platform: 'tiktok', itemKey: 'all' }).views).toBe(4000);
+    expect(statsTotals(merged.stats, { platform: 'all', itemKey: 'bees#1' }).views).toBe(1000);
+  });
+});
+
+describe('choosing what is on screen', () => {
+  it('keeps a real selection and turns a missing one into all projects', () => {
+    expect(resolveSelection([ants, bees], 'ants')).toBe('ants');
+    expect(resolveSelection([ants, bees], ALL_PROJECTS)).toBe(ALL_PROJECTS);
+    expect(resolveSelection([ants, bees], 'gone')).toBe(ALL_PROJECTS);
+    expect(resolveSelection([], 'gone')).toBe('gone');
+  });
+
+  it('shows the named project, else every project together, else the placeholder', () => {
+    expect(dataFor([ants, bees], 'ants').project).toBe('ants');
+    expect(dataFor([ants, bees], 'gone').project).toBe(ALL_PROJECTS);
+    expect(dataFor([], 'ants').project).toBe('');
+  });
+});
+
+/** The same project as an older CLI would have written it: no keys on items or readings. */
+function withoutKeys(data: DashboardData): DashboardData {
+  const drop = <T extends object>(value: T, keys: string[]): T =>
+    Object.fromEntries(Object.entries(value).filter(([k]) => !keys.includes(k))) as T;
+  return {
+    ...data,
+    items: data.items.map((i) => drop(i, ['key', 'project'])),
+    stats: { ...data.stats, snapshots: data.stats.snapshots.map((s) => drop(s, ['itemKey'])) },
+  };
+}
+
+describe('withKeys', () => {
+  it('fills in keys missing from data written by an older CLI', () => {
+    const upgraded = withKeys(withoutKeys(ants));
+    expect(upgraded.items.map((i) => [i.key, i.project])).toEqual([
+      ['ants#1', 'ants'],
+      ['ants#2', 'ants'],
+    ]);
+    expect(upgraded.stats.snapshots.map((s) => s.itemKey)).toEqual(['ants#1', 'ants#2']);
+    expect(withKeys(ants)).toEqual(ants);
+  });
+
+  it('lets old data from two projects share a slot and still pool stats', () => {
+    const merged = mergeProjects([withKeys(withoutKeys(ants)), withKeys(withoutKeys(bees))]);
+    expect(inPostingOrder(merged.items).map((i) => i.key)).toEqual([
+      'ants#1',
+      'bees#1',
+      'ants#2',
+      'bees#2',
+    ]);
+    expect(statsTotals(merged.stats, { platform: 'all', itemKey: 'all' }).views).toBe(4000);
+  });
 });
 
 describe('projectOptions', () => {
   it('offers all projects first, then each with its first poster', () => {
     const options = projectOptions([bees, ants]);
     expect(options.map((o) => o.value)).toEqual([ALL_PROJECTS, 'ants', 'bees']);
-    expect(options[0]?.detail).toBe('Automatic: 4 videos from 2 projects on one calendar');
+    expect(options[0]?.detail).toBe('4 videos, 2 projects');
     expect(options[1]).toMatchObject({
       thumb: 'projects/ants/thumbs/001.jpg',
       detail: 'ants channel, 2 videos',
     });
     const empty = projectOptions([project('new', ['12:00'], [], '2026-10-02T00:00:00Z')]);
     expect(empty[1]).toMatchObject({ mark: 'film', detail: 'new channel, 0 videos' });
-  });
-});
-
-describe('parseAmount', () => {
-  it('reads plain, comma, k and M amounts', () => {
-    expect(parseAmount('30000')).toBe(30000);
-    expect(parseAmount('30,000')).toBe(30000);
-    expect(parseAmount(' 30k ')).toBe(30000);
-    expect(parseAmount('1.5M')).toBe(1500000);
-    expect(parseAmount('$2.5k')).toBe(2500);
-    expect(parseAmount('lots')).toBeUndefined();
-    expect(parseAmount('')).toBeUndefined();
-  });
-});
-
-describe('custom numbers', () => {
-  const rates = { tiktok: 0.4, instagram: 0.01, youtube: 0.07 };
-  const override = { views: 30000, split: { tiktok: 60, instagram: 10, youtube: 30 } };
-
-  it('splits views into whole numbers that add up to the total', () => {
-    expect(splitViews(override)).toEqual({ tiktok: 18000, instagram: 3000, youtube: 9000 });
-    const odd = splitViews({ views: 10, split: { tiktok: 1, instagram: 1, youtube: 1 } });
-    expect(odd.tiktok + odd.instagram + odd.youtube).toBe(10);
-    expect(splitViews({ views: 9, split: { tiktok: 0, instagram: 0, youtube: 0 } })).toEqual({
-      tiktok: 3,
-      instagram: 3,
-      youtube: 3,
-    });
-  });
-
-  it('estimates income per platform and in total', () => {
-    const income = overrideIncome(override, rates);
-    expect(income.perPlatform.tiktok).toBeCloseTo(7.2, 10);
-    expect(income.total).toBeCloseTo(7.86, 10);
-  });
-
-  it('becomes the newest point for the tab on screen, keeping history', () => {
-    const history: StatsPoint[] = [
-      { at: '2026-10-01T00:00:00Z', views: 100, income: 0.04, likes: 9, comments: 2, shares: 1 },
-    ];
-    const now = new Date('2026-10-02T00:00:00Z');
-    const all = applyOverride(history, override, rates, 'all', now);
-    expect(all).toHaveLength(2);
-    expect(all[1]).toMatchObject({ at: now.toISOString(), views: 30000, likes: 9, comments: 2 });
-    expect(applyOverride(history, override, rates, 'youtube', now)[1]?.views).toBe(9000);
-    const replaced = applyOverride(
-      history,
-      override,
-      rates,
-      'all',
-      new Date('2026-09-30T00:00:00Z'),
-    );
-    expect(replaced).toHaveLength(1);
-    expect(applyOverride([], override, rates, 'all', now)[0]).toMatchObject({
-      likes: 0,
-      views: 30000,
-    });
-  });
-
-  it('starts the form from saved numbers, else from the recorded split', () => {
-    expect(startingOverride(override, ants.stats)).toBe(override);
-    expect(startingOverride(undefined, ants.stats)).toEqual({
-      views: 2000,
-      split: { tiktok: 2000, instagram: 0, youtube: 0 },
-    });
-    const none = { ...ants.stats, snapshots: [] };
-    expect(startingOverride(undefined, none).split).toEqual({
-      tiktok: 50,
-      instagram: 25,
-      youtube: 25,
-    });
-  });
-
-  describe('storage', () => {
-    beforeEach(() => {
-      const store = new Map<string, string>();
-      vi.stubGlobal('window', {
-        localStorage: {
-          getItem: (k: string) => store.get(k) ?? null,
-          setItem: (k: string, v: string) => store.set(k, v),
-          removeItem: (k: string) => store.delete(k),
-        },
-      });
-    });
-    afterEach(() => vi.unstubAllGlobals());
-
-    it('saves per selection, ignores junk and clears', () => {
-      saveOverride(ALL_PROJECTS, override);
-      expect(loadOverride(ALL_PROJECTS)).toEqual(override);
-      expect(loadOverride('ants')).toBeUndefined();
-      window.localStorage.setItem('content-machine:override:bees', '{"views":-1}');
-      expect(loadOverride('bees')).toBeUndefined();
-      window.localStorage.setItem('content-machine:override:bees', 'not json');
-      expect(loadOverride('bees')).toBeUndefined();
-      clearOverride(ALL_PROJECTS);
-      expect(loadOverride(ALL_PROJECTS)).toBeUndefined();
-    });
   });
 });
