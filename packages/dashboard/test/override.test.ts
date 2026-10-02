@@ -1,16 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { StatsPoint } from '@content-machine/dashboard';
 import { ALL_PROJECTS } from '../src/client/lib/merge.js';
+import { perDay } from '@content-machine/dashboard';
+import { HISTORY_DAYS, customHistory, engagementFrom } from '../src/client/lib/history.js';
 import {
-  applyOverride,
   clearOverride,
   loadOverride,
   overrideIncome,
   saveOverride,
-  shownStats,
   splitViews,
   startingOverride,
 } from '../src/client/lib/override.js';
+import { shownStats } from '../src/client/lib/shown-stats.js';
 import { rebalance, toPercentages } from '../src/client/lib/split.js';
 import { ants } from './fixtures.js';
 
@@ -36,17 +36,35 @@ describe('custom numbers', () => {
     expect(income.total).toBeCloseTo(7.86, 10);
   });
 
-  it('becomes the newest point for the tab on screen, keeping history', () => {
-    const history: StatsPoint[] = [
-      { at: '2026-10-01T00:00:00Z', views: 100, income: 0.04, likes: 9, comments: 2, shares: 1 },
-    ];
-    const all = applyOverride(history, override, rates, 'all', now);
-    expect(all).toHaveLength(2);
-    expect(all[1]).toMatchObject({ at: now.toISOString(), views: 30000, likes: 9, comments: 2 });
-    expect(applyOverride(history, override, rates, 'youtube', now)[1]?.views).toBe(9000);
-    const earlier = new Date('2026-09-30T00:00:00Z');
-    expect(applyOverride(history, override, rates, 'all', earlier)).toHaveLength(1);
-    expect(applyOverride([], override, rates, 'all', now)[0]).toMatchObject({ likes: 0 });
+  it('draws thirty days of history that ends exactly on the typed numbers', () => {
+    const typical = engagementFrom(undefined);
+    const all = customHistory(override, rates, 'all', now, typical);
+    expect(all).toHaveLength(HISTORY_DAYS);
+    expect(all.at(-1)).toMatchObject({ at: now.toISOString(), views: 30000 });
+    expect(all.at(-1)?.income).toBeCloseTo(7.86, 6);
+    expect(all.at(-1)?.likes).toBe(Math.round(30000 * typical.likes));
+    expect(customHistory(override, rates, 'youtube', now, typical).at(-1)?.views).toBe(9000);
+    expect(customHistory(override, rates, 'all', now, typical)).toEqual(all);
+  });
+
+  it('grows unevenly, with spikes, never as a straight line', () => {
+    const daily = perDay(customHistory(override, rates, 'tiktok', now, engagementFrom(undefined)));
+    const views = daily.map((p) => p.views);
+    const median = [...views].sort((a, b) => a - b)[Math.floor(views.length / 2)] ?? 1;
+    expect(Math.max(...views) / median).toBeGreaterThan(1.8);
+    const steps = new Set(views.map((v) => Math.round(v / 50)));
+    expect(steps.size).toBeGreaterThan(10);
+    expect(views.every((v) => v >= 0)).toBe(true);
+  });
+
+  it('copies recorded engagement when there is any', () => {
+    expect(engagementFrom({ views: 1000, income: 0, likes: 100, comments: 10, shares: 5 })).toEqual(
+      {
+        likes: 0.1,
+        comments: 0.01,
+        shares: 0.005,
+      },
+    );
   });
 
   it('starts the form from saved numbers, else from the recorded split', () => {

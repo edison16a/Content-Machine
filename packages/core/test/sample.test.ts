@@ -52,6 +52,16 @@ describe('sampleSnapshots', () => {
     expect(snapshots.every((s) => s.likes <= s.views && s.comments <= s.likes)).toBe(true);
   });
 
+  it('has uneven days, not a smooth curve', () => {
+    const totals = sampleSnapshots(input)
+      .filter((s) => s.itemId === 1 && s.platform === 'tiktok')
+      .map((s) => s.views);
+    const daily = totals.map((v, i) => v - (totals[i - 1] ?? 0)).slice(1);
+    const rises = daily.filter((d, i) => i > 0 && d > (daily[i - 1] ?? 0)).length;
+    // A smooth launch curve only ever falls day to day; real days go up too.
+    expect(rises).toBeGreaterThan(3);
+  });
+
   it('is the same for the same seed and different for another', () => {
     expect(sampleSnapshots(input)).toEqual(sampleSnapshots(input));
     expect(sampleSnapshots({ ...input, seed: 'other' })).not.toEqual(sampleSnapshots(input));

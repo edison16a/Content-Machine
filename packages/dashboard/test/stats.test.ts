@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   incomeFor,
+  perDay,
   statsTimeline,
   statsTotals,
   type DashboardSnapshot,
@@ -81,6 +82,19 @@ describe('statsTimeline', () => {
       shares: 4,
     });
     expect(incomeFor(2500, 0.4)).toBe(1);
+  });
+});
+
+describe('perDay', () => {
+  it('turns running totals into amounts per reading, never below zero', () => {
+    const points = statsTimeline(stats, { platform: 'all', itemKey: 'all' });
+    expect(perDay(points).map((p) => p.views)).toEqual([1500, 1300]);
+    const dropped = perDay([
+      { at: 'a', views: 10, income: 1, likes: 5, comments: 3, shares: 1 },
+      { at: 'b', views: 12, income: 1.5, likes: 4, comments: 3, shares: 1 },
+    ]);
+    expect(dropped[1]).toMatchObject({ views: 2, income: 0.5, likes: 0, comments: 0 });
+    expect(perDay([])).toEqual([]);
   });
 });
 
