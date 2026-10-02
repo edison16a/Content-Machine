@@ -14,7 +14,8 @@ The dashboard is the one place to see what posts when, and to watch every video 
 - Every command that refreshes a project's `dashboard.html` also rewrites that data file from **every** project's schedule. Media paths in it are prefixed with `projects/<name>/`. A project with a broken file is left out with a warning.
 - The page polls by adding a fresh `<script src="projects/dashboard-data.js?v=…">`. Browsers block `fetch()` on `file://`, but script tags still load, so no server is needed. When the projects differ from last time the page redraws in place: the selected tab, week and open video stay put. If the open video was removed, the player closes.
 - `build` is a fingerprint of the client bundle. When it changes between polls, the page reloads once to pick up the new client (guarded so it cannot loop).
-- **Projects:** a picker appears under the header when there are two or more. The choice is remembered. `#project=<name>` in the address picks one. Otherwise the project updated most recently is shown.
+- **All projects on one calendar** is the default. Every project's videos share the calendar and the statistics. The combined view's slot rows are every distinct slot time across projects, in order, and each video sits on the row of its own time; when two projects post in the same slot, both cards show. Settings that must be single (time zone, week start, logos) come from the project updated most recently. Items and readings are told apart by a key, `<project>#<id>`, so numbers that repeat across projects never collide; the picker in the statistics names each video's project.
+- **Settings** (the gear in the header, top right) holds a custom dropdown to show one project instead: "All projects" (automatic, the default) first, then each project with its first video's poster, its channel and its video count. Picking one jumps the calendar to that project's videos. The choice is remembered (under a new storage key, so an older remembered pick does not carry over). `#project=<name>` in the address also picks one. A project's own `dashboard.html` always shows just that project.
 - With no projects yet it still shows the whole dashboard: an empty calendar saying "No projects yet", zeroed statistics with empty graphs, and the platform tabs. It keeps polling, so everything fills in on its own.
 
 ## Tabs
@@ -23,6 +24,16 @@ All, TikTok, Instagram and YouTube. The choice is remembered.
 
 - **All** shows the same calendar, but each card carries all three platforms' logos with a status dot each, and slot times are the base times (the platforms post minutes apart). The stats panel is hidden there. The Post now strip lists due posts from every platform, each labeled with its platform.
 - **A platform** shows the stats panel, the week calendar and that platform's times, statuses and captions.
+
+## Custom numbers (admin panel)
+
+Clicking the Settings gear three times within about a second opens a hidden admin panel. It is a convenience, not a lock: nothing is protected and nothing leaves the browser.
+
+- **Total views** accepts `30000`, `30,000`, `30k` or `1.5M`.
+- **Split:** a slider per platform. The shares are the sliders' relative weights, shown as percentages, with each platform's views and estimated income (rates from config, six decimals) and the total income, all updating as you type or slide.
+- **Show these numbers** saves them in this browser for the current selection (all projects, or the one picked) and closes the panel. The statistics then use them as the newest point, "now": tiles show them, each graph ends on them, and history stays as recorded. Views and income follow the typed numbers for the tab on screen; likes, comments and shares carry on from the last real reading. A "Custom numbers" label shows next to the heading. They apply only when the picker is on All videos.
+- **Use recorded numbers** removes them. Escape, the close button or a click outside closes without saving.
+- The form starts from the saved numbers, or else from the recorded totals and their split (half TikTok, a quarter each for the others when nothing is recorded yet).
 
 ## Statistics
 
