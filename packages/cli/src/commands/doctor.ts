@@ -119,10 +119,8 @@ export async function runDoctor(ctx: CommandContext): Promise<Check[]> {
       missing[0]?.code ?? 'E_USAGE',
       `Missing: ${missing.map((c) => c.name).join(', ')}.`,
       {
-        hint: missing
-          .map((c) => c.fix)
-          .filter((f) => f !== undefined)
-          .join(' '),
+        // ffmpeg and ffprobe share one fix; say it once.
+        hint: [...new Set(missing.map((c) => c.fix).filter((f) => f !== undefined))].join(' '),
       },
     );
   }
