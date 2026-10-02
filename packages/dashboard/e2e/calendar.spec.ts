@@ -5,7 +5,7 @@ test.describe('calendar', () => {
     const { requests, errors } = await openDashboard(page);
     await expect(page.locator('.day')).toHaveCount(7);
     await expect(page.locator('.day.is-today')).toHaveCount(1);
-    await expect(page.locator('.chip-total .chip-value')).toHaveText('24');
+    await expect(page.locator('.stat-total .stat-value')).toHaveText('24');
     await page.waitForTimeout(500);
     expect(requests).toEqual([]);
     expect(errors).toEqual([]);
@@ -27,7 +27,6 @@ test.describe('calendar', () => {
       'true',
     );
     await expect(firstTime).toHaveText('12:15 PM');
-    await expect(page.locator('.handle')).toHaveText('@your.instagram');
     await page.locator('.tab[data-platform="youtube"]').click();
     await expect(firstTime).toHaveText('12:30 PM');
     await page.reload();
@@ -67,15 +66,14 @@ test.describe('calendar', () => {
     await expect(page.locator('.slot-empty').first()).toBeVisible();
   });
 
-  test('toggles and remembers dark mode', async ({ page }) => {
+  test('starts in dark mode and remembers a switch to light', async ({ page }) => {
     await openDashboard(page);
     const html = page.locator('html');
-    const before = await html.getAttribute('data-theme');
-    await page.getByRole('button', { name: /Switch to (dark|light) mode/ }).click();
-    await expect(html).not.toHaveAttribute('data-theme', before ?? '');
-    const after = await html.getAttribute('data-theme');
+    await expect(html).toHaveAttribute('data-theme', 'dark');
+    await page.getByRole('button', { name: 'Switch to light mode' }).click();
+    await expect(html).toHaveAttribute('data-theme', 'light');
     await page.reload();
-    await expect(html).toHaveAttribute('data-theme', after ?? '');
+    await expect(html).toHaveAttribute('data-theme', 'light');
   });
 
   test('links to GitHub', async ({ page }) => {

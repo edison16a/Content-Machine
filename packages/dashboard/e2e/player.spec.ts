@@ -21,6 +21,27 @@ test.describe('player', () => {
     await expect.poll(async () => (await playback(page)).audioBytes).toBeGreaterThan(0);
   });
 
+  test('keeps the player simple: no next, previous or auto-play controls', async ({ page }) => {
+    await openDashboard(page);
+    await page.locator('.card').first().click();
+    await expect(page.getByRole('button', { name: /Next video|Previous video/ })).toHaveCount(0);
+    await expect(page.getByText('Auto-play next')).toHaveCount(0);
+    const title = await page.locator('#player-title').textContent();
+    await expect
+      .poll(async () => (await playback(page)).readyState, { timeout: 15_000 })
+      .toBeGreaterThanOrEqual(1);
+    await page.locator('.player video').evaluate((el) => {
+      const video = el as HTMLVideoElement;
+      video.currentTime = video.duration - 0.3;
+    });
+    await expect
+      .poll(() => page.locator('.player video').evaluate((v) => (v as HTMLVideoElement).ended), {
+        timeout: 10_000,
+      })
+      .toBe(true);
+    await expect(page.locator('#player-title')).toHaveText(title ?? '');
+  });
+
   test('keyboard controls work and closing stops playback', async ({ page }) => {
     await openDashboard(page);
     await page.locator('.card').nth(1).click();
@@ -30,11 +51,6 @@ test.describe('player', () => {
     await page.keyboard.press('m');
     await expect.poll(async () => (await playback(page)).muted).toBe(true);
     await page.keyboard.press('m');
-    const id = await page.locator('.details .eyebrow').textContent();
-    await page.keyboard.press('ArrowRight');
-    await expect(page.locator('.details .eyebrow')).not.toHaveText(id ?? '');
-    await page.keyboard.press('ArrowLeft');
-    await expect(page.locator('.details .eyebrow')).toHaveText(id ?? '');
     await page.keyboard.press('f');
     await expect.poll(() => page.evaluate(() => document.fullscreenElement !== null)).toBe(true);
     await page.evaluate(() => document.exitFullscreen());
@@ -43,21 +59,6 @@ test.describe('player', () => {
     const closed = await playback(page);
     expect(closed.paused).toBe(true);
     expect(closed.src).toBeNull();
-  });
-
-  test('auto-plays the next video in posting order', async ({ page }) => {
-    await openDashboard(page);
-    await page.locator('.card').first().click();
-    const id = await page.locator('.details .eyebrow').textContent();
-    await expect
-      .poll(async () => (await playback(page)).readyState, { timeout: 15_000 })
-      .toBeGreaterThanOrEqual(1);
-    await page.locator('.player video').evaluate((el) => {
-      const video = el as HTMLVideoElement;
-      video.currentTime = video.duration - 0.3;
-    });
-    await expect(page.locator('.details .eyebrow')).not.toHaveText(id ?? '', { timeout: 10_000 });
-    await expect.poll(async () => (await playback(page)).paused).toBe(false);
   });
 
   test('copies the caption and an absolute file path', async ({ page }) => {
@@ -75,7 +76,7 @@ test.describe('player', () => {
     });
     await openDashboard(page);
     await page.locator('.card').first().click();
-    await page.getByRole('button', { name: 'Copy caption' }).click();
+    await page.getByRole('button', { name: 'Copy TikTok caption' }).click();
     await page.getByRole('button', { name: 'Copy file path' }).click();
     await expect(page.getByRole('button', { name: 'Copied' }).first()).toBeVisible();
     const copied = await page.evaluate(
@@ -90,14 +91,15 @@ test.describe('player', () => {
     movedDir,
   }) => {
     await openDashboard(page, movedDir);
-    const firstId = Number(await page.locator('.card').first().getAttribute('data-id'));
-    await rm(join(movedDir, 'videos', `${String(firstId + 1).padStart(3, '0')}.mp4`));
     await page.locator('.card').first().click();
     await expect
       .poll(async () => (await playback(page)).readyState, { timeout: 15_000 })
       .toBeGreaterThanOrEqual(3);
     expect((await playback(page)).paused).toBe(false);
-    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('Escape');
+    const secondId = Number(await page.locator('.card').nth(1).getAttribute('data-id'));
+    await rm(join(movedDir, 'videos', `${String(secondId).padStart(3, '0')}.mp4`));
+    await page.locator('.card').nth(1).click();
     await expect(page.locator('.video-error')).toBeVisible();
     await expect(page.locator('.video-error')).toContainText(
       'Keep dashboard.html in the project folder next to the videos folder.',
