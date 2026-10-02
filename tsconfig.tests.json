@@ -5,6 +5,7 @@
     "declaration": false,
     "declarationMap": false,
     "noEmit": true,
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "rootDir": ".",
     "paths": {
       "@content-machine/core": ["./packages/core/src/index.ts"],
