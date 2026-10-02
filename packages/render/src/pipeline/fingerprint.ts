@@ -3,7 +3,7 @@ import type { Brand } from '@content-machine/core';
 import { OVERLAY_VERSION } from '../overlays/prepare.js';
 
 /** Bump when the render pipeline changes how outputs look or sound. */
-export const RENDER_VERSION = 'render-v1';
+export const RENDER_VERSION = 'render-v2';
 
 export interface FingerprintInput {
   planKey: string;

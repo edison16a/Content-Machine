@@ -46,7 +46,9 @@ describe('computeLayout', () => {
     expect(layout.kind).toBe('band');
     expect(layout.foreground).toEqual({ x: 0, y: 656, width: 1080, height: 608 });
     expect(layout.foreground.y - (layout.title.y + TITLE_BLOCK_HEIGHT)).toBe(36);
-    expect(layout.credit.y - (layout.foreground.y + layout.foreground.height)).toBe(36);
+    expect(layout.credit.y - (layout.foreground.y + layout.foreground.height)).toBe(
+      36 + CREDIT.topPadding,
+    );
   });
 
   it('limits tall square-ish sources to the room left over', () => {

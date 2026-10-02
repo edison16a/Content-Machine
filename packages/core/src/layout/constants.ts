@@ -36,6 +36,8 @@ export const CREDIT = {
    * it stays clear of the like and comment buttons on the right.
    */
   maxWidth: 744,
+  /** A little extra air between the video band and the credit, on top of the gap. */
+  topPadding: 14,
   blockHeight: 64,
 } as const;
 
