@@ -9,7 +9,6 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/edison16a/Content-Machine/actions/workflows/ci.yml"><img src="https://github.com/edison16a/Content-Machine/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-35AA0E" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/node-20%2B-35AA0E" alt="Node 20 or newer">
   <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Linux-35AA0E" alt="macOS and Linux">
