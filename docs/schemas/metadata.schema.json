@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/edison16a/Content-Machine/docs/schemas/metadata.schema.json",
+  "title": "Content Machine metadata",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "postTitle": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 99
+          },
+          "captions": {
+            "type": "object",
+            "properties": {
+              "tiktok": {
+                "type": "string"
+              },
+              "instagram": {
+                "type": "string"
+              },
+              "youtube": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "tiktok",
+              "instagram",
+              "youtube"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "postTitle",
+          "captions"
+        ]
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "items"
+  ]
+}

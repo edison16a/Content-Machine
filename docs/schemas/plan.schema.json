@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/edison16a/Content-Machine/docs/schemas/plan.schema.json",
+  "title": "Content Machine plan",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "sequential",
+        "clip"
+      ]
+    },
+    "accentColor": {
+      "default": "#FF8A1F",
+      "type": "string",
+      "pattern": "^#[0-9A-Fa-f]{6}$"
+    },
+    "sources": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "channel": {
+            "type": "string",
+            "minLength": 1
+          },
+          "platform": {
+            "type": "string",
+            "enum": [
+              "youtube",
+              "twitch",
+              "kick",
+              "tiktok",
+              "instagram",
+              "x",
+              "facebook",
+              "other"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "accent": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "file",
+          "channel",
+          "platform"
+        ]
+      }
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 999
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "start": {
+            "type": "number",
+            "minimum": 0
+          },
+          "end": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "note": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "accent": {
+            "type": "string",
+            "minLength": 1
+          },
+          "accentColor": {
+            "type": "string",
+            "pattern": "^#[0-9A-Fa-f]{6}$"
+          }
+        },
+        "required": [
+          "id",
+          "source",
+          "start",
+          "end"
+        ]
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "mode",
+    "sources",
+    "items"
+  ]
+}

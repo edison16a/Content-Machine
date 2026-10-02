@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/edison16a/Content-Machine/docs/schemas/config.schema.json",
+  "title": "Content Machine config",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "slots": {
+      "minItems": 1,
+      "maxItems": 12,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+      }
+    },
+    "stagger": {
+      "type": "object",
+      "properties": {
+        "tiktok": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 180
+        },
+        "instagram": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 180
+        },
+        "youtube": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 180
+        }
+      },
+      "required": [
+        "tiktok",
+        "instagram",
+        "youtube"
+      ]
+    },
+    "weekStartsOn": {
+      "type": "string",
+      "enum": [
+        "monday",
+        "sunday"
+      ]
+    },
+    "timezone": {
+      "type": "string"
+    },
+    "account": {
+      "type": "string",
+      "minLength": 1
+    },
+    "handles": {
+      "type": "object",
+      "properties": {
+        "tiktok": {
+          "default": "",
+          "type": "string"
+        },
+        "instagram": {
+          "default": "",
+          "type": "string"
+        },
+        "youtube": {
+          "default": "",
+          "type": "string"
+        }
+      }
+    },
+    "brand": {
+      "type": "object",
+      "properties": {
+        "font": {
+          "type": "string",
+          "minLength": 1
+        },
+        "textColor": {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$"
+        },
+        "accentColor": {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$"
+        }
+      },
+      "required": [
+        "font",
+        "textColor",
+        "accentColor"
+      ]
+    },
+    "layout": {
+      "type": "object",
+      "properties": {
+        "canvasWidth": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        "canvasHeight": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        "safeTop": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "safeBottom": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        "gap": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "canvasWidth",
+        "canvasHeight",
+        "safeTop",
+        "safeBottom",
+        "gap"
+      ]
+    },
+    "maxDurationSeconds": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 59.98
+    },
+    "repoUrl": {
+      "type": "string",
+      "format": "uri"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "slots",
+    "stagger",
+    "weekStartsOn",
+    "account",
+    "handles",
+    "brand",
+    "layout",
+    "maxDurationSeconds",
+    "repoUrl"
+  ]
+}

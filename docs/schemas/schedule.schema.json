@@ -1,0 +1,279 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/edison16a/Content-Machine/docs/schemas/schedule.schema.json",
+  "title": "Content Machine schedule",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "project": {
+      "type": "string",
+      "maxLength": 64,
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "channel": {
+      "type": "string"
+    },
+    "timezone": {
+      "type": "string"
+    },
+    "weekStartsOn": {
+      "type": "string",
+      "enum": [
+        "monday",
+        "sunday"
+      ]
+    },
+    "slots": {
+      "minItems": 1,
+      "maxItems": 12,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+      }
+    },
+    "stagger": {
+      "type": "object",
+      "properties": {
+        "tiktok": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 180
+        },
+        "instagram": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 180
+        },
+        "youtube": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 180
+        }
+      },
+      "required": [
+        "tiktok",
+        "instagram",
+        "youtube"
+      ]
+    },
+    "handles": {
+      "default": {},
+      "type": "object",
+      "properties": {
+        "tiktok": {
+          "default": "",
+          "type": "string"
+        },
+        "instagram": {
+          "default": "",
+          "type": "string"
+        },
+        "youtube": {
+          "default": "",
+          "type": "string"
+        }
+      }
+    },
+    "updatedAt": {
+      "type": "string"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "video": {
+            "type": "string"
+          },
+          "thumb": {
+            "type": "string"
+          },
+          "duration": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "postTitle": {
+            "type": "string"
+          },
+          "captions": {
+            "type": "object",
+            "properties": {
+              "tiktok": {
+                "type": "string"
+              },
+              "instagram": {
+                "type": "string"
+              },
+              "youtube": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "tiktok",
+              "instagram",
+              "youtube"
+            ]
+          },
+          "source": {
+            "type": "string"
+          },
+          "sourceStart": {
+            "type": "number",
+            "minimum": 0
+          },
+          "sourceEnd": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "note": {
+            "default": "",
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "slot": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "platforms": {
+            "type": "object",
+            "properties": {
+              "tiktok": {
+                "type": "object",
+                "properties": {
+                  "time": {
+                    "type": "string",
+                    "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                  },
+                  "iso": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "queued",
+                      "scheduled",
+                      "posted",
+                      "failed"
+                    ]
+                  },
+                  "note": {
+                    "default": "",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "time",
+                  "iso",
+                  "status"
+                ]
+              },
+              "instagram": {
+                "type": "object",
+                "properties": {
+                  "time": {
+                    "type": "string",
+                    "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                  },
+                  "iso": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "queued",
+                      "scheduled",
+                      "posted",
+                      "failed"
+                    ]
+                  },
+                  "note": {
+                    "default": "",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "time",
+                  "iso",
+                  "status"
+                ]
+              },
+              "youtube": {
+                "type": "object",
+                "properties": {
+                  "time": {
+                    "type": "string",
+                    "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                  },
+                  "iso": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "queued",
+                      "scheduled",
+                      "posted",
+                      "failed"
+                    ]
+                  },
+                  "note": {
+                    "default": "",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "time",
+                  "iso",
+                  "status"
+                ]
+              }
+            },
+            "required": [
+              "tiktok",
+              "instagram",
+              "youtube"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "video",
+          "thumb",
+          "duration",
+          "postTitle",
+          "captions",
+          "source",
+          "sourceStart",
+          "sourceEnd",
+          "date",
+          "slot",
+          "platforms"
+        ]
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "project",
+    "channel",
+    "timezone",
+    "weekStartsOn",
+    "slots",
+    "stagger",
+    "updatedAt",
+    "items"
+  ]
+}

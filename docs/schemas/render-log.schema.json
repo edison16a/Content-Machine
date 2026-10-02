@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/edison16a/Content-Machine/docs/schemas/render-log.schema.json",
+  "title": "Content Machine render-log",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "plannedStart": {
+            "type": "number",
+            "minimum": 0
+          },
+          "plannedEnd": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "start": {
+            "type": "number",
+            "minimum": 0
+          },
+          "end": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "startSnapped": {
+            "type": "boolean"
+          },
+          "endSnapped": {
+            "type": "boolean"
+          },
+          "planKey": {
+            "type": "string"
+          },
+          "fingerprint": {
+            "type": "string"
+          },
+          "output": {
+            "type": "string"
+          },
+          "thumb": {
+            "type": "string"
+          },
+          "renderedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "source",
+          "plannedStart",
+          "plannedEnd",
+          "start",
+          "end",
+          "startSnapped",
+          "endSnapped",
+          "planKey",
+          "fingerprint",
+          "output",
+          "thumb",
+          "renderedAt"
+        ]
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "items"
+  ]
+}
