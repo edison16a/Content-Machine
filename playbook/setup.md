@@ -51,7 +51,7 @@ Run `npm run cm -- doctor` once more to make sure the config loads.
 
 Run `npm run cm -- open`. It opens `index.html` at the top of the repository folder. Tell the user:
 
-- This one page is their dashboard for every project. **Bookmark it and leave it open.** It updates itself every few seconds, shows the time where they post, anything due right now and a countdown to the next post.
+- This one page is their dashboard for every project. **Bookmark it and leave it open.** It updates itself every few seconds, shows the time where they post and anything due right now.
 - If they opened it before setup and it said "not set up yet", refresh it once.
 
 ## 5. Done

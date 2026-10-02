@@ -135,7 +135,7 @@ The conversation from the screenshot at the top, as text:
   </tr>
 </table>
 
-- **Live strip.** The time where you post, anything due to post right now, and a countdown to the next post.
+- **Live strip.** The time where you post and anything due to post right now.
 - **Every project in one place.** A picker appears when you have more than one.
 - **Play every video with sound.** Click a card and it plays right away. Space, M, F and Esc work as you would expect.
 - **Stats at a glance** for the selected platform: posted, scheduled, queued, failed and what posts next.

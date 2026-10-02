@@ -2,8 +2,8 @@ import { PLATFORM_NAMES, type DashboardItem } from '../../shared/types.js';
 import type { Context } from '../context.js';
 import { longDate, todayIn } from '../lib/dates.js';
 import { h, replace } from '../lib/dom.js';
-import { agoText, clockIn, itemLabel, time12, untilText } from '../lib/format.js';
-import { dueNow, nextUp } from '../lib/selectors.js';
+import { agoText, clockIn, itemLabel, time12 } from '../lib/format.js';
+import { dueNow } from '../lib/selectors.js';
 
 /** A row you can click to open that video in the player. */
 function itemButton(ctx: Context, item: DashboardItem, when: string): HTMLButtonElement {
@@ -17,9 +17,10 @@ function itemButton(ctx: Context, item: DashboardItem, when: string): HTMLButton
 }
 
 /**
- * The live strip above the calendar: the time where the project posts, what
- * to post right now if anything is overdue, and a countdown to the next
- * slot. It is redrawn every few seconds, so it is always current.
+ * The live strip above the calendar: the time where the project posts and
+ * what to post right now if anything is overdue. It is redrawn every few
+ * seconds, so it is always current. What posts next lives in the stats panel
+ * below it, so it is not repeated here.
  */
 export function renderNow(ctx: Context, container: HTMLElement): void {
   const { platform } = ctx.store.get();
@@ -27,7 +28,6 @@ export function renderNow(ctx: Context, container: HTMLElement): void {
   const now = ctx.now();
   const name = PLATFORM_NAMES[platform];
   const due = dueNow(items, platform, now);
-  const next = nextUp(items, platform, now);
   const zone = timezone.replace(/_/g, ' ');
 
   const clock = h(
@@ -35,7 +35,6 @@ export function renderNow(ctx: Context, container: HTMLElement): void {
     { class: 'now-clock' },
     h('span', { class: 'now-time', text: clockIn(timezone, now) }),
     h('span', { class: 'now-date', text: `${longDate(todayIn(timezone, now))}, ${zone}` }),
-    ctx.live ? h('span', { class: 'now-live', text: 'Live' }) : null,
   );
 
   const duePanel =
@@ -54,18 +53,5 @@ export function renderNow(ctx: Context, container: HTMLElement): void {
           ),
         );
 
-  const nextPanel = h(
-    'div',
-    { class: 'now-next' },
-    h('h3', { text: `Next on ${name}` }),
-    next === undefined
-      ? h('p', { class: 'now-none', text: 'Nothing waiting.' })
-      : itemButton(
-          ctx,
-          next,
-          `${time12(next.platforms[platform].time)}, ${untilText(Date.parse(next.platforms[platform].iso) - now.getTime())}`,
-        ),
-  );
-
-  replace(container, clock, duePanel, nextPanel);
+  replace(container, clock, duePanel);
 }

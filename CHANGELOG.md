@@ -8,7 +8,7 @@ All notable changes to this project are documented here. The format is based on 
 
 - `fetch` command: give it a video link and it downloads the video and its best captions with yt-dlp into `source/downloads/`, names the captions `<video>.transcript.txt`, and fills in the project's channel and platform.
 - `index.html` at the repo root: one live dashboard for every project. It rereads `projects/dashboard-data.js` every few seconds, so it can stay open for good, and reloads itself after an upgrade.
-- A live strip on the dashboard with the clock in the project's time zone, posts due right now and a countdown to the next post.
+- A live strip on the dashboard with the clock in the project's time zone, and posts due right now.
 - `playbook/setup.md`, which Claude follows when you say "Set up Content Machine" on a fresh clone.
 - `doctor` reports yt-dlp, and two new error codes: `E_YTDLP_MISSING` and `E_DOWNLOAD_FAILED`.
 

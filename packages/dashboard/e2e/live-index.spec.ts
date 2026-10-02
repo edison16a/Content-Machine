@@ -17,8 +17,7 @@ test.describe('live index.html', () => {
     await expect(page.locator('.week .day').first()).toBeVisible();
     await expect(page.locator('.project-select')).toHaveValue('demo');
     await expect(page.locator('.project-select option')).toHaveCount(2);
-    await expect(page.locator('.now-live')).toHaveText('Live');
-    await expect(page.locator('.now-next .now-item')).toContainText(/in \d/);
+    await expect(page.locator('.now-time')).toBeVisible();
     await expect(page.locator('.card img').first()).toHaveAttribute('src', /^projects\/demo\//);
     await page.selectOption('.project-select', 'demo-clips');
     await expect(page.locator('.card')).toHaveCount(3);

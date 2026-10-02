@@ -21,9 +21,8 @@ The dashboard is the one place to see what posts when, and to watch every video 
 
 A panel above the stats, redrawn every 15 seconds (and the whole page when the date rolls over):
 
-- **Clock:** the current time and date in the project's time zone, and a "Live" marker on the live index.
+- **Clock:** the current time and date in the project's time zone.
 - **Post on <platform> now:** queued posts whose time has passed, oldest first, each with when it was due and how long ago. Click one to open it. Hidden when there are none.
-- **Next on <platform>:** the next queued or scheduled post with its time and a countdown ("in 2 h 5 min"), or "Nothing waiting."
 
 ## One self-contained snapshot
 

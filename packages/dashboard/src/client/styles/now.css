@@ -1,7 +1,7 @@
 /* The live strip: the clock, what to post now and what posts next. */
 .now {
   display: grid;
-  grid-template-columns: auto 1fr 1fr;
+  grid-template-columns: auto 1fr;
   gap: var(--space-4) var(--space-5);
   align-items: start;
   margin-top: var(--space-5);
@@ -29,27 +29,6 @@
   color: var(--muted);
   font-size: 13px;
   font-weight: 600;
-}
-
-/* A small dot that tells you the page is updating by itself. */
-.now-live {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: var(--space-1);
-  color: var(--accent);
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.now-live::before {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--accent);
-  content: '';
 }
 
 .now h3 {
@@ -102,10 +81,6 @@
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.now-none {
-  color: var(--muted);
 }
 
 /* Project switcher on the live index. Hidden when there is only one project. */

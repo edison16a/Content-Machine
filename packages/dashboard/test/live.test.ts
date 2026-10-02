@@ -7,7 +7,7 @@ import {
   type DashboardData,
   type DashboardItem,
 } from '@content-machine/dashboard';
-import { agoText, clockIn, untilText } from '../src/client/lib/format.js';
+import { agoText, clockIn } from '../src/client/lib/format.js';
 import { chooseProject, projectFromHash } from '../src/client/lib/projects.js';
 import { dueNow } from '../src/client/lib/selectors.js';
 
@@ -113,14 +113,6 @@ describe('what to post now', () => {
 });
 
 describe('time words', () => {
-  it('counts down in minutes, hours and days', () => {
-    expect(untilText(0)).toBe('in 1 min');
-    expect(untilText(45 * 60_000)).toBe('in 45 min');
-    expect(untilText(120 * 60_000)).toBe('in 2 h');
-    expect(untilText(125 * 60_000)).toBe('in 2 h 5 min');
-    expect(untilText(72 * 3_600_000)).toBe('in 3 days');
-  });
-
   it('says how long ago something was due', () => {
     expect(agoText(10_000)).toBe('just now');
     expect(agoText(12 * 60_000)).toBe('12 min ago');
