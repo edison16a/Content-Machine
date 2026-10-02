@@ -46,10 +46,12 @@ export const ERROR_CODES = [
   'E_FFPROBE_MISSING',
   'E_LIBX264_MISSING',
   'E_FONT_MISSING',
+  'E_YTDLP_MISSING',
   // Tool and render failures
   'E_FFMPEG_FAILED',
   'E_RENDER_FAILED',
   'E_CHECK_FAILED',
+  'E_DOWNLOAD_FAILED',
   // Anything we did not anticipate
   'E_UNEXPECTED',
 ] as const;
