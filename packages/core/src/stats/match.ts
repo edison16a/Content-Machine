@@ -30,10 +30,12 @@ export function normalizeTitle(text: string): string {
 const MIN_PREFIX = 12;
 /** Share of the recorded words that must appear in a candidate for a loose match. */
 const MIN_OVERLAP = 0.8;
+/** A loose match on one or two words ("The", "Part two") would match almost anything. */
+const MIN_WORDS = 3;
 
 function wordOverlap(recorded: string, candidate: string): number {
   const words = recorded.split(' ').filter(Boolean);
-  if (words.length === 0) return 0;
+  if (words.length < MIN_WORDS) return 0;
   const have = new Set(candidate.split(' '));
   return words.filter((word) => have.has(word)).length / words.length;
 }
