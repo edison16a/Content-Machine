@@ -36,6 +36,12 @@ If several videos tie (Sequential parts share a title), `postedOn` keeps the one
 
 Each reading replaces the previous reading for the same video on the same platform. A point on the timeline is the sum of the latest reading of every video at that moment; readings with the same `at` form one point. The totals shown are the last point. Filters (a platform or All, one video or all) apply before summing.
 
+## Test data
+
+`npm run cm -- testdata <project> on|off [--income <dollars>] [--views <n>] [--days <n>]` (defaults: $30,000, 30 days). On writes `plan/sample-stats.json` (schema `stats`) from `sampleSnapshots` in `packages/core/src/stats/sample.ts`: the target (dollars, or views with `--views`) is split randomly across platforms and videos; a dollar target becomes views through each platform's rate (a platform with rate 0 uses $0.05 for its views). Each video starts on a random day in the first 60% of the window and grows quickly, then levels off, with one reading per day. Likes, comments and shares are random typical shares of views. The randomness is seeded by the project name, so the same project always gets the same numbers. Amounts accept `30000`, `30,000` or `30k`.
+
+While the file exists, the dashboard and `stats` show only the test data (mixing it with real readings for the same videos would make meaningless totals), with `sample: true` in the dashboard data and a "Test data" label. Off deletes the file. `plan/stats.json` is never touched by either.
+
 ## Income estimate
 
 `views / 1000 × rate`, per platform, summed. Rates are US dollars per 1,000 views in `config/defaults.json` under `rates`, overridable in `config/local.json`. Defaults (October 2026):

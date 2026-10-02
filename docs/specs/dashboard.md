@@ -14,14 +14,14 @@ The dashboard is the one place to see what posts when, and to watch every video 
 - Every command that refreshes a project's `dashboard.html` also rewrites that data file from **every** project's schedule. Media paths in it are prefixed with `projects/<name>/`. A project with a broken file is left out with a warning.
 - The page polls by adding a fresh `<script src="projects/dashboard-data.js?v=…">`. Browsers block `fetch()` on `file://`, but script tags still load, so no server is needed. When the projects differ from last time the page redraws in place: the selected tab, week and open video stay put. If the open video was removed, the player closes.
 - `build` is a fingerprint of the client bundle. When it changes between polls, the page reloads once to pick up the new client (guarded so it cannot loop).
-- **Projects:** a picker appears above the live strip when there are two or more. The choice is remembered. `#project=<name>` in the address picks one. Otherwise the project updated most recently is shown.
-- With no projects yet it still shows the whole dashboard: an empty calendar saying "No projects yet", zeroed statistics and the platform tabs. It keeps polling, so everything fills in on its own.
+- **Projects:** a picker appears under the header when there are two or more. The choice is remembered. `#project=<name>` in the address picks one. Otherwise the project updated most recently is shown.
+- With no projects yet it still shows the whole dashboard: an empty calendar saying "No projects yet", zeroed statistics with empty graphs, and the platform tabs. It keeps polling, so everything fills in on its own.
 
 ## Tabs
 
 All, TikTok, Instagram and YouTube. The choice is remembered.
 
-- **All** shows the same calendar, but each card carries all three platforms' logos with a status dot each, and slot times are the base times (the platforms post minutes apart). The stats panel is hidden there. The live strip lists due posts from every platform, each labeled with its platform.
+- **All** shows the same calendar, but each card carries all three platforms' logos with a status dot each, and slot times are the base times (the platforms post minutes apart). The stats panel is hidden there. The Post now strip lists due posts from every platform, each labeled with its platform.
 - **A platform** shows the stats panel, the week calendar and that platform's times, statuses and captions.
 
 ## Statistics
@@ -33,16 +33,14 @@ A section under the calendar (or the video grid) on every tab, scoped to that ta
 - **Tiles:** views with an eye icon, estimated income in dollars to six decimals, likes, comments and shares.
 - **Graphs:** one card per chosen metric, two per row (one on narrow screens), each a 2px line with a 10% wash, round y-axis ticks from zero, the first and last date, and an end dot. Hovering or arrow keys move a crosshair that snaps to the nearest reading, with a tooltip showing the value and time.
 - **Table view:** every reading time, newest first, with a column per chosen metric.
-- With nothing recorded, the tiles show zeros and a note says to ask Claude to update the stats.
+- With nothing recorded, the tiles show zeros and each graph still draws its frame: gridlines, a zero baseline, the last week along the bottom and "No readings yet" in the middle. The table shows its header and a "No readings yet" row.
+- While test data is on, a "Test data" label sits next to the heading and every number comes from the test data.
 
 Each metric has one color, used for its icon, chip key and graph only: views blue, income green, likes pink, comments amber, shares violet, with separate steps for light and dark. The set was run through a color blind and contrast check on the panel color in both themes. Values and labels stay in the text colors.
 
-## The live strip
+## Post now
 
-A panel above the stats, redrawn every 15 seconds (and the whole page when the date rolls over):
-
-- **Clock:** the current time and date in the project's time zone.
-- **Post on <platform> now:** queued posts whose time has passed, oldest first, each with when it was due and how long ago. Click one to open it. Hidden when there are none.
+A strip above the calendar listing queued posts whose time has come, oldest first, each with when it was due and how long ago. Click one to open it. It is redrawn every 15 seconds (the whole page when the date rolls over) and is hidden entirely when nothing is due. On the All tab it covers every platform and names each one.
 
 ## One self-contained snapshot
 
