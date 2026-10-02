@@ -21,6 +21,14 @@ export function save(key: string, value: string): void {
   }
 }
 
+export function remove(key: string): void {
+  try {
+    window.localStorage.removeItem(PREFIX + key);
+  } catch {
+    // Nothing stored, or storage is blocked; either way it is gone.
+  }
+}
+
 /** Reads a stored value only if it is one of the allowed options. */
 export function loadChoice<T extends string>(key: string, options: readonly T[], fallback: T): T {
   const value = load(key);

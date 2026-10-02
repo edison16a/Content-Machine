@@ -1,8 +1,9 @@
-import { statsTimeline, statsTotals, type StatsFilter } from '../../../shared/stats.js';
+import { ZERO_TOTALS, statsTimeline, type StatsPoint, type Totals } from '../../../shared/stats.js';
 import type { Context } from '../../context.js';
 import { h, replace } from '../../lib/dom.js';
 import { clockIn } from '../../lib/format.js';
 import { icon } from '../../lib/icons.js';
+import { applyOverride, loadOverride } from '../../lib/override.js';
 import { lineChart } from './chart.js';
 import { emptyChart } from './empty-chart.js';
 import { statsControls } from './controls.js';
@@ -19,10 +20,36 @@ export interface StatsSection {
   update: () => void;
 }
 
+/** The totals at the newest point, or zeros before any reading. */
+function totalsOf(points: readonly StatsPoint[]): Totals {
+  const last = points.at(-1);
+  if (last === undefined) return { ...ZERO_TOTALS };
+  const { views, income, likes, comments, shares } = last;
+  return { views, income, likes, comments, shares };
+}
+
+/**
+ * The points the section shows: the recorded timeline for the selection,
+ * with any custom numbers from the admin panel as the newest point. Custom
+ * numbers are totals for the whole selection, so they only apply when
+ * looking at all videos, not one. `custom` says whether they were used.
+ */
+function shownPoints(ctx: Context): { points: StatsPoint[]; custom: boolean } {
+  const { platform, statsItem, project } = ctx.store.get();
+  const exists = statsItem === 'all' || ctx.data.items.some((item) => item.key === statsItem);
+  const itemKey = exists ? statsItem : 'all';
+  const points = statsTimeline(ctx.data.stats, { platform, itemKey });
+  const override = itemKey === 'all' ? loadOverride(project) : undefined;
+  if (override === undefined) return { points, custom: false };
+  return {
+    points: applyOverride(points, override, ctx.data.stats.rates, platform, ctx.now()),
+    custom: true,
+  };
+}
+
 /** One card per chosen metric: its name, its latest total and its graph. */
-function chartCards(ctx: Context, filter: StatsFilter): HTMLElement {
-  const points = statsTimeline(ctx.data.stats, filter);
-  const totals = statsTotals(ctx.data.stats, filter);
+function chartCards(ctx: Context, points: readonly StatsPoint[]): HTMLElement {
+  const totals = totalsOf(points);
   return h(
     'div',
     { class: 'chart-grid-cards' },
@@ -55,6 +82,12 @@ function chartCards(ctx: Context, filter: StatsFilter): HTMLElement {
  */
 export function renderStatsSection(ctx: Context): StatsSection {
   const meta = h('span', { class: 'section-meta' });
+  const customBadge = h('span', {
+    class: 'sample-badge',
+    text: 'Custom numbers',
+    title: 'Set in the admin panel. Clear them there to see the recorded numbers.',
+    hidden: true,
+  });
   const sampleBadge = h('span', {
     class: 'sample-badge',
     text: 'Test data',
@@ -82,6 +115,7 @@ export function renderStatsSection(ctx: Context): StatsSection {
       { class: 'section-head' },
       h('h2', { class: 'section-title', text: 'Statistics' }),
       sampleBadge,
+      customBadge,
       meta,
       h('span', { class: 'section-spacer' }),
       refresh,
@@ -90,21 +124,20 @@ export function renderStatsSection(ctx: Context): StatsSection {
   );
 
   function update(): void {
-    const { platform, statsItem, metrics } = ctx.store.get();
-    const exists = statsItem === 'all' || ctx.data.items.some((item) => item.id === statsItem);
-    const filter: StatsFilter = { platform, itemId: exists ? statsItem : 'all' };
-    const points = statsTimeline(ctx.data.stats, filter);
+    const { metrics } = ctx.store.get();
+    const { points, custom } = shownPoints(ctx);
     sampleBadge.hidden = !ctx.data.stats.sample;
+    customBadge.hidden = !custom;
     meta.textContent = `Updated ${clockIn(ctx.data.timezone, ctx.now())}`;
     controls.update(table);
     replace(
       body,
-      statTiles(statsTotals(ctx.data.stats, filter)),
+      statTiles(totalsOf(points)),
       metrics.length === 0
         ? h('p', { class: 'section-empty', text: 'Pick a metric above to see its graph.' })
         : table
           ? statsTable(points, metrics, ctx.data.timezone)
-          : chartCards(ctx, filter),
+          : chartCards(ctx, points),
     );
   }
 

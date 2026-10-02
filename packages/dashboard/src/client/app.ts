@@ -4,7 +4,7 @@ import { shiftAnchor } from './lib/calendar.js';
 import { todayIn } from './lib/dates.js';
 import { h } from './lib/dom.js';
 import { stopPreview } from './lib/hover-preview.js';
-import { chooseProject } from './lib/projects.js';
+import { dataFor } from './lib/projects.js';
 import { initialAnchor } from './lib/selectors.js';
 import { createStore, initialState, type State, type Store } from './state.js';
 import { renderCalendar } from './views/calendar/index.js';
@@ -13,7 +13,8 @@ import { renderHeader } from './views/header.js';
 import { renderNow } from './views/now.js';
 import { renderOverview } from './views/overview.js';
 import { createPlayer } from './views/player.js';
-import { renderProjectPicker } from './views/project-picker.js';
+import { createAdminPanel } from './views/settings/admin.js';
+import { renderSettings } from './views/settings/settings.js';
 import { renderStatsSection } from './views/stats/section.js';
 import { renderTabs } from './views/tabs.js';
 
@@ -30,6 +31,8 @@ export interface App {
 export interface MountOptions {
   live: boolean;
   projects: DashboardData[];
+  /** A project name, or ALL_PROJECTS for every project on one calendar. */
+  selection: string;
   refresh: () => Promise<void>;
 }
 
@@ -54,10 +57,11 @@ function bindWeekKeys(store: Store, playerOpen: () => boolean): void {
 }
 
 /** Builds the page once, then re-renders only the parts a state change touches. */
-export function mountApp(root: HTMLElement, first: DashboardData, options: MountOptions): App {
+export function mountApp(root: HTMLElement, options: MountOptions): App {
   let projects = options.projects;
+  const first = dataFor(projects, options.selection);
   const now = (): Date => new Date();
-  const store = createStore(initialState(anchorFor(first, now()), first.project));
+  const store = createStore(initialState(anchorFor(first, now()), options.selection));
   const ctx: Context = {
     data: first,
     live: options.live,
@@ -68,26 +72,29 @@ export function mountApp(root: HTMLElement, first: DashboardData, options: Mount
     playerOpen: () => player.isOpen(),
   };
   const player = createPlayer(ctx);
-  const header = renderHeader(ctx);
   const tabs = renderTabs(ctx);
   const nav = renderCalendarNav(ctx);
   const stats = renderStatsSection(ctx);
-  const picker = renderProjectPicker(ctx, (name) => {
-    const next = projects.find((project) => project.project === name);
-    if (next !== undefined) store.set({ project: name, anchor: anchorFor(next, now()) });
+  const admin = createAdminPanel(ctx, () => stats.update());
+  const settings = renderSettings(ctx, () => projects, {
+    // Picking a project also jumps the calendar to where its videos are.
+    pickProject: (selection) =>
+      store.set({ project: selection, anchor: anchorFor(dataFor(projects, selection), now()) }),
+    openAdmin: admin.open,
   });
+  const header = renderHeader(ctx, settings.element);
   const live = h('section', { class: 'now', 'aria-label': 'Right now' });
   const overview = h('section', { class: 'overview' });
   const week = h('main', { class: 'week', id: 'week' });
   root.replaceChildren(
     header.element,
-    picker.element,
     live,
     overview,
     h('nav', { class: 'toolbar', 'aria-label': 'Calendar controls' }, tabs.element, nav.element),
     week,
     stats.element,
     player.element,
+    admin.element,
   );
 
   /** Everything that depends on the data or the tab, redrawn together. */
@@ -108,8 +115,8 @@ export function mountApp(root: HTMLElement, first: DashboardData, options: Mount
     if (previous === undefined || state.theme !== previous.theme) header.update();
     if (previous !== undefined && state.project !== previous.project) {
       player.close();
-      ctx.data = chooseProject(projects, state.project) ?? ctx.data;
-      picker.update(projects);
+      ctx.data = dataFor(projects, state.project);
+      settings.update();
       renderData();
     } else if (previous === undefined || state.platform !== previous.platform) {
       tabs.update();
@@ -123,15 +130,16 @@ export function mountApp(root: HTMLElement, first: DashboardData, options: Mount
     } else if (state.metrics !== previous.metrics || state.statsItem !== previous.statsItem) {
       stats.update();
     }
-    if (state.focusId !== null) {
-      const card = week.querySelector<HTMLElement>(`.card[data-id="${state.focusId}"]`);
+    if (state.focusKey !== null) {
+      const card = week.querySelector<HTMLElement>(
+        `.card[data-key="${CSS.escape(state.focusKey)}"]`,
+      );
       card?.scrollIntoView({ block: 'nearest' });
       card?.focus();
-      store.set({ focusId: null });
+      store.set({ focusKey: null });
     }
   };
   store.subscribe(render);
-  picker.update(projects);
   render(store.get());
 
   // Keep the clock honest. When the date rolls over, "Today" moves too.
@@ -152,11 +160,8 @@ export function mountApp(root: HTMLElement, first: DashboardData, options: Mount
   return {
     setProjects(next) {
       projects = next;
-      const chosen = chooseProject(projects, store.get().project);
-      if (chosen === undefined) return;
-      ctx.data = chosen;
-      if (chosen.project !== store.get().project) store.set({ project: chosen.project });
-      picker.update(projects);
+      ctx.data = dataFor(projects, store.get().project);
+      settings.update();
       renderData();
     },
   };

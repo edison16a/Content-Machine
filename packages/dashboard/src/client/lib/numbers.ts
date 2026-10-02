@@ -40,3 +40,15 @@ export function niceTicks(max: number, count = 4): number[] {
   for (let value = 0; value < max + step; value += step) ticks.push(Number(value.toPrecision(12)));
   return ticks;
 }
+
+/**
+ * Reads a typed amount like "30000", "30,000", "1.5k" or "2M". Returns
+ * undefined for anything else, so a form can say what is wrong.
+ */
+export function parseAmount(text: string): number | undefined {
+  const match = /^\s*\$?([\d,]*\.?\d+)\s*([km])?\s*$/i.exec(text);
+  if (match === null) return undefined;
+  const value = Number((match[1] ?? '').replace(/,/g, ''));
+  const scale = { k: 1e3, m: 1e6 }[(match[2] ?? '').toLowerCase()] ?? 1;
+  return Number.isFinite(value) ? value * scale : undefined;
+}
