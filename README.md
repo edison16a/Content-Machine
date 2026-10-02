@@ -1,0 +1,208 @@
+<p align="center">
+  <img src="assets/brand/content-machine.svg" alt="Content Machine logo" width="72">
+</p>
+
+<h1 align="center">Content Machine</h1>
+
+<p align="center">
+  Turn one long video into a steady, scheduled stream of short vertical videos for TikTok, Instagram Reels and YouTube Shorts, driven by Claude.
+</p>
+
+<p align="center">
+  <a href="https://github.com/edison16a/Content-Machine/actions/workflows/ci.yml"><img src="https://github.com/edison16a/Content-Machine/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-35AA0E" alt="MIT license"></a>
+  <img src="https://img.shields.io/badge/node-20%2B-35AA0E" alt="Node 20 or newer">
+  <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Linux-35AA0E" alt="macOS and Linux">
+</p>
+
+## Results
+
+<!-- ACCOUNTS:START -->
+**Real accounts running on Content Machine:**
+
+[![TikTok: @YOUR_TIKTOK_HANDLE](https://img.shields.io/badge/TikTok-%40YOUR__TIKTOK__HANDLE-000000?style=for-the-badge&logo=tiktok&logoColor=white)](https://www.tiktok.com/@YOUR_TIKTOK_HANDLE) [![Instagram: YOUR_INSTAGRAM_HANDLE](https://img.shields.io/badge/Instagram-YOUR__INSTAGRAM__HANDLE-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/YOUR_INSTAGRAM_HANDLE) [![YouTube: @YOUR_YOUTUBE_HANDLE](https://img.shields.io/badge/YouTube-%40YOUR__YOUTUBE__HANDLE-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/@YOUR_YOUTUBE_HANDLE)
+
+_These are placeholders. Put your handles and links in `docs/accounts.json`, then run `npm run docs:accounts`._
+<!-- ACCOUNTS:END -->
+
+<p align="center">
+  <img src="docs/images/dashboard-week.png" alt="The Content Machine dashboard: a week calendar with three timed slots per day, platform tabs and status badges" width="100%">
+  <br><sub>The dashboard, generated from the built-in demo project (mock data, synthetic video).</sub>
+</p>
+
+## What it is
+
+You give Claude a long video you have the rights to, plus its transcript. Claude reads the transcript and decides where to cut. A local engine renders the cuts as 1080x1920 videos with the same layout every time, gives each one a fixed posting slot (three a day per platform) and builds a dashboard where you can watch every video with sound. When you are ready, Claude can enter the videos into each platform's own scheduler through your logged-in browser.
+
+Two modes, one plan format:
+
+| | Sequential | Clip |
+| --- | --- | --- |
+| What it posts | The whole video, start to finish, in parts | Only the best moments |
+| Length | Up to 60 seconds per part, cut at story beats | 8 to 59 seconds per clip |
+| On-video title | The video's title, identical on every part | A fresh title for each clip that says what happened |
+| Editing | None. Original audio, the layout, the title and the credit | Same: just the cut, the layout, the title and the credit |
+
+## How it works
+
+```mermaid
+flowchart LR
+  A["Long video and transcript<br/>(your files)"] --> B["Claude plans the cuts<br/>plan.json"]
+  B --> C["Engine renders<br/>snaps cuts to pauses, 1080x1920"]
+  C --> D["Fixed schedule<br/>3 a day per platform"]
+  D --> E["dashboard.html<br/>watch every video with sound"]
+  E -. "optional" .-> F["Claude enters posts in each<br/>platform's scheduler"]
+```
+
+## Quick start
+
+**You need:** Node 20 or newer, ffmpeg (`brew install ffmpeg` or `sudo apt install ffmpeg`) and [Claude Code](https://claude.com/claude-code). Optional: the Claude in Chrome extension, for hands-off uploading.
+
+```bash
+git clone https://github.com/edison16a/Content-Machine.git
+cd Content-Machine
+npm install
+```
+
+Open Claude Code in that folder and say:
+
+```text
+Using Content Machine: https://github.com/edison16a/Content-Machine
+```
+
+You can also skip the clone: say the same sentence to Claude Code in any empty folder and it clones the repository itself, following [`playbook/run.md`](playbook/run.md).
+
+Want to see it before using your own footage? Build the demo (synthetic video, about ten minutes) and open it:
+
+```bash
+npm run demo
+npm run cm -- open demo
+```
+
+## How it looks in Claude
+
+<p align="center">
+  <img src="docs/images/claude-usage.png" alt="An illustrative chat: the user says Using Content Machine, Claude asks six intake questions, reports progress and finishes with 24 videos scheduled" width="720">
+  <br><sub>Illustrative. The same conversation as text is below.</sub>
+</p>
+
+> **You:** Using Content Machine: https://github.com/edison16a/Content-Machine
+>
+> **Claude:** Let's set up your videos. A few quick questions:
+> 1. What type of video? Sequential (the whole video in parts, up to 60 seconds each) or Clip (only the best moments).
+> 2. What's the title of the video?
+> 3. What should the project folder be called?
+> 4. Which channel is it from, and which platform?
+> 5. Where is the video file, and can you paste the transcript?
+> 6. Do you own this footage or have permission to use it?
+>
+> **You:** Sequential. "How We Built A Tiny House In 30 Days". Call it tiny-house. It's from Example Channel on YouTube. The file is ~/Movies/tiny-house.mp4 and the transcript is pasted below. It's my own video.
+>
+> **Claude:** Planning your cuts… 24 parts. Rendering 24 videos… Checking every video… Scheduling 3 a day per platform…
+>
+> **Claude:** Done. 24 videos scheduled across 8 days. Your dashboard is open. Click any video to watch it with sound. Want me to upload them into each platform's scheduler now?
+
+## The dashboard
+
+One HTML file per project. It works straight from your disk, makes no network requests, and plays the real files next to it.
+
+<p align="center">
+  <img src="docs/images/dashboard-player.png" alt="The player: a vertical video playing with sound beside its caption, platform statuses and actions" width="100%">
+</p>
+
+<table>
+  <tr>
+    <td width="68%"><img src="docs/images/dashboard-dark.png" alt="The dashboard in dark mode"></td>
+    <td width="32%"><img src="docs/images/dashboard-mobile.png" alt="The dashboard on a phone, showing a list of days"></td>
+  </tr>
+</table>
+
+- **Play every video with sound.** Click a card and it plays right away. Space, M, F, the arrow keys and Esc work as you would expect.
+- **Auto-play next.** When a video ends, the next one in posting order starts, which is the best way to review a Sequential story.
+- **Platform tabs** with the official logos. Each tab shows that platform's times, statuses, caption and handle.
+- **A week calendar** with three timed slots per day, Today, and First unposted.
+- **Copy the caption, copy the file path, or download the video** from the player.
+- **Statuses** for every platform: queued, scheduled, posted or failed.
+- Light and dark mode, phone layout, keyboard friendly. Hovering a card plays a silent preview.
+
+## Folder structure
+
+```
+projects/<project-name>/
+├── dashboard.html      open this: calendar, click any video to watch it with sound
+├── project.json
+├── README.txt          what each folder is for
+├── source/             INPUTS (yours): long videos, <video>.transcript.txt, brief.txt
+├── plan/               DECISIONS: plan.json, metadata.json, schedule.json, schedule-history.log, report.md
+├── videos/             FINAL: 001.mp4, 002.mp4 and so on (what gets posted)
+├── thumbs/             posters for the dashboard
+└── work/               DISPOSABLE: caches, QA images, logs
+```
+
+**Four kinds of folders, one job each:** inputs, decisions, deliverables and disposable. The tool owns `plan/schedule.json`, `videos/`, `thumbs/` and `work/`. Keep `dashboard.html` next to `videos/` and `thumbs/`, and move the project folder as one unit. More in [docs/folder-structure.md](docs/folder-structure.md).
+
+## Consistency by design
+
+- **Fixed cadence.** Three posts a day per platform at the same times (12:00, 17:00 and 20:00 by default), with Instagram 15 minutes and YouTube 30 minutes after TikTok.
+- **Deterministic scheduling.** A pure function decides every date, never a language model. Scheduled items never move, and projects posting to the same accounts never take each other's slots. Daylight saving changes are handled.
+- **Overflow queues forward.** Thirty videos fill ten days. There is no limit.
+- **Same layout and brand every time.** The same font, title block, credit line and video position, so a feed looks like one series.
+- **Cuts land on pauses.** Every cut moves to the nearest pause in the audio, so no video starts or ends mid-word.
+
+## Posting and scheduling realities
+
+As of October 2026. **Verify in your account:** platforms change these often, and this project has not tested them.
+
+| Platform | Desktop scheduler | Needs | How far ahead |
+| --- | --- | --- | --- |
+| TikTok | TikTok Studio | Business or Creator account | About 10 days |
+| Instagram Reels | Meta Business Suite | Professional account | Weeks |
+| YouTube Shorts | YouTube Studio | Any channel | No published limit, but every upload counts toward a daily limit |
+
+When a scheduler refuses a date, Claude stops that platform, leaves the rest queued and tells you when to come back. Details in [docs/platform-scheduling.md](docs/platform-scheduling.md).
+
+## Responsible use
+
+Only use footage you own or have permission to use: your own videos, an official clipping program, or a creator who agreed. Sequential re-posts a whole video, so it needs permission that covers that. **There is no downloader in this repository and there never will be.** Audio is never changed, titles must be true to the footage, and every video credits its source. Follow each platform's rules. See [docs/responsible-use.md](docs/responsible-use.md).
+
+## The repository
+
+```
+packages/core        pure logic: schemas, transcripts, plans, snapping, layout, scheduling, statuses
+packages/render      ffmpeg rendering, canvas text overlays, thumbnails, QA
+packages/dashboard   the dashboard.html generator and its client UI
+packages/cli         the content-machine command
+playbook/            what Claude reads at runtime
+docs/                specs, architecture, ADRs, JSON Schemas
+```
+
+Every command: `npm run cm -- <command>`. Run `npm run cm -- --help` for the list (`doctor`, `new`, `transcript`, `render`, `preview`, `check`, `schedule`, `mark`, `dashboard`, `open`, `status`, `autoplan`, `demo`, `schema`). Each one takes `--json` for machine-readable output. Read [docs/architecture.md](docs/architecture.md) for how it fits together.
+
+## Development
+
+```bash
+npm install          # installs and builds every package
+npm run check        # lint, typecheck, build, unit and integration tests
+npm run demo         # builds projects/demo from synthetic video
+npm run test:e2e     # dashboard browser tests in Google Chrome
+npm run docs:images  # regenerates the screenshots in docs/images
+```
+
+Supported on macOS and Linux. Windows is untested; WSL may work.
+
+## Contributing
+
+Issues and pull requests are welcome. Start with [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md). Report security problems privately, as described in [SECURITY.md](SECURITY.md).
+
+## Roadmap
+
+- Word-level transcript timing for even tighter cuts.
+- Optional burned-in captions, off by default.
+- A "season" view in the dashboard for projects that span months.
+- Windows support.
+
+## License
+
+[MIT](LICENSE). Third-party fonts, logos and packages are listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+Content Machine is an independent open-source project. It is not affiliated with, endorsed by or sponsored by TikTok, ByteDance, Instagram, Meta, YouTube, Google or Anthropic. All trademarks belong to their owners.
