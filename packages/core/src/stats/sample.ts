@@ -10,8 +10,12 @@ export interface SampleInput {
   /** The last reading's time, ISO. Readings go back one per day from here. */
   now: string;
   days: number;
-  /** Estimated dollars the whole set should add up to on the last day. */
-  income: number;
+  /**
+   * What the whole set adds up to on the last day: estimated dollars, or
+   * views. Short-form rates are fractions of a cent, so a dollar target
+   * means a very large number of views.
+   */
+  target: { kind: 'income' | 'views'; amount: number };
   /** Same seed, same numbers, so tests and screenshots stay stable. */
   seed: string;
 }
@@ -37,9 +41,9 @@ function shares(count: number, rng: () => number, spread: number): number[] {
 
 /**
  * Made-up readings for trying the dashboard: one per day for `days` days,
- * for every video on every platform. The income target is split randomly
- * across platforms and videos, then turned into views with each platform's
- * rate. Each video starts on a random day and its views climb fast, then
+ * for every video on every platform. The target is split randomly across
+ * platforms and videos; a dollar target is turned into views with each
+ * platform's rate. Each video starts on a random day and its views climb fast, then
  * level off, the way short videos usually do. Likes, comments and shares
  * follow as typical shares of views.
  */
@@ -60,8 +64,8 @@ export function sampleSnapshots(input: SampleInput): StatsSnapshot[] {
     };
     for (const [p, platform] of PLATFORMS.entries()) {
       const rate = input.rates[platform] > 0 ? input.rates[platform] : FALLBACK_RATE;
-      const income = input.income * (platformShares[p] ?? 0) * (itemShares[i] ?? 0);
-      const finalViews = (income / rate) * 1000;
+      const share = input.target.amount * (platformShares[p] ?? 0) * (itemShares[i] ?? 0);
+      const finalViews = input.target.kind === 'views' ? share : (share / rate) * 1000;
       for (let day = start; day < input.days; day += 1) {
         const t = day - start;
         const grown =
