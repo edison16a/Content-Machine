@@ -302,20 +302,28 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  /* Small enough for six decimals of dollars in a half-width tile. */
+  .stat-tile-value {
+    font-size: 19px;
+  }
+
+  /* The Total and Per day switch takes its own row above the picker. */
   .stats-controls-end {
+    flex-wrap: wrap;
     width: 100%;
   }
 
-  .picker {
+  .stats-controls .picker {
     flex: 1;
     min-width: 0;
   }
 
-  .picker-button {
+  /* Scoped so it wins over the base width in picker.css, which loads later. */
+  .stats-controls .picker-button {
     width: 100%;
   }
 
-  .picker-panel {
+  .stats-controls .picker-panel {
     right: auto;
     left: 0;
     width: min(360px, calc(100vw - 32px));
