@@ -70,9 +70,18 @@
   }
 
   .tab {
-    gap: 6px;
-    padding: 0 6px;
-    font-size: 14px;
+    gap: 5px;
+    padding: 0 5px;
+    font-size: 13px;
+  }
+
+  .tab-logo,
+  .tab-icon {
+    height: 15px;
+  }
+
+  .tab-icon {
+    width: 15px;
   }
 
   .weeknav {

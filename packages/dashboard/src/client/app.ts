@@ -1,11 +1,14 @@
 import type { DashboardData } from '../shared/types.js';
 import type { Context } from './context.js';
-import { addDays, todayIn } from './lib/dates.js';
+import { shiftAnchor } from './lib/calendar.js';
+import { todayIn } from './lib/dates.js';
 import { h } from './lib/dom.js';
 import { stopPreview } from './lib/hover-preview.js';
 import { chooseProject } from './lib/projects.js';
-import { initialWeek } from './lib/selectors.js';
+import { initialAnchor } from './lib/selectors.js';
 import { createStore, initialState, type State, type Store } from './state.js';
+import { renderCalendar } from './views/calendar/index.js';
+import { renderCalendarNav } from './views/calendar/nav.js';
 import { renderHeader } from './views/header.js';
 import { renderNow } from './views/now.js';
 import { renderOverview } from './views/overview.js';
@@ -13,9 +16,6 @@ import { createPlayer } from './views/player.js';
 import { renderProjectPicker } from './views/project-picker.js';
 import { renderStatsSection } from './views/stats/section.js';
 import { renderTabs } from './views/tabs.js';
-import { renderVideos } from './views/videos.js';
-import { renderWeek } from './views/week.js';
-import { renderWeekNav } from './views/weeknav.js';
 
 /** How often the clock and the "post now" list are redrawn. */
 const TICK_MS = 15_000;
@@ -33,10 +33,10 @@ export interface MountOptions {
   refresh: () => Promise<void>;
 }
 
-const weekFor = (data: DashboardData, now: Date): string =>
-  initialWeek(data.items, todayIn(data.timezone, now), data.weekStartsOn);
+const anchorFor = (data: DashboardData, now: Date): string =>
+  initialAnchor(data.items, todayIn(data.timezone, now), data.weekStartsOn);
 
-/** Left and right arrows page through weeks, unless a control wants the keys. */
+/** Left and right arrows page through the calendar, unless a control wants the keys. */
 function bindWeekKeys(store: Store, playerOpen: () => boolean): void {
   document.addEventListener('keydown', (event) => {
     if (playerOpen() || event.altKey || event.ctrlKey || event.metaKey) return;
@@ -44,9 +44,9 @@ function bindWeekKeys(store: Store, playerOpen: () => boolean): void {
     const target = event.target instanceof HTMLElement ? event.target : null;
     if (target !== null && target.closest('[role="tablist"], select, .chart-frame') !== null)
       return;
-    if (store.get().platform === 'all') return;
     event.preventDefault();
-    store.set({ weekStart: addDays(store.get().weekStart, event.key === 'ArrowLeft' ? -7 : 7) });
+    const { calendar, anchor } = store.get();
+    store.set({ anchor: shiftAnchor(calendar, anchor, event.key === 'ArrowLeft' ? -1 : 1) });
   });
 }
 
@@ -54,7 +54,7 @@ function bindWeekKeys(store: Store, playerOpen: () => boolean): void {
 export function mountApp(root: HTMLElement, first: DashboardData, options: MountOptions): App {
   let projects = options.projects;
   const now = (): Date => new Date();
-  const store = createStore(initialState(weekFor(first, now()), first.project));
+  const store = createStore(initialState(anchorFor(first, now()), first.project));
   const ctx: Context = {
     data: first,
     live: options.live,
@@ -67,16 +67,15 @@ export function mountApp(root: HTMLElement, first: DashboardData, options: Mount
   const player = createPlayer(ctx);
   const header = renderHeader(ctx);
   const tabs = renderTabs(ctx);
-  const nav = renderWeekNav(ctx);
+  const nav = renderCalendarNav(ctx);
   const stats = renderStatsSection(ctx);
   const picker = renderProjectPicker(ctx, (name) => {
     const next = projects.find((project) => project.project === name);
-    if (next !== undefined) store.set({ project: name, weekStart: weekFor(next, now()) });
+    if (next !== undefined) store.set({ project: name, anchor: anchorFor(next, now()) });
   });
   const live = h('section', { class: 'now', 'aria-label': 'Right now' });
   const overview = h('section', { class: 'overview' });
   const week = h('main', { class: 'week', id: 'week' });
-  const videos = h('main', { class: 'videos' });
   root.replaceChildren(
     header.element,
     picker.element,
@@ -84,7 +83,6 @@ export function mountApp(root: HTMLElement, first: DashboardData, options: Mount
     overview,
     h('nav', { class: 'toolbar', 'aria-label': 'Calendar controls' }, tabs.element, nav.element),
     week,
-    videos,
     stats.element,
     player.element,
   );
@@ -92,18 +90,13 @@ export function mountApp(root: HTMLElement, first: DashboardData, options: Mount
   /** Everything that depends on the data or the tab, redrawn together. */
   const renderData = (): void => {
     stopPreview();
+    // The counts panel describes one platform, so the All tab leaves it out.
     const all = store.get().platform === 'all';
     overview.hidden = all;
-    nav.element.hidden = all;
-    week.hidden = all;
-    videos.hidden = !all;
     renderNow(ctx, live);
-    if (all) renderVideos(ctx, videos);
-    else {
-      renderOverview(ctx, overview);
-      nav.update();
-      renderWeek(ctx, week);
-    }
+    if (!all) renderOverview(ctx, overview);
+    nav.update();
+    renderCalendar(ctx, week);
     stats.update();
     player.refresh();
   };
@@ -120,10 +113,10 @@ export function mountApp(root: HTMLElement, first: DashboardData, options: Mount
       renderData();
       // Switching tabs is a natural moment to check for new numbers.
       if (previous !== undefined) void ctx.refresh().then(stats.update);
-    } else if (state.weekStart !== previous.weekStart) {
+    } else if (state.anchor !== previous.anchor || state.calendar !== previous.calendar) {
       stopPreview();
       nav.update();
-      renderWeek(ctx, week);
+      renderCalendar(ctx, week);
     } else if (state.metrics !== previous.metrics || state.statsItem !== previous.statsItem) {
       stats.update();
     }

@@ -4,6 +4,7 @@ import {
   type DashboardPlatform,
   type StatMetric,
 } from '../shared/types.js';
+import { CALENDAR_VIEWS, type CalendarView } from './lib/calendar.js';
 import { load, loadChoice, save } from './lib/storage.js';
 
 export type Theme = 'light' | 'dark';
@@ -16,8 +17,13 @@ export interface State {
   /** Which project is on screen. Only the live index has more than one. */
   project: string;
   platform: View;
-  /** First day of the visible week, "YYYY-MM-DD". */
-  weekStart: string;
+  /** Day, week or month. Week by default; the choice is remembered. */
+  calendar: CalendarView;
+  /**
+   * A date inside the visible period, "YYYY-MM-DD". Each view works out its
+   * own range from it, so switching views keeps you around the same days.
+   */
+  anchor: string;
   theme: Theme;
   /** Item whose card should take focus after the next render. */
   focusId: number | null;
@@ -52,11 +58,12 @@ function loadMetrics(): StatMetric[] {
 }
 
 /** Restores remembered preferences. Dark mode is the default. */
-export function initialState(weekStart: string, project: string): State {
+export function initialState(anchor: string, project: string): State {
   return {
     project,
     platform: loadChoice<View>('platform', VIEWS, 'tiktok'),
-    weekStart,
+    calendar: loadChoice<CalendarView>('calendar', CALENDAR_VIEWS, 'week'),
+    anchor,
     theme: loadChoice<Theme>('theme', ['light', 'dark'], 'dark'),
     focusId: null,
     metrics: loadMetrics(),
@@ -64,7 +71,7 @@ export function initialState(weekStart: string, project: string): State {
   };
 }
 
-/** A tiny observable store. Remembers the tab, the theme and the graph choices. */
+/** A tiny observable store. Remembers the tab, the calendar view, the theme and the graphs. */
 export function createStore(initial: State): Store {
   let state = initial;
   const listeners: Listener[] = [];
@@ -75,6 +82,7 @@ export function createStore(initial: State): Store {
       state = { ...state, ...patch };
       if (patch.platform !== undefined) save('platform', state.platform);
       if (patch.theme !== undefined) save('theme', state.theme);
+      if (patch.calendar !== undefined) save('calendar', state.calendar);
       if (patch.project !== undefined) save('project', state.project);
       if (patch.metrics !== undefined) save('metrics', state.metrics.join(','));
       for (const listener of listeners) listener(state, previous);
