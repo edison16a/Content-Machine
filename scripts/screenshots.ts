@@ -44,6 +44,8 @@ async function openPlayer(page: Page): Promise<void> {
     v.currentTime = 2.5;
     await new Promise((r) => v.addEventListener('seeked', r, { once: true }));
   });
+  // Let Chrome drop its buffering spinner before the picture is taken.
+  await page.waitForTimeout(1500);
 }
 
 const SHOTS: Shot[] = [
