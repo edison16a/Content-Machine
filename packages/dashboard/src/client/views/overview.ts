@@ -1,50 +1,69 @@
 import { PLATFORM_NAMES } from '../../shared/types.js';
 import type { Context } from '../context.js';
-import { longDate } from '../lib/dates.js';
+import { dayName, monthDay } from '../lib/dates.js';
 import { h, replace } from '../lib/dom.js';
-import { itemLabel, stamp, time12 } from '../lib/format.js';
-import { countsFor, nextUp } from '../lib/selectors.js';
+import { time12 } from '../lib/format.js';
+import { countsFor, nextUp, type Counts } from '../lib/selectors.js';
 
-function chip(label: string, value: number, kind: string): HTMLElement {
+const STATS = [
+  ['posted', 'Posted'],
+  ['scheduled', 'Scheduled'],
+  ['queued', 'Queued'],
+  ['failed', 'Failed'],
+] as const;
+
+function stat(value: number, label: string, kind: string): HTMLElement {
   return h(
     'div',
-    { class: `chip chip-${kind}` },
-    h('span', { class: 'chip-value', text: String(value) }),
-    h('span', { class: 'chip-label', text: label }),
+    { class: `stat stat-${kind}` },
+    h('span', { class: 'stat-value', text: String(value) }),
+    h('span', { class: 'stat-label', text: label }),
   );
 }
 
-/** Summary chips for the selected platform, plus what posts next and when the data was made. */
+/** One thin bar showing how far along the queue is: posted, then scheduled. */
+function progress(counts: Counts): HTMLElement {
+  const total = Math.max(1, counts.total);
+  const segment = (kind: string, value: number): HTMLElement | null =>
+    value === 0
+      ? null
+      : h('span', { class: `bar-${kind}`, style: `width:${(value / total) * 100}%` });
+  return h(
+    'div',
+    { class: 'bar', role: 'img', 'aria-label': `${counts.posted} of ${counts.total} posted` },
+    segment('posted', counts.posted),
+    segment('scheduled', counts.scheduled),
+    segment('failed', counts.failed),
+  );
+}
+
+/** The stats panel for the selected platform, with what posts next. */
 export function renderOverview(ctx: Context, container: HTMLElement): void {
-  const { data } = ctx;
   const { platform } = ctx.store.get();
-  const counts = countsFor(data.items, platform);
-  const next = nextUp(data.items, platform, ctx.now());
+  const counts = countsFor(ctx.data.items, platform);
+  const next = nextUp(ctx.data.items, platform, ctx.now());
   const nextText =
     next === undefined
       ? 'Nothing waiting'
-      : `${itemLabel(next.id)} on ${longDate(next.date)} at ${time12(next.platforms[platform].time)}`;
+      : `${dayName(next.date)} ${monthDay(next.date)}, ${time12(next.platforms[platform].time)}`;
   replace(
     container,
     h(
       'div',
-      { class: 'chips', 'aria-label': `${PLATFORM_NAMES[platform]} summary` },
-      chip('Total', counts.total, 'total'),
-      chip('Queued', counts.queued, 'queued'),
-      chip('Scheduled', counts.scheduled, 'scheduled'),
-      chip('Posted', counts.posted, 'posted'),
-      chip('Failed', counts.failed, 'failed'),
-    ),
-    h(
-      'dl',
-      { class: 'meta' },
-      h('div', {}, h('dt', { text: 'Next up' }), h('dd', { text: nextText })),
+      { class: 'stats', 'aria-label': `${PLATFORM_NAMES[platform]} summary` },
       h(
         'div',
-        {},
-        h('dt', { text: 'Updated' }),
-        h('dd', { text: stamp(data.updatedAt, data.timezone) }),
+        { class: 'stats-row' },
+        stat(counts.total, 'Videos', 'total'),
+        ...STATS.map(([key, label]) => stat(counts[key], label, key)),
+        h(
+          'div',
+          { class: 'stat stat-next' },
+          h('span', { class: 'stat-value', text: nextText }),
+          h('span', { class: 'stat-label', text: 'Next up' }),
+        ),
       ),
+      progress(counts),
     ),
   );
 }
