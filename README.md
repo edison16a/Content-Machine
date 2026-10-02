@@ -136,14 +136,14 @@ The conversation from the screenshot at the top, as text:
 </table>
 
 - **Live strip.** The time where you post and anything due to post right now.
-- **All tab.** Every video in posting order with its status on TikTok, Instagram and YouTube at a glance.
-- **Statistics.** Total views, estimated income (to six decimals), likes, comments and shares per platform or all together, and a color-coded graph of each over time. Pick which graphs show, narrow to one video, or read it as a table. Ask Claude to "update my stats" and it reads each platform's analytics for you.
+- **All tab.** The same calendar with every video's status on TikTok, Instagram and YouTube on each card.
+- **Statistics.** Total views, estimated income (to six decimals), likes, comments and shares per platform or all together, and a color-coded graph of each over time. Pick which graphs show, search for one video, or read it as a table. Ask Claude to "update my stats" and it reads each platform's analytics for you.
 - **Every project in one place.** A picker appears when you have more than one.
 - **Play every video with sound.** Click a card and it plays right away. Space, M, F and Esc work as you would expect.
 - **Stats at a glance** for the selected platform: posted, scheduled, queued, failed and what posts next.
 - **Platform tabs** with the official logos. Each tab shows that platform's times, statuses and caption.
-- **A week calendar** with three timed slots per day, Today, and First unposted.
-- **Copy the caption, copy the file path, or download the video** from the player.
+- **Day, week or month calendar** with three timed slots per day, Today, and First unposted. Week is the default.
+- **Copy the caption, copy the file path, or open the video's folder** from the player.
 - Phone layout, keyboard friendly. Hovering a card plays a silent preview.
 
 ## Folder structure
