@@ -9,6 +9,9 @@ import { METRICS } from './metrics.js';
 import { statsTable } from './table.js';
 import { statTiles } from './tiles.js';
 
+/** Shortest time the Refresh spinner shows, so a quick reread is still visible. */
+const MIN_SPIN_MS = 700;
+
 export interface StatsSection {
   element: HTMLElement;
   /** Redraws from the current data and choices. */
@@ -55,7 +58,12 @@ export function renderStatsSection(ctx: Context): StatsSection {
     icon('refresh'),
     h('span', { class: 'label', text: 'Refresh' }),
   );
-  const body = h('div', { class: 'stats-body' });
+  const body = h('div', { class: 'stats-results' });
+  let table = false;
+  const controls = statsControls(ctx, () => {
+    table = !table;
+    update();
+  });
   const element = h(
     'section',
     { class: 'stats-section', 'aria-label': 'Statistics' },
@@ -67,23 +75,19 @@ export function renderStatsSection(ctx: Context): StatsSection {
       h('span', { class: 'section-spacer' }),
       refresh,
     ),
-    body,
+    h('div', { class: 'stats-body' }, controls.element, body),
   );
-  let table = false;
 
-  const update = (): void => {
+  function update(): void {
     const { platform, statsItem, metrics } = ctx.store.get();
     const exists = statsItem === 'all' || ctx.data.items.some((item) => item.id === statsItem);
     const filter: StatsFilter = { platform, itemId: exists ? statsItem : 'all' };
     const points = statsTimeline(ctx.data.stats, filter);
     const recorded = ctx.data.stats.snapshots.length > 0;
     meta.textContent = `Updated ${clockIn(ctx.data.timezone, ctx.now())}`;
+    controls.update(table);
     replace(
       body,
-      statsControls(ctx, table, (next) => {
-        table = next;
-        update();
-      }),
       statTiles(statsTotals(ctx.data.stats, filter)),
       !recorded
         ? h('p', {
@@ -96,12 +100,21 @@ export function renderStatsSection(ctx: Context): StatsSection {
             ? statsTable(points, metrics, ctx.data.timezone)
             : chartCards(ctx, filter),
     );
-  };
+  }
 
+  // Rereading a local file takes a few milliseconds, too fast to see. Keep
+  // the spinner up for a moment so a click always looks like it did something.
+  const label = refresh.querySelector('.label');
   refresh.addEventListener('click', () => {
-    refresh.disabled = true;
-    void ctx.refresh().finally(() => {
-      refresh.disabled = false;
+    if (refresh.classList.contains('is-loading')) return;
+    refresh.classList.add('is-loading');
+    refresh.setAttribute('aria-busy', 'true');
+    if (label !== null) label.textContent = 'Refreshing';
+    const pause = new Promise((resolve) => window.setTimeout(resolve, MIN_SPIN_MS));
+    void Promise.all([ctx.refresh(), pause]).finally(() => {
+      refresh.classList.remove('is-loading');
+      refresh.removeAttribute('aria-busy');
+      if (label !== null) label.textContent = 'Refresh';
       update();
     });
   });
