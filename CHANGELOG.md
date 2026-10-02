@@ -16,6 +16,8 @@ All notable changes to this project are documented here. The format is based on 
 - An All tab before TikTok: the calendar with every platform's status on each card.
 - Day, week and month calendar views, week by default and remembered.
 - A searchable video picker in the statistics section, and a spinning Refresh icon while it works.
+- `testdata` command: switch 30 days of made-up statistics on or off (about $30,000 by default, split randomly across platforms and videos), kept apart from real readings and labeled on the dashboard.
+- Empty graphs and an empty table before any readings, instead of a note.
 - Payout rates per 1,000 views in config (`rates`), used only for the income estimate.
 - `playbook/steps/09-stats.md`: how Claude reads each platform's analytics and records them.
 - The demo records sample statistics so the graphs have data.
@@ -27,7 +29,7 @@ All notable changes to this project are documented here. The format is based on 
 - The playbook accepts a video link at intake instead of a file and a pasted transcript.
 - The TikTok logo is now the TikTok app icon.
 - The player's Download button is now Open folder, which opens the folder holding the video.
-- The live strip shows the clock and posts due now; the Live marker and the next post panel are gone.
+- The live strip is gone: no clock, no Live marker, no next post panel. A "Post now" strip appears only when a post is due.
 - With no projects, the live index shows the full dashboard, empty, instead of a placeholder message.
 - The playbook's clip and post titles now carry the whole video's context unless the moment's own title is strong on its own.
 - The "no downloader" rule is replaced by "download only through `fetch`". The footage permission rule is unchanged.
