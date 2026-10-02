@@ -14,13 +14,15 @@ import {
   todayIn,
 } from '../demo/build.js';
 import { clipDemo, sequentialDemo } from '../demo/plans.js';
+import { demoStatsRows } from '../demo/stats.js';
 import { Output } from '../io/output.js';
-import { writeJson } from '../project/files.js';
+import { loadSchedule, writeJson } from '../project/files.js';
 import { projectPaths } from '../project/paths.js';
 import { runCheck } from './check.js';
 import { runMark } from './mark.js';
 import { runRender } from './render.js';
 import { runSchedule } from './schedule.js';
+import { runStats } from './stats.js';
 
 interface DemoFlags {
   clean?: boolean;
@@ -57,6 +59,18 @@ async function markStatuses(ctx: CommandContext, schedule: Schedule): Promise<vo
   }
 }
 
+/** Sample views, likes and so on for the posted videos, so the graphs have a shape. */
+async function recordDemoStats(ctx: CommandContext, workDir: string): Promise<void> {
+  const schedule = await loadSchedule(ctx.fs, projectPaths(ctx.root, 'demo'));
+  if (schedule === undefined) return;
+  const rows = demoStatsRows(schedule, ctx.clock.now());
+  if (rows.length === 0) return;
+  const file = join(workDir, 'demo-stats.json');
+  await writeJson(ctx.fs, file, rows);
+  await ctx.fs.remove(projectPaths(ctx.root, 'demo').stats);
+  await runStats(ctx, 'demo', { import: file });
+}
+
 /**
  * Builds two mock projects from synthetic media: a 24-part Sequential project
  * with a realistic mix of statuses, and a small Clip project on the same
@@ -90,6 +104,7 @@ export async function runDemo(ctx: CommandContext, flags: DemoFlags): Promise<vo
   await runCheck(quiet, 'demo');
   const scheduled = await runSchedule(shiftedContext(quiet, PAST_DAYS + 1), 'demo', {});
   await markStatuses(quiet, scheduled.schedule);
+  await recordDemoStats(quiet, demo.workDir);
   // Browser tests and screenshots freeze the page clock at this moment.
   await writeJson(ctx.fs, join(demo.workDir, 'demo-clock.json'), {
     now: ctx.clock.now().toISOString(),
