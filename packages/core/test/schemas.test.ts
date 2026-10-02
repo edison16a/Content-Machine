@@ -111,7 +111,8 @@ describe('JSON Schema export', () => {
   it.each(SCHEMA_NAMES)('exports %s', (name) => {
     const schema = jsonSchemaFor(name);
     expect(schema.$id).toContain(`${name}.schema.json`);
-    expect(schema.type).toBe('object');
+    // Files are objects, except the stats import, which is a list of readings.
+    expect(schema.type).toBe(name === 'stats-import' ? 'array' : 'object');
   });
 
   it('knows its schema names', () => {
