@@ -65,6 +65,7 @@ export default tseslint.config(
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/restrict-template-expressions': ['error', { allowNumber: true }],
       '@typescript-eslint/consistent-type-imports': 'error',
+      '@typescript-eslint/no-confusing-void-expression': ['error', { ignoreArrowShorthand: true }],
       'no-restricted-syntax': [
         'error',
         {
