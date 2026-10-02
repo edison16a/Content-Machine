@@ -1,6 +1,6 @@
 # 3. One self-contained dashboard file with relative media paths
 
-Status: accepted
+Status: accepted, extended by [ADR 5](0005-live-index.md)
 
 ## Context
 
