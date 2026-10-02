@@ -15,7 +15,16 @@ function reading(
   itemId: number,
   views: number,
 ): DashboardSnapshot {
-  return { at, platform, itemId, views, likes: views / 10, comments: 1, shares: 2 };
+  return {
+    at,
+    platform,
+    itemId,
+    itemKey: `p#${itemId}`,
+    views,
+    likes: views / 10,
+    comments: 1,
+    shares: 2,
+  };
 }
 
 const stats: DashboardStats = {
@@ -31,7 +40,7 @@ const stats: DashboardStats = {
 
 describe('statsTimeline', () => {
   it('sums the latest reading of every video at each moment', () => {
-    const points = statsTimeline(stats, { platform: 'all', itemId: 'all' });
+    const points = statsTimeline(stats, { platform: 'all', itemKey: 'all' });
     expect(points.map((p) => [p.at, p.views])).toEqual([
       ['2026-10-01T00:00:00Z', 1500],
       ['2026-10-02T00:00:00Z', 2800],
@@ -40,15 +49,15 @@ describe('statsTimeline', () => {
   });
 
   it('narrows to one platform and one video', () => {
-    expect(statsTimeline(stats, { platform: 'youtube', itemId: 'all' })).toHaveLength(1);
-    const one = statsTimeline(stats, { platform: 'tiktok', itemId: 2 });
+    expect(statsTimeline(stats, { platform: 'youtube', itemKey: 'all' })).toHaveLength(1);
+    const one = statsTimeline(stats, { platform: 'tiktok', itemKey: 'p#2' });
     expect(one.map((p) => p.views)).toEqual([300]);
   });
 
   it('gives zeros when nothing is recorded', () => {
     const empty = { ...stats, snapshots: [] };
-    expect(statsTimeline(empty, { platform: 'all', itemId: 'all' })).toEqual([]);
-    expect(statsTotals(empty, { platform: 'all', itemId: 'all' })).toEqual({
+    expect(statsTimeline(empty, { platform: 'all', itemKey: 'all' })).toEqual([]);
+    expect(statsTotals(empty, { platform: 'all', itemKey: 'all' })).toEqual({
       views: 0,
       income: 0,
       likes: 0,
@@ -58,7 +67,7 @@ describe('statsTimeline', () => {
   });
 
   it('totals the latest point', () => {
-    expect(statsTotals(stats, { platform: 'tiktok', itemId: 'all' })).toMatchObject({
+    expect(statsTotals(stats, { platform: 'tiktok', itemKey: 'all' })).toMatchObject({
       views: 2300,
       likes: 230,
       comments: 2,

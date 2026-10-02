@@ -59,6 +59,7 @@ describe('toDashboardData', () => {
   it('copies only what the page shows and drops empty handles', () => {
     const data = toDashboardData(schedule, extras);
     expect(data.handles).toEqual({ tiktok: 'me' });
+    expect(data.items[0]).toMatchObject({ id: 1, key: 'demo#1', project: 'demo' });
     expect(data.items[0]?.platforms.instagram.time).toBe('12:15');
     expect(data.repoUrl).toBe(extras.repoUrl);
   });

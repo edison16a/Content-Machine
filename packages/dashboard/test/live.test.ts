@@ -8,13 +8,16 @@ import {
   type DashboardItem,
 } from '@content-machine/dashboard';
 import { agoText, clockIn } from '../src/client/lib/format.js';
-import { chooseProject, projectFromHash } from '../src/client/lib/projects.js';
+import { ALL_PROJECTS } from '../src/client/lib/merge.js';
+import { dataFor, projectFromHash } from '../src/client/lib/projects.js';
 import { dueNow } from '../src/client/lib/selectors.js';
 
 function item(id: number, iso: string, status: 'queued' | 'scheduled' | 'posted'): DashboardItem {
   const entry = { time: iso.slice(11, 16), iso, status, note: '' };
   return {
     id,
+    key: `test#${id}`,
+    project: 'test',
     video: `videos/00${id}.mp4`,
     thumb: `thumbs/00${id}.jpg`,
     duration: 30,
@@ -90,11 +93,11 @@ describe('picking a project', () => {
     expect(projectFromHash('')).toBeUndefined();
   });
 
-  it('prefers the asked-for project, then the most recently updated', () => {
-    expect(chooseProject(projects, 'old')?.project).toBe('old');
-    expect(chooseProject(projects, 'gone')?.project).toBe('new');
-    expect(chooseProject(projects, undefined)?.project).toBe('new');
-    expect(chooseProject([], 'old')).toBeUndefined();
+  it('shows the named project, else every project together, else the placeholder', () => {
+    expect(dataFor(projects, 'old').project).toBe('old');
+    expect(dataFor(projects, 'gone').project).toBe(ALL_PROJECTS);
+    expect(dataFor(projects, ALL_PROJECTS).project).toBe(ALL_PROJECTS);
+    expect(dataFor([], 'old').project).toBe('');
   });
 });
 

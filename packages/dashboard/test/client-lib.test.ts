@@ -21,11 +21,10 @@ import {
   time12,
 } from '../src/client/lib/format.js';
 import {
-  byId,
+  inPostingOrder,
   countsFor,
   firstUnposted,
   initialWeek,
-  neighbor,
   nextUp,
   slotIndex,
   timePassed,
@@ -40,6 +39,8 @@ function item(
   const entry = { time: '12:00', iso: `${date}T12:00:00-07:00`, status, note: '' };
   return {
     id,
+    key: `demo#${id}`,
+    project: 'demo',
     video: `videos/${id}.mp4`,
     thumb: `thumbs/${id}.jpg`,
     duration: 30,
@@ -129,8 +130,12 @@ describe('selectors', () => {
       failed: 0,
       total: 3,
     });
-    expect(byId(items).map((i) => i.id)).toEqual([1, 2, 3]);
-    expect(slotIndex(items).get('2026-10-02#1')?.id).toBe(2);
+    expect(inPostingOrder(items).map((i) => i.id)).toEqual([1, 2, 3]);
+    expect(
+      slotIndex(items)
+        .get('2026-10-02#1')
+        ?.map((i) => i.id),
+    ).toEqual([2]);
   });
 
   it('finds the first unposted and the next post', () => {
@@ -140,12 +145,6 @@ describe('selectors', () => {
     expect(nextUp(items, 'tiktok', new Date('2026-10-20T00:00:00Z'))).toBeUndefined();
     expect(timePassed(items[0]!, 'tiktok', new Date('2026-10-03T00:00:00Z'))).toBe(true);
     expect(timePassed(items[2]!, 'tiktok', new Date('2026-10-30T00:00:00Z'))).toBe(false);
-  });
-
-  it('walks posting order', () => {
-    expect(neighbor(items, 1, 1)?.id).toBe(2);
-    expect(neighbor(items, 3, 1)).toBeUndefined();
-    expect(neighbor(items, 9, -1)).toBeUndefined();
   });
 
   it('opens on this week, the next item week, or the first item week', () => {
