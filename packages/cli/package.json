@@ -28,5 +28,6 @@
     "@content-machine/render": "^0.1.0",
     "commander": "^14.0.3",
     "zod": "^4.6.5"
-  }
+  },
+  "author": "Edison Law"
 }

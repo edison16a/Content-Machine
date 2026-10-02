@@ -21,5 +21,6 @@
   },
   "dependencies": {
     "@content-machine/core": "^0.1.0"
-  }
+  },
+  "author": "Edison Law"
 }
