@@ -138,7 +138,7 @@ The conversation from the screenshot at the top, as text:
 - **Post now.** A strip that appears only when a post is due, listing what to post right now.
 - **All tab.** The same calendar with every video's status on TikTok, Instagram and YouTube on each card.
 - **Statistics.** Total views, estimated income (to six decimals), likes, comments and shares per platform or all together, and a color-coded graph of each over time. Pick which graphs show, search for one video, or read it as a table. Ask Claude to "update my stats" and it reads each platform's analytics for you, or say "activate test data" to see it filled with 30 days of made-up numbers first.
-- **Every project in one place.** A picker appears when you have more than one.
+- **Every project on one calendar,** with statistics for all of them. Settings (the gear) can switch to a single project.
 - **Play every video with sound.** Click a card and it plays right away. Space, M, F and Esc work as you would expect.
 - **Stats at a glance** for the selected platform: posted, scheduled, queued, failed and what posts next.
 - **Platform tabs** with the official logos. Each tab shows that platform's times, statuses and caption.
