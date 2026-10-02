@@ -8,6 +8,8 @@ If the user asks to **update their stats** or how their videos are doing, follow
 
 If the user asks to **activate, turn on or try test data** (sample or fake stats), run `npm run cm -- testdata <project> on` for each project they mean (default: 30 days adding up to about $30,000; `--income 5k` or `--views 30k` to change it). "Turn off" or "remove test data" is `npm run cm -- testdata <project> off`. Test data replaces the real numbers on the dashboard while it is on and never changes them.
 
+If the user asks to **remove the demo projects** (or the demo), run `npm run cm -- demo --remove`. It deletes `projects/demo` and `projects/demo-clips` and frees the posting slots they held.
+
 The dashboard to show the user is always `index.html` at the repo root. It reads `projects/dashboard-data.js` and updates itself, so they can keep one tab open.
 
 If you are working on the codebase itself (fixing bugs, adding features), follow this instead:
