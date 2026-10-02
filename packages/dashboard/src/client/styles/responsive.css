@@ -1,0 +1,102 @@
+/* Below 1100px the seven columns get too tight: switch to a scrolling list of days. */
+@media (max-width: 1100px) {
+  .week {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+
+  .card-title {
+    font-size: 13.5px;
+  }
+}
+
+@media (max-width: 860px) {
+  .player {
+    padding: 0;
+  }
+
+  .player-panel {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    max-height: none;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .frame {
+    height: min(62vh, 640px);
+  }
+}
+
+@media (max-width: 640px) {
+  #app {
+    padding: var(--space-4);
+  }
+
+  .week {
+    grid-template-columns: 1fr;
+  }
+
+  .channel,
+  .button .label,
+  .meta div:last-child {
+    display: none;
+  }
+
+  .actions .button {
+    width: 36px;
+    padding: 0;
+  }
+
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tab-group {
+    overflow-x: auto;
+  }
+
+  .tab {
+    padding: 0 10px;
+  }
+
+  .weeknav {
+    justify-content: space-between;
+  }
+
+  .week-title {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .weeknav .button {
+    width: 36px;
+    padding: 0;
+  }
+
+  .divider {
+    display: none;
+  }
+
+  .chip {
+    min-width: 0;
+    flex: 1;
+    padding: 8px 10px;
+  }
+
+  .chips {
+    width: 100%;
+    flex-wrap: nowrap;
+  }
+
+  .chip-value {
+    font-size: 17px;
+  }
+
+  .chip-label {
+    font-size: 11px;
+  }
+}

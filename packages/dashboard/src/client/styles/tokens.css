@@ -1,0 +1,54 @@
+/* Design tokens. One accent (the Content Machine green) plus black, white and grays. */
+:root {
+  --accent: #35aa0e;
+  --accent-ink: #0b0b0b;
+  --accent-soft: rgb(53 170 14 / 0.1);
+  --bg: #ffffff;
+  --surface: #f6f6f6;
+  --surface-strong: #ececec;
+  --line: #e4e4e4;
+  --line-strong: #cfcfcf;
+  --text: #0b0b0b;
+  --muted: #6b6b6b;
+  --overlay: rgb(0 0 0 / 0.62);
+
+  --radius-sm: 8px;
+  --radius: 10px;
+  --radius-card: 14px;
+  --radius-lg: 18px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --font:
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --accent-soft: rgb(53 170 14 / 0.16);
+  --bg: #0b0b0b;
+  --surface: #151515;
+  --surface-strong: #1f1f1f;
+  --line: #262626;
+  --line-strong: #3a3a3a;
+  --text: #f3f3f3;
+  --muted: #9a9a9a;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --accent-soft: rgb(53 170 14 / 0.16);
+    --bg: #0b0b0b;
+    --surface: #151515;
+    --surface-strong: #1f1f1f;
+    --line: #262626;
+    --line-strong: #3a3a3a;
+    --text: #f3f3f3;
+    --muted: #9a9a9a;
+    color-scheme: dark;
+  }
+}

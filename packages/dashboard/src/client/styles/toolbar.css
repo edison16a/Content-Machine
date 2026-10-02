@@ -1,0 +1,96 @@
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--line);
+}
+
+.tab-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.tabs {
+  position: relative;
+  display: flex;
+  gap: var(--space-1);
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 48px;
+  padding: 0 14px;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.tab:hover,
+.tab.is-active {
+  color: var(--text);
+}
+
+.tab-logo {
+  width: auto;
+  height: 18px;
+}
+
+.count {
+  min-width: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--surface-strong);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  line-height: 20px;
+  text-align: center;
+}
+
+/* The only motion on the page: the underline glides to the active tab. */
+.tab-underline {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+  transition:
+    transform 0.25s ease,
+    width 0.25s ease;
+}
+
+.handle {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.weeknav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 6px 0;
+}
+
+.week-title {
+  min-width: 200px;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.divider {
+  width: 1px;
+  height: 20px;
+  margin: 0 var(--space-1);
+  background: var(--line);
+}
