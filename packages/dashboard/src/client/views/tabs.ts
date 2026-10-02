@@ -1,7 +1,6 @@
 import { DASHBOARD_PLATFORMS, PLATFORM_NAMES, type DashboardPlatform } from '../../shared/types.js';
 import type { Context } from '../context.js';
 import { h, img } from '../lib/dom.js';
-import { countsFor } from '../lib/selectors.js';
 
 /**
  * Platform tabs with their official logos. The accent underline slides to the
@@ -10,7 +9,6 @@ import { countsFor } from '../lib/selectors.js';
 export function renderTabs(ctx: Context): { element: HTMLElement; update: () => void } {
   const { data, store } = ctx;
   const underline = h('span', { class: 'tab-underline', 'aria-hidden': 'true' });
-  const handle = h('span', { class: 'handle' });
   const tabs = new Map<DashboardPlatform, HTMLButtonElement>();
   const list = h('div', { class: 'tabs', role: 'tablist', 'aria-label': 'Platform' });
   for (const platform of DASHBOARD_PLATFORMS) {
@@ -26,7 +24,6 @@ export function renderTabs(ctx: Context): { element: HTMLElement; update: () => 
       },
       logo === null ? null : img(logo, '', 'tab-logo'),
       h('span', { text: PLATFORM_NAMES[platform] }),
-      h('span', { class: 'count', text: String(countsFor(data.items, platform).total) }),
     );
     tabs.set(platform, tab);
     list.append(tab);
@@ -55,10 +52,8 @@ export function renderTabs(ctx: Context): { element: HTMLElement; update: () => 
       tab.tabIndex = selected ? 0 : -1;
       tab.classList.toggle('is-active', selected);
     }
-    const name = data.handles[current] ?? '';
-    handle.textContent = name === '' ? '' : name.startsWith('@') ? name : `@${name}`;
     place();
   };
   new ResizeObserver(place).observe(list);
-  return { element: h('div', { class: 'tab-group' }, list, handle), update };
+  return { element: list, update };
 }
