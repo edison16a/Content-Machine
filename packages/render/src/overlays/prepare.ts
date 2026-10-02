@@ -8,7 +8,7 @@ import { renderBandShadow } from './shadow.js';
 import { renderTitle } from './title.js';
 
 /** Bump when overlay drawing changes so cached PNGs are redrawn. */
-export const OVERLAY_VERSION = 'overlay-v2';
+export const OVERLAY_VERSION = 'overlay-v3';
 
 export interface PreparedOverlays {
   titlePath: string;

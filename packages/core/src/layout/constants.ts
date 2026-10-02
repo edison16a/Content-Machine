@@ -24,16 +24,18 @@ export const TITLE = {
 /** Reserved for two lines at the largest size, so the band never moves. */
 export const TITLE_BLOCK_HEIGHT = Math.ceil(2 * TITLE.maxSize * TITLE.linePitch);
 
-/** Credit line: platform logo, a gap, then the channel name. */
+/** Credit line: platform logo, a gap, then the channel name, centered. */
 export const CREDIT = {
   logoHeight: 56,
   logoGap: 16,
   fontSize: 52,
   minFontSize: 36,
   step: 2,
-  left: 60,
-  /** Right edge limit: keeps clear of the like and comment buttons. */
-  rightLimit: 864,
+  /**
+   * Widest the centered credit may get (168px to 912px on a 1080 canvas), so
+   * it stays clear of the like and comment buttons on the right.
+   */
+  maxWidth: 744,
   blockHeight: 64,
 } as const;
 

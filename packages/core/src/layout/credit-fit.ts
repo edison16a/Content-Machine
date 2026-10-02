@@ -12,8 +12,7 @@ export interface CreditFit {
  * to 36px, then trims characters and adds an ellipsis.
  */
 export function fitCredit(name: string, measure: Measure, logoWidth: number): CreditFit {
-  const available =
-    CREDIT.rightLimit - CREDIT.left - (logoWidth > 0 ? logoWidth + CREDIT.logoGap : 0);
+  const available = CREDIT.maxWidth - (logoWidth > 0 ? logoWidth + CREDIT.logoGap : 0);
   const sizes: number[] = [];
   for (let size: number = CREDIT.fontSize; size >= CREDIT.minFontSize; size -= CREDIT.step)
     sizes.push(size);

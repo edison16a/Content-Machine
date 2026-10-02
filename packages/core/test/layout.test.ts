@@ -30,7 +30,9 @@ describe('computeLayout', () => {
     expect(layout.title.y).toBeGreaterThanOrEqual(safeTop);
     expect(layout.credit.y + layout.credit.height).toBeLessThanOrEqual(safeBottom);
     expect(layout.title.y + layout.title.height).toBeLessThanOrEqual(layout.credit.y);
-    expect(layout.credit.x + layout.credit.width).toBeLessThanOrEqual(CREDIT.rightLimit);
+    expect(layout.credit.width).toBe(CREDIT.maxWidth);
+    expect(layout.credit.x + layout.credit.width / 2).toBe(540);
+    expect(layout.credit.x + layout.credit.width).toBeLessThanOrEqual(912);
     if (layout.kind === 'band') {
       expect(layout.title.y + layout.title.height).toBeLessThanOrEqual(layout.foreground.y);
       expect(layout.foreground.y + layout.foreground.height).toBeLessThanOrEqual(layout.credit.y);
@@ -144,7 +146,7 @@ describe('fitCredit', () => {
     const cut = fitCredit('An Extremely Long Channel Name That Will Never Fit Here', measure, 56);
     expect(cut).toMatchObject({ fontSize: 36, truncated: true });
     expect(cut.text.endsWith('…')).toBe(true);
-    expect(measure(cut.text, 36)).toBeLessThanOrEqual(864 - 60 - 56 - 16);
+    expect(measure(cut.text, 36)).toBeLessThanOrEqual(744 - 56 - 16);
     expect(fitCredit('No Logo', measure, 0).truncated).toBe(false);
   });
 });

@@ -16,7 +16,8 @@ export interface CreditImage {
 
 /**
  * Draws the credit line: source platform logo, a 16px gap, then the channel
- * name, left aligned at 60px and never past 864px (clear of the app's buttons).
+ * name. The pair is centered as one unit and is never wider than 744px, which
+ * keeps it clear of the app's buttons on the right.
  */
 export async function renderCredit(spec: CreditSpec): Promise<CreditImage> {
   const measure = canvasMeasure();
@@ -26,7 +27,10 @@ export async function renderCredit(spec: CreditSpec): Promise<CreditImage> {
   const canvas = createCanvas(DEFAULT_LAYOUT.canvasWidth, CREDIT.blockHeight + 2 * OVERLAY_PADDING);
   const ctx = canvas.getContext('2d');
   const middle = OVERLAY_PADDING + CREDIT.blockHeight / 2;
-  let x: number = CREDIT.left;
+  ctx.font = fontAt(fit.fontSize);
+  const logoSpace = logoWidth > 0 ? logoWidth + CREDIT.logoGap : 0;
+  const total = logoSpace + ctx.measureText(fit.text).width;
+  let x = (DEFAULT_LAYOUT.canvasWidth - total) / 2;
   const logo = spec.logo;
   if (logo !== undefined) {
     const y = middle - CREDIT.logoHeight / 2;

@@ -36,8 +36,14 @@ export function foregroundMaxHeight(c: LayoutConstants = DEFAULT_LAYOUT): number
   return c.safeBottom - c.safeTop - TITLE_BLOCK_HEIGHT - CREDIT.blockHeight - 2 * c.gap;
 }
 
-function creditRect(y: number): Rect {
-  return { x: CREDIT.left, y, width: CREDIT.rightLimit - CREDIT.left, height: CREDIT.blockHeight };
+/** The credit block is centered horizontally and never wider than CREDIT.maxWidth. */
+function creditRect(y: number, canvasWidth: number): Rect {
+  return {
+    x: (canvasWidth - CREDIT.maxWidth) / 2,
+    y,
+    width: CREDIT.maxWidth,
+    height: CREDIT.blockHeight,
+  };
 }
 
 /** Landscape and square-ish sources: centered band, clamped into the safe zone. */
@@ -65,7 +71,7 @@ function bandLayout(width: number, height: number, c: LayoutConstants): Layout {
       width: c.canvasWidth,
       height: TITLE_BLOCK_HEIGHT,
     },
-    credit: creditRect(fgY + fgHeight + c.gap),
+    credit: creditRect(fgY + fgHeight + c.gap, c.canvasWidth),
   };
 }
 
@@ -81,7 +87,7 @@ function coverLayout(c: LayoutConstants): Layout {
       width: c.canvasWidth,
       height: TITLE_BLOCK_HEIGHT,
     },
-    credit: creditRect(c.safeBottom - CREDIT.blockHeight),
+    credit: creditRect(c.safeBottom - CREDIT.blockHeight, c.canvasWidth),
   };
 }
 
