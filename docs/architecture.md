@@ -4,10 +4,10 @@ Content Machine is a TypeScript monorepo with four packages. Pure logic sits in 
 
 ```mermaid
 flowchart LR
-  cli["cli<br/>commands, config, project folders"]
+  cli["cli<br/>commands, config, project folders,<br/>yt-dlp downloads"]
   render["render<br/>ffmpeg, canvas overlays, QA"]
   dashboard["dashboard<br/>dashboard.html generator and client"]
-  core["core (pure)<br/>schemas, transcript, plan, snap,<br/>layout, schedule, status, errors"]
+  core["core (pure)<br/>schemas, transcript, fetch, plan, snap,<br/>layout, schedule, status, errors"]
   cli --> render
   cli --> dashboard
   cli --> core
@@ -29,6 +29,8 @@ flowchart LR
 | --------------------------------------------- | -------------------------------------------------------- |
 | A JSON file's shape                           | `packages/core/src/schemas`, then `npm run docs:schemas` |
 | How transcripts are read                      | `packages/core/src/transcript`                           |
+| Which captions and flags yt-dlp gets          | `packages/core/src/fetch`                                |
+| Running yt-dlp, saving downloaded captions    | `packages/cli/src/download`                              |
 | Plan rules (lengths, gaps, accents)           | `packages/core/src/plan`                                 |
 | How cuts move onto pauses, or autoplan        | `packages/core/src/snap`                                 |
 | Where things sit on the canvas, line breaking | `packages/core/src/layout`                               |
@@ -38,7 +40,8 @@ flowchart LR
 | The render loop, thumbnails, preview          | `packages/render/src/pipeline`                           |
 | Output checks and contact sheets              | `packages/render/src/qa`                                 |
 | What the dashboard shows or how it looks      | `packages/dashboard/src/client` (views, lib, styles)     |
-| How dashboard.html is assembled               | `packages/dashboard/src/generate`                        |
+| How dashboard.html and the live data are made | `packages/dashboard/src/generate`                        |
+| Which projects the live index lists           | `packages/cli/src/project/live-index.ts`                 |
 | A command or flag                             | `packages/cli/src/commands`                              |
 | Project folders, config loading, locks        | `packages/cli/src/project`, `config`, `io`               |
 | What Claude does at runtime                   | `playbook/`                                              |
@@ -46,9 +49,11 @@ flowchart LR
 ## Data flow
 
 1. `new` scaffolds `projects/<name>/` from `config/defaults.json` and `config/local.json`.
-2. Claude writes `plan/plan.json`. `render` probes sources, validates the plan, detects pauses, snaps cuts, draws overlays, runs ffmpeg once per item, writes thumbnails and `work/render-log.json`.
-3. `check` probes every output and writes QA frames and contact sheets.
-4. Claude writes `plan/metadata.json`. `schedule` assigns slots (pure), records them in `plan/schedule.json` and `schedule-ledger.json` under a lock, and regenerates `dashboard.html`.
-5. `mark` moves statuses through the state machine and appends to `plan/schedule-history.log`.
+2. `fetch` (optional) downloads a video and its captions from a link into `source/downloads/`.
+3. Claude writes `plan/plan.json`. `render` probes sources, validates the plan, detects pauses, snaps cuts, draws overlays, runs ffmpeg once per item, writes thumbnails and `work/render-log.json`.
+4. `check` probes every output and writes QA frames and contact sheets.
+5. Claude writes `plan/metadata.json`. `schedule` assigns slots (pure), records them in `plan/schedule.json` and `schedule-ledger.json` under a lock, and regenerates `dashboard.html`.
+6. `mark` moves statuses through the state machine and appends to `plan/schedule-history.log`.
+7. Every step that regenerates a `dashboard.html` also rewrites `projects/dashboard-data.js` from all projects. The open `index.html` rereads it and redraws.
 
 Decisions behind this design are recorded in [`docs/adr/`](adr/).
