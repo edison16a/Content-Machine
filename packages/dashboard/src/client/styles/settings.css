@@ -78,6 +78,12 @@
     inset 0 0 0 1px var(--line);
 }
 
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
 .admin-head {
   display: flex;
   align-items: center;
@@ -123,7 +129,7 @@
 
 .admin-row {
   display: grid;
-  grid-template-columns: 110px 1fr 44px 120px 110px;
+  grid-template-columns: 100px minmax(140px, 1fr) 40px 104px 86px;
   align-items: center;
   gap: var(--space-3);
   font-variant-numeric: tabular-nums;
@@ -175,6 +181,7 @@
 
 .admin-actions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
   gap: var(--space-2);
 }
@@ -199,5 +206,11 @@
 
   .admin-row .admin-num {
     display: none;
+  }
+
+  /* Both buttons full width, the main one on top, so neither is cut off. */
+  .admin-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
   }
 }

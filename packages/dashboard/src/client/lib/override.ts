@@ -127,3 +127,26 @@ export function startingOverride(saved: Override | undefined, stats: DashboardSt
     ? { views: 0, split: { tiktok: 50, instagram: 25, youtube: 25 } }
     : { views, split };
 }
+
+/**
+ * The points the statistics section shows: the recorded timeline for the
+ * selection, with custom numbers as the newest point when there are any.
+ * Custom numbers are totals for every video, so they apply only when the
+ * picker is on All videos. A picked video that is not on screen (it belongs
+ * to another project) counts as All videos.
+ */
+export function shownStats(
+  stats: DashboardStats,
+  itemKeys: readonly string[],
+  choice: { platform: View; statsItem: string },
+  override: Override | undefined,
+  now: Date,
+): { points: StatsPoint[]; custom: boolean } {
+  const itemKey = itemKeys.includes(choice.statsItem) ? choice.statsItem : 'all';
+  const points = statsTimeline(stats, { platform: choice.platform, itemKey });
+  if (override === undefined || itemKey !== 'all') return { points, custom: false };
+  return {
+    points: applyOverride(points, override, stats.rates, choice.platform, now),
+    custom: true,
+  };
+}

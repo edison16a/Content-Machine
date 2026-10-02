@@ -1,9 +1,9 @@
-import { ZERO_TOTALS, statsTimeline, type StatsPoint, type Totals } from '../../../shared/stats.js';
+import { ZERO_TOTALS, type StatsPoint, type Totals } from '../../../shared/stats.js';
 import type { Context } from '../../context.js';
 import { h, replace } from '../../lib/dom.js';
 import { clockIn } from '../../lib/format.js';
 import { icon } from '../../lib/icons.js';
-import { applyOverride, loadOverride } from '../../lib/override.js';
+import { loadOverride, shownStats } from '../../lib/override.js';
 import { lineChart } from './chart.js';
 import { emptyChart } from './empty-chart.js';
 import { statsControls } from './controls.js';
@@ -28,23 +28,17 @@ function totalsOf(points: readonly StatsPoint[]): Totals {
   return { views, income, likes, comments, shares };
 }
 
-/**
- * The points the section shows: the recorded timeline for the selection,
- * with any custom numbers from the admin panel as the newest point. Custom
- * numbers are totals for the whole selection, so they only apply when
- * looking at all videos, not one. `custom` says whether they were used.
- */
+/** The points on screen, with custom numbers from the admin panel when they apply. */
 function shownPoints(ctx: Context): { points: StatsPoint[]; custom: boolean } {
   const { platform, statsItem, project } = ctx.store.get();
-  const exists = statsItem === 'all' || ctx.data.items.some((item) => item.key === statsItem);
-  const itemKey = exists ? statsItem : 'all';
-  const points = statsTimeline(ctx.data.stats, { platform, itemKey });
-  const override = itemKey === 'all' ? loadOverride(project) : undefined;
-  if (override === undefined) return { points, custom: false };
-  return {
-    points: applyOverride(points, override, ctx.data.stats.rates, platform, ctx.now()),
-    custom: true,
-  };
+  const keys = ctx.data.items.map((item) => item.key);
+  return shownStats(
+    ctx.data.stats,
+    keys,
+    { platform, statsItem },
+    loadOverride(project),
+    ctx.now(),
+  );
 }
 
 /** One card per chosen metric: its name, its latest total and its graph. */
@@ -77,7 +71,8 @@ function chartCards(ctx: Context, points: readonly StatsPoint[]): HTMLElement {
 /**
  * Statistics under the calendar: totals for the selected tab, then a graph
  * per metric over time. Numbers come from plan/stats.json, which the stats
- * command fills in. The Refresh button rereads it right away; the page also
+ * command fills in, or from custom numbers set in the admin panel (kept in
+ * this browser). The Refresh button rereads it right away; the page also
  * rereads it every minute and whenever you switch tabs.
  */
 export function renderStatsSection(ctx: Context): StatsSection {
