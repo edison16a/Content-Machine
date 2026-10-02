@@ -40,12 +40,35 @@ function shares(count: number, rng: () => number, spread: number): number[] {
 }
 
 /**
+ * One video's daily views on one platform, as relative sizes, for `length`
+ * days from launch. Short videos get most of their views in the first days
+ * and then a long tail; on top of that every day varies, and now and then
+ * something picks the video up again: a bump several times the usual day
+ * that fades over a day or three. Real analytics look like this, and it
+ * keeps the graphs from being smooth curves.
+ */
+function dailyViews(length: number, rng: () => number): number[] {
+  const launch = 1.5 + rng() * 4;
+  const tail = 0.04 + rng() * 0.08;
+  const days: number[] = [];
+  let boost = 0;
+  for (let t = 0; t < length; t += 1) {
+    if (t > 0 && rng() < 0.12) boost += 1.5 + rng() * 4.5;
+    const base = Math.exp(-t / launch) + tail;
+    days.push(base * (0.7 + rng() * 0.6) * (1 + boost));
+    boost *= 0.35 + rng() * 0.3;
+  }
+  return days;
+}
+
+/**
  * Made-up readings for trying the dashboard: one per day for `days` days,
  * for every video on every platform. The target is split randomly across
  * platforms and videos; a dollar target is turned into views with each
- * platform's rate. Each video starts on a random day and its views climb fast, then
- * level off, the way short videos usually do. Likes, comments and shares
- * follow as typical shares of views.
+ * platform's rate. Each video starts on a random day; its daily views are
+ * biggest at launch and fade into a long tail, with noise and the odd viral
+ * bump (see `dailyViews`). Likes, comments and shares follow as typical
+ * shares of views.
  */
 export function sampleSnapshots(input: SampleInput): StatsSnapshot[] {
   const rng = random(input.seed);
@@ -55,8 +78,6 @@ export function sampleSnapshots(input: SampleInput): StatsSnapshot[] {
   const snapshots: StatsSnapshot[] = [];
   for (const [i, item] of input.items.entries()) {
     const start = Math.floor(rng() * input.days * 0.6);
-    const tau = 2 + rng() * 6;
-    const span = input.days - 1 - start;
     const engagement = {
       likes: 0.04 + rng() * 0.06,
       comments: 0.002 + rng() * 0.006,
@@ -66,11 +87,12 @@ export function sampleSnapshots(input: SampleInput): StatsSnapshot[] {
       const rate = input.rates[platform] > 0 ? input.rates[platform] : FALLBACK_RATE;
       const share = input.target.amount * (platformShares[p] ?? 0) * (itemShares[i] ?? 0);
       const finalViews = input.target.kind === 'views' ? share : (share / rate) * 1000;
+      const daily = dailyViews(input.days - start, rng);
+      const sum = daily.reduce((a, b) => a + b, 0);
+      let running = 0;
       for (let day = start; day < input.days; day += 1) {
-        const t = day - start;
-        const grown =
-          span === 0 ? 1 : (1 - Math.exp(-(t + 1) / tau)) / (1 - Math.exp(-(span + 1) / tau));
-        const views = Math.round(finalViews * grown);
+        running += daily[day - start] ?? 0;
+        const views = Math.round((finalViews * running) / sum);
         snapshots.push({
           at: new Date(end - (input.days - 1 - day) * DAY_MS).toISOString(),
           platform,
