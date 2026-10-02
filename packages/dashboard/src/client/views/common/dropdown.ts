@@ -35,19 +35,29 @@ function optionMark(option: DropdownOption): HTMLElement {
  * Escape or a click outside to close. `update` refreshes it in place, so a
  * background refresh never closes it while someone is using it.
  */
-export function dropdown(spec: DropdownSpec): { element: HTMLElement; update: () => void } {
+export function dropdown(spec: DropdownSpec): {
+  element: HTMLElement;
+  /** The button that opens it, for a visible <label for> or to move focus to it. */
+  button: HTMLButtonElement;
+  update: () => void;
+} {
   dropdownCount += 1;
   const listId = `dropdown-${dropdownCount}`;
-  const label = h('span', { class: 'picker-label' });
+  // Screen readers hear the control's name and its current value together:
+  // "Project, All projects".
+  const name = h('span', { class: 'visually-hidden', id: `${listId}-name`, text: spec.name });
+  const label = h('span', { class: 'picker-label', id: `${listId}-value` });
   const button = h(
     'button',
     {
       type: 'button',
       class: 'picker-button',
+      id: `${listId}-button`,
       'aria-haspopup': 'listbox',
       'aria-expanded': 'false',
-      'aria-label': spec.name,
+      'aria-labelledby': `${listId}-name ${listId}-value`,
     },
+    name,
     label,
     icon('chevronDown', 'icon picker-chevron'),
   );
@@ -190,5 +200,5 @@ export function dropdown(spec: DropdownSpec): { element: HTMLElement; update: ()
     if (!panel.hidden) renderList();
   };
   update();
-  return { element, update };
+  return { element, button, update };
 }

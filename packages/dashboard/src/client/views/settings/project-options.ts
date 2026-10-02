@@ -15,7 +15,7 @@ export function projectOptions(projects: readonly DashboardData[]): DropdownOpti
     {
       value: ALL_PROJECTS,
       label: 'All projects',
-      detail: `Automatic: ${count(videos, 'video')} from ${count(projects.length, 'project')} on one calendar`,
+      detail: `${count(videos, 'video')}, ${count(projects.length, 'project')}`,
       mark: 'grid',
     },
     ...[...projects]

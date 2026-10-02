@@ -43,15 +43,21 @@ export function renderSettings(
     selected: () => ctx.store.get().project,
     onPick: actions.pickProject,
   });
+  // A project's own dashboard.html holds one project, so there is nothing
+  // to choose there and the picker is left out.
   const panel = h(
     'div',
     { class: 'settings-panel', role: 'dialog', 'aria-label': 'Settings', hidden: true },
     h('h2', { class: 'settings-title', text: 'Settings' }),
-    h('label', { class: 'settings-label', text: 'Project' }),
-    projectPicker.element,
+    ctx.live
+      ? h('label', { class: 'settings-label', for: projectPicker.button.id, text: 'Project' })
+      : null,
+    ctx.live ? projectPicker.element : null,
     h('p', {
       class: 'settings-note',
-      text: 'All projects shows every video on one calendar, with statistics for all of them.',
+      text: ctx.live
+        ? 'All projects shows every video on one calendar, with statistics for all of them.'
+        : 'This page shows one project. Open index.html to see every project together.',
     }),
   );
   const element = h('div', { class: 'settings' }, button, panel);
@@ -71,7 +77,14 @@ export function renderSettings(
     button.setAttribute('aria-expanded', 'true');
     document.addEventListener('pointerdown', outside);
     document.addEventListener('keydown', keys);
+    if (ctx.live) projectPicker.button.focus();
   };
+  // Tabbing out of the panel closes it. A missing relatedTarget means a
+  // click on something that cannot take focus, like the note, so it stays.
+  element.addEventListener('focusout', (event) => {
+    const next = event.relatedTarget;
+    if (!panel.hidden && next instanceof Node && !element.contains(next)) close();
+  });
   function close(): void {
     panel.hidden = true;
     button.setAttribute('aria-expanded', 'false');
