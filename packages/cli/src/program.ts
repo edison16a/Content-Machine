@@ -5,6 +5,7 @@ import { registerCheck } from './commands/check.js';
 import { registerDashboard } from './commands/dashboard.js';
 import { registerDemo } from './commands/demo.js';
 import { registerDoctor } from './commands/doctor.js';
+import { registerFetch } from './commands/fetch.js';
 import { registerMark } from './commands/mark.js';
 import { registerNew } from './commands/new.js';
 import { registerPreview } from './commands/preview.js';
@@ -34,6 +35,7 @@ export function buildProgram(
   for (const register of [
     registerDoctor,
     registerNew,
+    registerFetch,
     registerTranscript,
     registerRender,
     registerPreview,
