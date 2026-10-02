@@ -4,6 +4,8 @@ import { loadChoice, save } from './lib/storage.js';
 export type Theme = 'light' | 'dark';
 
 export interface State {
+  /** Which project is on screen. Only the live index has more than one. */
+  project: string;
   platform: DashboardPlatform;
   /** First day of the visible week, "YYYY-MM-DD". */
   weekStart: string;
@@ -21,8 +23,9 @@ export interface Store {
 }
 
 /** Restores remembered preferences. Dark mode is the default. */
-export function initialState(weekStart: string): State {
+export function initialState(weekStart: string, project: string): State {
   return {
+    project,
     platform: loadChoice<DashboardPlatform>('platform', DASHBOARD_PLATFORMS, 'tiktok'),
     weekStart,
     theme: loadChoice<Theme>('theme', ['light', 'dark'], 'dark'),
@@ -41,6 +44,7 @@ export function createStore(initial: State): Store {
       state = { ...state, ...patch };
       if (patch.platform !== undefined) save('platform', state.platform);
       if (patch.theme !== undefined) save('theme', state.theme);
+      if (patch.project !== undefined) save('project', state.project);
       for (const listener of listeners) listener(state, previous);
     },
     subscribe(listener) {

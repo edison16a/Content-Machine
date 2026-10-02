@@ -6,7 +6,7 @@ import { firstUnposted } from '../lib/selectors.js';
 
 /** Previous and next week, the week's dates, Today and First unposted. */
 export function renderWeekNav(ctx: Context): { element: HTMLElement; update: () => void } {
-  const { data, store } = ctx;
+  const { store } = ctx;
   const title = h('h2', { class: 'week-title', 'aria-live': 'polite' });
   const shift = (days: number): void =>
     store.set({ weekStart: addDays(store.get().weekStart, days) });
@@ -29,9 +29,9 @@ export function renderWeekNav(ctx: Context): { element: HTMLElement; update: () 
   const text = (label: string, onClick: () => void): HTMLButtonElement =>
     h('button', { type: 'button', class: 'text-button', on: { click: onClick } }, label);
   const jump = (): void => {
-    const item = firstUnposted(data.items, store.get().platform);
+    const item = firstUnposted(ctx.data.items, store.get().platform);
     if (item !== undefined)
-      store.set({ weekStart: startOfWeek(item.date, data.weekStartsOn), focusId: item.id });
+      store.set({ weekStart: startOfWeek(item.date, ctx.data.weekStartsOn), focusId: item.id });
   };
   const element = h(
     'div',
@@ -40,7 +40,9 @@ export function renderWeekNav(ctx: Context): { element: HTMLElement; update: () 
     title,
     arrow('Next week', 'chevronRight', 7),
     text('Today', () =>
-      store.set({ weekStart: startOfWeek(todayIn(data.timezone, ctx.now()), data.weekStartsOn) }),
+      store.set({
+        weekStart: startOfWeek(todayIn(ctx.data.timezone, ctx.now()), ctx.data.weekStartsOn),
+      }),
     ),
     text('First unposted', jump),
   );

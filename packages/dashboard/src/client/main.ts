@@ -1,86 +1,38 @@
-import { DATA_ELEMENT_ID, type DashboardData } from '../shared/types.js';
-import type { Context } from './context.js';
-import { addDays, todayIn } from './lib/dates.js';
-import { h } from './lib/dom.js';
-import { stopPreview } from './lib/hover-preview.js';
-import { initialWeek } from './lib/selectors.js';
-import { createStore, initialState, type State } from './state.js';
-import { renderHeader } from './views/header.js';
-import { renderOverview } from './views/overview.js';
-import { createPlayer } from './views/player.js';
-import { renderTabs } from './views/tabs.js';
-import { renderWeek } from './views/week.js';
-import { renderWeekNav } from './views/weeknav.js';
+import { mountApp, type App } from './app.js';
+import { replace } from './lib/dom.js';
+import { readSource, watchLive } from './lib/live-source.js';
+import { chooseProject, projectFromHash } from './lib/projects.js';
+import { load } from './lib/storage.js';
+import { waitingState } from './views/waiting.js';
 
-function readData(): DashboardData {
-  const node = document.getElementById(DATA_ELEMENT_ID);
-  return JSON.parse(node?.textContent ?? '{}') as DashboardData;
-}
-
-/** Builds the page once, then re-renders only the parts a state change touches. */
+/**
+ * Starts the dashboard. A project's dashboard.html shows its baked in data.
+ * The root index.html shows every project and keeps rereading the data
+ * file, so it can stay open forever and still be current.
+ */
 function boot(): void {
-  const data = readData();
-  const now = (): Date => new Date();
-  const store = createStore(
-    initialState(initialWeek(data.items, todayIn(data.timezone, now()), data.weekStartsOn)),
-  );
-  const ctx: Context = {
-    data,
-    store,
-    now,
-    openItem: (item, opener) => player.open(item, opener),
-    playerOpen: () => player.isOpen(),
-  };
-  const player = createPlayer(ctx);
-  const header = renderHeader(ctx);
-  const tabs = renderTabs(ctx);
-  const nav = renderWeekNav(ctx);
-  const overview = h('section', { class: 'overview' });
-  const week = h('main', { class: 'week', id: 'week' });
-  const app = document.getElementById('app') ?? document.body;
-  app.replaceChildren(
-    header.element,
-    overview,
-    h('nav', { class: 'toolbar', 'aria-label': 'Calendar controls' }, tabs.element, nav.element),
-    week,
-    player.element,
-  );
+  const source = readSource();
+  const live = source.kind === 'live';
+  const root = document.getElementById('app') ?? document.body;
+  const wanted = projectFromHash(window.location.hash) ?? load('project') ?? undefined;
+  let app: App | undefined;
 
-  const render = (state: State, previous?: State): void => {
-    if (previous === undefined || state.theme !== previous.theme) header.update();
-    if (previous === undefined || state.platform !== previous.platform) {
-      tabs.update();
-      renderOverview(ctx, overview);
-      player.refresh();
-    }
-    if (
-      previous === undefined ||
-      state.platform !== previous.platform ||
-      state.weekStart !== previous.weekStart
-    ) {
-      stopPreview();
-      nav.update();
-      renderWeek(ctx, week);
-    }
-    if (state.focusId !== null) {
-      const card = week.querySelector<HTMLElement>(`.card[data-id="${state.focusId}"]`);
-      card?.scrollIntoView({ block: 'nearest' });
-      card?.focus();
-      store.set({ focusId: null });
-    }
-  };
-  store.subscribe(render);
-  render(store.get());
-
-  document.addEventListener('keydown', (event) => {
-    if (player.isOpen() || event.altKey || event.ctrlKey || event.metaKey) return;
-    if (event.target instanceof HTMLElement && event.target.closest('[role="tablist"]') !== null)
+  const start = (projects: typeof source.projects): void => {
+    const first = chooseProject(projects, wanted);
+    if (first === undefined) {
+      replace(root, waitingState());
       return;
-    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-      event.preventDefault();
-      store.set({ weekStart: addDays(store.get().weekStart, event.key === 'ArrowLeft' ? -7 : 7) });
     }
-  });
+    app = mountApp(root, first, { live, projects });
+  };
+
+  start(source.projects);
+  if (live) {
+    watchLive((projects) => {
+      if (app === undefined) start(projects);
+      else app.setProjects(projects);
+    });
+  }
   document.documentElement.classList.add('is-ready');
 }
 

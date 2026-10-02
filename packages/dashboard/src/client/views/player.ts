@@ -114,7 +114,16 @@ export function createPlayer(ctx: Context): Player {
       current = undefined;
     },
     refresh() {
-      if (current !== undefined) replace(details, playerDetails(ctx, current));
+      if (current === undefined) return;
+      // New data may have changed this video's status or captions, or removed it.
+      const id = current.id;
+      const latest = ctx.data.items.find((item) => item.id === id);
+      if (latest === undefined) {
+        api.close();
+        return;
+      }
+      current = latest;
+      replace(details, playerDetails(ctx, current));
     },
   };
   bindKeys(api, video);
