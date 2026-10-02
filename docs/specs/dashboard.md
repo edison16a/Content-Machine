@@ -21,15 +21,15 @@ The dashboard is the one place to see what posts when, and to watch every video 
 
 All, TikTok, Instagram and YouTube. The choice is remembered.
 
-- **All** shows a grid of every video in posting order (poster, title, id and date) with each platform's logo and status dot, instead of the week calendar. The stats panel and week navigation are hidden there. The live strip lists due posts from every platform, each labeled with its platform.
+- **All** shows the same calendar, but each card carries all three platforms' logos with a status dot each, and slot times are the base times (the platforms post minutes apart). The stats panel is hidden there. The live strip lists due posts from every platform, each labeled with its platform.
 - **A platform** shows the stats panel, the week calendar and that platform's times, statuses and captions.
 
 ## Statistics
 
 A section under the calendar (or the video grid) on every tab, scoped to that tab's platform (or all of them):
 
-- **Heading** with when it was last read and a **Refresh** button. The data is reread when you press it, every minute on its own, and whenever you switch tabs.
-- **One row of filters:** a chip per metric (Views, Income, Likes, Comments, Shares) choosing which graphs show (remembered), a select for one video or all, and a Show table toggle.
+- **Heading** with when it was last read and a **Refresh** button. The data is reread when you press it, every minute on its own, and whenever you switch tabs. While a press is rereading, the button's icon spins and its label reads "Refreshing" for at least 0.7 seconds (a gentle pulse instead when the system asks for reduced motion).
+- **One row of filters:** a chip per metric (Views, Income, Likes, Comments, Shares) choosing which graphs show (remembered), a video picker, and a Show table toggle. The picker is a button that opens a panel with a search box and a list of every video (poster, number, title). Typing filters by every word in any order; "#3" matches video 3 exactly. Arrow keys move, Enter picks, Escape or a click outside closes. Background refreshes update the list without closing it.
 - **Tiles:** views with an eye icon, estimated income in dollars to six decimals, likes, comments and shares.
 - **Graphs:** one card per chosen metric, two per row (one on narrow screens), each a 2px line with a 10% wash, round y-axis ticks from zero, the first and last date, and an end dot. Hovering or arrow keys move a crosshair that snaps to the nearest reading, with a tooltip showing the value and time.
 - **Table view:** every reading time, newest first, with a column per chosen metric.
@@ -53,7 +53,7 @@ A panel above the stats, redrawn every 15 seconds (and the whole page when the d
 
 ## Design rules
 
-Minimal and calm: one accent color (the Content Machine green, `#35AA0E`) plus black, white and grays. Rounded corners (14px cards), no gradients, no decorative effects, no outlined buttons: buttons are solid and borderless, icon buttons are bare until hovered. The only motion is the tab underline sliding to the active tab. **Dark mode is the default.** A light mode toggle sits in the header and the choice is remembered.
+Minimal and calm: one accent color (the Content Machine green, `#35AA0E`) plus black, white and grays. Rounded corners (14px cards), no gradients, no decorative effects, no outlined buttons: buttons are solid and borderless, icon buttons are bare until hovered. The only motion is the tab underline sliding to the active tab and the Refresh icon spinning while it works. **Dark mode is the default.** A light mode toggle sits in the header and the choice is remembered.
 
 Text is kept to what you need to act. No project names, channel links, handles or counts on the tabs.
 
@@ -62,8 +62,10 @@ Text is kept to what you need to act. No project names, channel links, handles o
 - **Header:** the Content Machine logo and name, a theme toggle and a "View on GitHub" button with the GitHub mark.
 - **Stats:** one panel for the selected platform with Videos, Posted, Scheduled, Queued and Failed as large numbers, "Next up" on the right, and a progress bar underneath (posted in the accent, scheduled in a lighter accent).
 - **Platform tabs:** TikTok, Instagram and YouTube with their official logos. The selected tab switches every time, status and caption to that platform. The choice is remembered.
-- **Week navigation:** previous and next week, the week's range ("Sep 28 to Oct 4, 2026"), Today and First unposted. The first day of the week comes from the project. Left and right arrow keys change weeks when no video is open.
-- **Week grid:** seven day columns with weekday, date and a Today marker. Each day shows its slots with their time for the selected platform. A slot holds a card (9:16 poster with a play mark, the post title and its status) or an empty dashed placeholder.
+- **Calendar navigation:** a Day, Week and Month switch (Week by default, the choice is remembered), previous and next by one day, week or month, the period's title ("Friday, October 2, 2026", "Sep 28 to Oct 4, 2026" or "October 2026"), Today and First unposted. The first day of the week comes from the project. Left and right arrow keys step through periods when no video is open and no control has focus.
+- **Week view:** seven day columns with weekday, date and a Today marker. Each day shows its slots with their time for the selected platform. A slot holds a card (9:16 poster with a play mark, the post title and its status) or an empty dashed placeholder.
+- **Day view:** one day, wide, with its slots side by side and large posters.
+- **Month view:** a grid of whole weeks with weekday headings. Each day shows its videos as small posters with status dots (three on the All tab); days from the neighbouring months are dimmed and today is outlined. Clicking a date opens that day in the day view; clicking a poster plays it.
 - **Hover preview:** on devices that can hover, resting on a card for 400ms plays a silent preview in place. One at a time.
 
 Statuses are a small dot and one word: queued is a gray dot, scheduled an accent ring, posted a solid accent dot, failed a bold word with a light dot.
@@ -72,7 +74,7 @@ Statuses are a small dot and one word: queued is a gray dot, scheduled an accent
 
 Clicking a card opens a modal with a real `<video>` (`controls`, `playsinline`, poster, `preload="metadata"`) that starts playing **with sound** right away; the click is the user gesture. If the browser still blocks it, a large play button appears.
 
-Beside the video, kept short: the post title, when it posts on the selected platform, that platform's caption with a copy button, all three platforms with logo, time and status, and two actions: "Download" and "Copy file path" (an absolute path worked out from the page's location).
+Beside the video, kept short: the post title, when it posts on the selected platform, that platform's caption with a copy button, all three platforms with logo, time and status, and two actions: "Open folder" and "Copy file path" (an absolute path worked out from the page's location). Open folder opens the folder holding the video in a new tab; browsers do not let a page open Finder or Explorer, so this is the closest a page can get, and the copied path pastes straight into Finder's Go to Folder.
 
 - There is no previous or next button and no auto-play: a video plays once and stops.
 - **Keyboard:** Space play or pause, M mute, F fullscreen, Esc close.
