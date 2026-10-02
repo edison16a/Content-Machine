@@ -63,15 +63,18 @@ async function markStatuses(ctx: CommandContext, schedule: Schedule): Promise<vo
  * account (so you can see the scheduler keep their slots apart).
  */
 export async function runDemo(ctx: CommandContext, flags: DemoFlags): Promise<void> {
+  // Internal steps report nothing; only the final summary is printed.
+  const silent = { write: () => true };
   const quiet: CommandContext = {
     ...ctx,
-    out: new Output({ ...ctx.out.options, json: false, quiet: true }),
+    out: new Output({ ...ctx.out.options, json: false, quiet: true }, silent),
   };
   const loud: CommandContext = { ...ctx, out: new Output({ ...ctx.out.options, json: false }) };
   if (flags.clean === true)
     for (const name of DEMO_PROJECTS) await ctx.fs.remove(projectPaths(ctx.root, name).root);
   await clearDemoLedger(ctx);
-  const render = { concurrency: 1, snapWindow: 2, preset: flags.preset };
+  // ffmpeg keeps about two cores busy per item, so two at once roughly halves the demo time.
+  const render = { concurrency: 2, snapWindow: 2, preset: flags.preset };
 
   const demo = await prepareDemoProject(
     ctx,
@@ -88,7 +91,9 @@ export async function runDemo(ctx: CommandContext, flags: DemoFlags): Promise<vo
   const scheduled = await runSchedule(shiftedContext(quiet, PAST_DAYS + 1), 'demo', {});
   await markStatuses(quiet, scheduled.schedule);
   // Browser tests and screenshots freeze the page clock at this moment.
-  await writeJson(ctx.fs, join(demo.workDir, 'demo-clock.json'), { now: ctx.clock.now().toISOString() });
+  await writeJson(ctx.fs, join(demo.workDir, 'demo-clock.json'), {
+    now: ctx.clock.now().toISOString(),
+  });
 
   const clips = await prepareDemoProject(
     ctx,
