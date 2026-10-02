@@ -4,6 +4,21 @@ All notable changes to this project are documented here. The format is based on 
 
 ## [Unreleased]
 
+### Added
+
+- `fetch` command: give it a video link and it downloads the video and its best captions with yt-dlp into `source/downloads/`, names the captions `<video>.transcript.txt`, and fills in the project's channel and platform.
+- `index.html` at the repo root: one live dashboard for every project. It rereads `projects/dashboard-data.js` every few seconds, so it can stay open for good, and reloads itself after an upgrade.
+- A live strip on the dashboard with the clock in the project's time zone, posts due right now and a countdown to the next post.
+- `playbook/setup.md`, which Claude follows when you say "Set up Content Machine" on a fresh clone.
+- `doctor` reports yt-dlp, and two new error codes: `E_YTDLP_MISSING` and `E_DOWNLOAD_FAILED`.
+
+### Changed
+
+- `render`, `check`, `preview`, `transcript` and `autoplan` find source videos in `source/downloads/` as well as `source/`.
+- `open` opens the live `index.html`, and its project argument is now optional.
+- The playbook accepts a video link at intake instead of a file and a pasted transcript.
+- The "no downloader" rule is replaced by "download only through `fetch`". The footage permission rule is unchanged.
+
 ## [0.1.0] - 2026-10-02
 
 ### Added
