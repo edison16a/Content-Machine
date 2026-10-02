@@ -9,7 +9,7 @@ const DATA = join(ROOT, 'projects', 'dashboard-data.js');
 const INDEX = `file://${join(ROOT, 'index.html')}#project=demo`;
 
 test.describe('live index.html', () => {
-  test('shows every project with a live strip', async ({ page }) => {
+  test('shows every project, with no clock strip when nothing is due', async ({ page }) => {
     const errors: string[] = [];
     page.on('pageerror', (error) => errors.push(error.message));
     await page.clock.setFixedTime(await demoNow());
@@ -17,7 +17,7 @@ test.describe('live index.html', () => {
     await expect(page.locator('.week .day').first()).toBeVisible();
     await expect(page.locator('.project-select')).toHaveValue('demo');
     await expect(page.locator('.project-select option')).toHaveCount(2);
-    await expect(page.locator('.now-time')).toBeVisible();
+    await expect(page.locator('.now')).toBeHidden();
     await expect(page.locator('.card img').first()).toHaveAttribute('src', /^projects\/demo\//);
     await page.selectOption('.project-select', 'demo-clips');
     await expect(page.locator('.card')).toHaveCount(3);

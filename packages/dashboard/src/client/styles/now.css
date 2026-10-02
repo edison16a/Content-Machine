@@ -1,34 +1,9 @@
-/* The live strip: the clock, what to post now and what posts next. */
+/* The "Post now" strip: only there when a post is due. */
 .now {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: var(--space-4) var(--space-5);
-  align-items: start;
   margin-top: var(--space-5);
   padding: 16px 24px;
   border-radius: var(--radius-lg);
   background: var(--panel);
-}
-
-.now-clock {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 180px;
-}
-
-.now-time {
-  font-size: 28px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-}
-
-.now-date {
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 600;
 }
 
 .now h3 {
@@ -98,10 +73,4 @@
   color: var(--text);
   font: inherit;
   font-weight: 600;
-}
-
-@media (max-width: 860px) {
-  .now {
-    grid-template-columns: 1fr;
-  }
 }

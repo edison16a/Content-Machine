@@ -5,9 +5,8 @@ import {
   type DashboardPlatform,
 } from '../../shared/types.js';
 import type { Context } from '../context.js';
-import { longDate, todayIn } from '../lib/dates.js';
 import { h, replace } from '../lib/dom.js';
-import { agoText, clockIn, itemLabel, time12 } from '../lib/format.js';
+import { agoText, itemLabel, time12 } from '../lib/format.js';
 import { dueNow } from '../lib/selectors.js';
 
 /** A row you can click to open that video in the player. */
@@ -29,40 +28,30 @@ function dueText(item: DashboardItem, platform: DashboardPlatform, now: Date, na
 }
 
 /**
- * The live strip above the calendar: the time where the project posts and
- * what to post right now if anything is overdue. It is redrawn every few
- * seconds, so it is always current. On the All tab the due list covers every
- * platform.
+ * The "Post now" strip above the calendar: queued posts whose time has come.
+ * It is redrawn every few seconds and hides itself when nothing is due. On
+ * the All tab it covers every platform.
  */
 export function renderNow(ctx: Context, container: HTMLElement): void {
   const view = ctx.store.get().platform;
-  const { items, timezone } = ctx.data;
+  const { items } = ctx.data;
   const now = ctx.now();
   const platforms = view === 'all' ? DASHBOARD_PLATFORMS : [view];
   const due = platforms.flatMap((platform) =>
     dueNow(items, platform, now).map((item) => ({ item, platform })),
   );
-  const zone = timezone.replace(/_/g, ' ');
-
-  const clock = h(
-    'div',
-    { class: 'now-clock' },
-    h('span', { class: 'now-time', text: clockIn(timezone, now) }),
-    h('span', { class: 'now-date', text: `${longDate(todayIn(timezone, now))}, ${zone}` }),
-  );
-
   const heading = view === 'all' ? 'Post now' : `Post on ${PLATFORM_NAMES[view]} now`;
-  const duePanel =
-    due.length === 0
-      ? null
-      : h(
-          'div',
-          { class: 'now-due', role: 'status' },
-          h('h3', { text: heading }),
-          ...due.map(({ item, platform }) =>
-            itemButton(ctx, item, dueText(item, platform, now, view === 'all')),
-          ),
-        );
-
-  replace(container, clock, duePanel);
+  container.hidden = due.length === 0;
+  if (due.length === 0) return;
+  replace(
+    container,
+    h(
+      'div',
+      { class: 'now-due', role: 'status' },
+      h('h3', { text: heading }),
+      ...due.map(({ item, platform }) =>
+        itemButton(ctx, item, dueText(item, platform, now, view === 'all')),
+      ),
+    ),
+  );
 }
