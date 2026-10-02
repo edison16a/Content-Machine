@@ -5,39 +5,60 @@ import { h } from './lib/dom.js';
 import { stopPreview } from './lib/hover-preview.js';
 import { chooseProject } from './lib/projects.js';
 import { initialWeek } from './lib/selectors.js';
-import { createStore, initialState, type State } from './state.js';
+import { createStore, initialState, type State, type Store } from './state.js';
 import { renderHeader } from './views/header.js';
 import { renderNow } from './views/now.js';
 import { renderOverview } from './views/overview.js';
 import { createPlayer } from './views/player.js';
 import { renderProjectPicker } from './views/project-picker.js';
+import { renderStatsSection } from './views/stats/section.js';
 import { renderTabs } from './views/tabs.js';
+import { renderVideos } from './views/videos.js';
 import { renderWeek } from './views/week.js';
 import { renderWeekNav } from './views/weeknav.js';
 
-/** How often the clock, countdowns and "post now" list are redrawn. */
+/** How often the clock and the "post now" list are redrawn. */
 const TICK_MS = 15_000;
+/** How often the statistics reread their numbers on their own. */
+const STATS_MS = 60_000;
 
 export interface App {
   /** Swaps in fresh data from the live file without losing your place. */
   setProjects: (projects: DashboardData[]) => void;
 }
 
+export interface MountOptions {
+  live: boolean;
+  projects: DashboardData[];
+  refresh: () => Promise<void>;
+}
+
 const weekFor = (data: DashboardData, now: Date): string =>
   initialWeek(data.items, todayIn(data.timezone, now), data.weekStartsOn);
 
+/** Left and right arrows page through weeks, unless a control wants the keys. */
+function bindWeekKeys(store: Store, playerOpen: () => boolean): void {
+  document.addEventListener('keydown', (event) => {
+    if (playerOpen() || event.altKey || event.ctrlKey || event.metaKey) return;
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+    const target = event.target instanceof HTMLElement ? event.target : null;
+    if (target !== null && target.closest('[role="tablist"], select, .chart-frame') !== null)
+      return;
+    if (store.get().platform === 'all') return;
+    event.preventDefault();
+    store.set({ weekStart: addDays(store.get().weekStart, event.key === 'ArrowLeft' ? -7 : 7) });
+  });
+}
+
 /** Builds the page once, then re-renders only the parts a state change touches. */
-export function mountApp(
-  root: HTMLElement,
-  first: DashboardData,
-  options: { live: boolean; projects: DashboardData[] },
-): App {
+export function mountApp(root: HTMLElement, first: DashboardData, options: MountOptions): App {
   let projects = options.projects;
   const now = (): Date => new Date();
   const store = createStore(initialState(weekFor(first, now()), first.project));
   const ctx: Context = {
     data: first,
     live: options.live,
+    refresh: options.refresh,
     store,
     now,
     openItem: (item, opener) => player.open(item, opener),
@@ -47,6 +68,7 @@ export function mountApp(
   const header = renderHeader(ctx);
   const tabs = renderTabs(ctx);
   const nav = renderWeekNav(ctx);
+  const stats = renderStatsSection(ctx);
   const picker = renderProjectPicker(ctx, (name) => {
     const next = projects.find((project) => project.project === name);
     if (next !== undefined) store.set({ project: name, weekStart: weekFor(next, now()) });
@@ -54,6 +76,7 @@ export function mountApp(
   const live = h('section', { class: 'now', 'aria-label': 'Right now' });
   const overview = h('section', { class: 'overview' });
   const week = h('main', { class: 'week', id: 'week' });
+  const videos = h('main', { class: 'videos' });
   root.replaceChildren(
     header.element,
     picker.element,
@@ -61,16 +84,27 @@ export function mountApp(
     overview,
     h('nav', { class: 'toolbar', 'aria-label': 'Calendar controls' }, tabs.element, nav.element),
     week,
+    videos,
+    stats.element,
     player.element,
   );
 
-  /** Everything that depends on the data, redrawn together. */
+  /** Everything that depends on the data or the tab, redrawn together. */
   const renderData = (): void => {
     stopPreview();
+    const all = store.get().platform === 'all';
+    overview.hidden = all;
+    nav.element.hidden = all;
+    week.hidden = all;
+    videos.hidden = !all;
     renderNow(ctx, live);
-    renderOverview(ctx, overview);
-    nav.update();
-    renderWeek(ctx, week);
+    if (all) renderVideos(ctx, videos);
+    else {
+      renderOverview(ctx, overview);
+      nav.update();
+      renderWeek(ctx, week);
+    }
+    stats.update();
     player.refresh();
   };
 
@@ -84,10 +118,14 @@ export function mountApp(
     } else if (previous === undefined || state.platform !== previous.platform) {
       tabs.update();
       renderData();
+      // Switching tabs is a natural moment to check for new numbers.
+      if (previous !== undefined) void ctx.refresh().then(stats.update);
     } else if (state.weekStart !== previous.weekStart) {
       stopPreview();
       nav.update();
       renderWeek(ctx, week);
+    } else if (state.metrics !== previous.metrics || state.statsItem !== previous.statsItem) {
+      stats.update();
     }
     if (state.focusId !== null) {
       const card = week.querySelector<HTMLElement>(`.card[data-id="${state.focusId}"]`);
@@ -109,20 +147,11 @@ export function mountApp(
       renderData();
     } else {
       renderNow(ctx, live);
-      renderOverview(ctx, overview);
+      if (store.get().platform !== 'all') renderOverview(ctx, overview);
     }
   }, TICK_MS);
-
-  document.addEventListener('keydown', (event) => {
-    if (player.isOpen() || event.altKey || event.ctrlKey || event.metaKey) return;
-    if (event.target instanceof HTMLElement && event.target.closest('[role="tablist"]') !== null)
-      return;
-    if (event.target instanceof HTMLSelectElement) return;
-    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-      event.preventDefault();
-      store.set({ weekStart: addDays(store.get().weekStart, event.key === 'ArrowLeft' ? -7 : 7) });
-    }
-  });
+  window.setInterval(() => void ctx.refresh().then(stats.update), STATS_MS);
+  bindWeekKeys(store, () => player.isOpen());
 
   return {
     setProjects(next) {
