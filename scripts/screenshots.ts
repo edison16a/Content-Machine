@@ -5,9 +5,10 @@
  * which is clearly labeled as illustrative.
  */
 import { spawnSync } from 'node:child_process';
-import { mkdir, readFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createCanvas, loadImage } from '@napi-rs/canvas';
 import { chromium, type Browser, type Page } from '@playwright/test';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
@@ -31,7 +32,8 @@ interface Shot {
   file: string;
   width: number;
   height: number;
-  scheme: 'light' | 'dark';
+  /** The dashboard is dark by default; light shots set the remembered choice first. */
+  theme: 'light' | 'dark';
   scale?: number;
   prepare?: (page: Page) => Promise<void>;
 }
@@ -53,19 +55,21 @@ async function openPlayer(page: Page): Promise<void> {
 }
 
 const SHOTS: Shot[] = [
-  { file: 'dashboard-week.png', width: 1440, height: 900, scheme: 'light' },
-  { file: 'dashboard-dark.png', width: 1440, height: 900, scheme: 'dark' },
-  { file: 'dashboard-player.png', width: 1440, height: 900, scheme: 'light', prepare: openPlayer },
-  { file: 'dashboard-mobile.png', width: 390, height: 844, scheme: 'light', scale: 2 },
+  { file: 'dashboard-week.png', width: 1440, height: 900, theme: 'dark' },
+  { file: 'dashboard-player.png', width: 1440, height: 900, theme: 'dark', prepare: openPlayer },
+  { file: 'dashboard-light.png', width: 1440, height: 900, theme: 'light' },
+  { file: 'dashboard-mobile.png', width: 390, height: 844, theme: 'dark', scale: 2 },
 ];
 
 async function capture(browser: Browser, shot: Shot): Promise<void> {
   const context = await browser.newContext({
     viewport: { width: shot.width, height: shot.height },
-    colorScheme: shot.scheme,
     deviceScaleFactor: shot.scale ?? 1,
   });
   const page = await context.newPage();
+  await page.addInitScript((theme) => {
+    localStorage.setItem('content-machine:theme', theme);
+  }, shot.theme);
   await page.clock.setFixedTime(new Date(NOW));
   await page.goto(`file://${join(DEMO, 'dashboard.html')}`);
   await page.locator('.week .card').first().waitFor();
@@ -78,13 +82,40 @@ async function capture(browser: Browser, shot: Shot): Promise<void> {
 
 async function chatImage(browser: Browser): Promise<void> {
   const page = await browser.newPage({
-    viewport: { width: 880, height: 600 },
+    viewport: { width: 920, height: 600 },
     deviceScaleFactor: 1.5,
   });
   await page.goto(`file://${join(ROOT, 'docs', 'mock', 'claude-usage.html')}`);
-  await page.locator('.chat').screenshot({ path: join(OUT, 'claude-usage.png') });
+  await page.locator('.window').screenshot({ path: join(OUT, 'claude-usage.png') });
   await page.close();
   console.log('docs/images/claude-usage.png');
+}
+
+/**
+ * A strip of real frames from the rendered demo videos: two Sequential parts
+ * and two clips, with rounded corners on a transparent background.
+ */
+async function videoStrip(): Promise<void> {
+  const frames = [
+    join(DEMO, 'work', 'qa', 'frames', '002_mid.jpg'),
+    join(DEMO, 'work', 'qa', 'frames', '014_mid.jpg'),
+    join(ROOT, 'projects', 'demo-clips', 'work', 'qa', 'frames', '001_mid.jpg'),
+    join(ROOT, 'projects', 'demo-clips', 'work', 'qa', 'frames', '002_mid.jpg'),
+  ];
+  const [w, h, gap, radius] = [300, 533, 24, 22];
+  const canvas = createCanvas(frames.length * w + (frames.length - 1) * gap, h);
+  const ctx = canvas.getContext('2d');
+  for (const [index, path] of frames.entries()) {
+    const x = index * (w + gap);
+    ctx.save();
+    ctx.beginPath();
+    ctx.roundRect(x, 0, w, h, radius);
+    ctx.clip();
+    ctx.drawImage(await loadImage(await readFile(path)), x, 0, w, h);
+    ctx.restore();
+  }
+  await writeFile(join(OUT, 'videos.png'), await canvas.encode('png'));
+  console.log('docs/images/videos.png');
 }
 
 await ensureDemo();
@@ -93,6 +124,7 @@ const browser = await chromium.launch({ channel: 'chrome' });
 try {
   for (const shot of SHOTS) await capture(browser, shot);
   await chatImage(browser);
+  await videoStrip();
 } finally {
   await browser.close();
 }
