@@ -1,0 +1,10 @@
+# Step 6: posting through the browser (only after the user says "upload", or when continuing)
+
+- Use the tabs where the user is already logged in. Never ask for or type a password or 2FA code. On a login wall, captcha or verification, stop and hand control back.
+- Confirm the account shown on screen matches the saved handle before every submit. Never change account settings, bio or profile info.
+- The files to upload are in `projects/<project>/videos/` (`001.mp4`, `002.mp4` and so on), always in id order.
+- **Verify first.** For items whose status is `scheduled` and whose time has passed, check the platform's content list (TikTok Studio, YouTube Studio, Instagram's content page) and run `npm run cm -- mark` to set `posted` if it's live, or `failed` with a note if not.
+- **Then upload in id order, one platform at a time.** For each `queued` item, enter it in that platform's own scheduler at the exact date and time in `plan/schedule.json` for that platform, with the post title and that platform's caption. After each success run `npm run cm -- mark <project> --item <id> --platform <platform> --status scheduled`. If an entry fails, mark it `failed` with a note and continue.
+- **Scheduling windows differ** (see `docs/platform-scheduling.md`). TikTok's desktop scheduler needs a Business or Creator account and only accepts dates about 10 days ahead. Instagram needs a professional account and Meta Business Suite on desktop. YouTube Studio has no published limit on how far ahead, but each upload counts toward a daily upload limit even if scheduled for later: upload no more than about 6 to 9 YouTube videos in a session. When a scheduler refuses a date, stop that platform, leave the rest `queued`, don't work around it, and tell the user the date to come back. Never post a video immediately to get around a limit.
+- If you can't attach a file through the file picker, ask the user to choose the file in the dialog, then continue with the title, caption and schedule yourself.
+- If uploads get flaky, stop and tell the user; the dashboard and `plan/schedule.json` hold the full plan, so nothing is lost.
