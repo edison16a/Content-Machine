@@ -1,10 +1,18 @@
 # Troubleshooting
 
-Run `npm run cm -- doctor` first. It checks Node, ffmpeg, libx264, the font, Chrome and logos, and prints a fix for anything missing.
+Run `npm run cm -- doctor` first. It checks Node, ffmpeg, libx264, the font, yt-dlp, Chrome and logos, and prints a fix for anything missing.
 
 ## ffmpeg is missing (`E_FFMPEG_MISSING`, exit 4)
 
 Install it: on macOS `brew install ffmpeg`; on Debian or Ubuntu `sudo apt install ffmpeg`. Both builds include ffprobe and libx264. Open a new terminal afterwards so it is on your `PATH`.
+
+## yt-dlp is missing (`E_YTDLP_MISSING`, exit 4)
+
+Only `fetch` needs it. On macOS `brew install yt-dlp`, on Windows `winget install yt-dlp.yt-dlp`, on Linux `pipx install yt-dlp`. Open a new terminal afterwards.
+
+## A link will not download (`E_DOWNLOAD_FAILED`, exit 5)
+
+The hint shows yt-dlp's own error. Most often the site changed and yt-dlp needs an update: `yt-dlp -U`, `brew upgrade yt-dlp` or `pipx upgrade yt-dlp`. Private, age restricted or members only videos cannot be fetched; download them yourself and copy the file into `source/`. On YouTube, "HTTP Error 403" from a cloud server or VPN usually means YouTube is blocking that network.
 
 ## The font does not load (`E_FONT_MISSING`, exit 4)
 
@@ -21,6 +29,12 @@ Every problem is listed with its item id. In Sequential mode each part must star
 ## A rendered item changed (`E_PLAN_LOCKED`)
 
 Rendered items are frozen so published videos never change silently. Append a new item with a new id instead. To re-render on purpose: `npm run cm -- render <project> --only <id> --force`.
+
+## index.html says "not set up yet" or stays empty
+
+- "Not set up yet" means the client has not been built. Run `npm install` (or say "set up Content Machine" to Claude), then refresh the page once.
+- "No projects yet" means there is no project or `projects/dashboard-data.js` has not been written. Any command that touches a project writes it, for example `npm run cm -- dashboard <project>`. The page picks it up within a few seconds.
+- `index.html` must stay at the top of the Content Machine folder: it loads the client, the data and the videos by relative path from there.
 
 ## A video will not play in the dashboard
 
