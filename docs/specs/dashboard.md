@@ -15,7 +15,27 @@ The dashboard is the one place to see what posts when, and to watch every video 
 - The page polls by adding a fresh `<script src="projects/dashboard-data.js?v=…">`. Browsers block `fetch()` on `file://`, but script tags still load, so no server is needed. When the projects differ from last time the page redraws in place: the selected tab, week and open video stay put. If the open video was removed, the player closes.
 - `build` is a fingerprint of the client bundle. When it changes between polls, the page reloads once to pick up the new client (guarded so it cannot loop).
 - **Projects:** a picker appears above the live strip when there are two or more. The choice is remembered. `#project=<name>` in the address picks one. Otherwise the project updated most recently is shown.
-- With no projects yet it shows "No projects yet" and keeps polling, so the calendar appears on its own.
+- With no projects yet it still shows the whole dashboard: an empty calendar saying "No projects yet", zeroed statistics and the platform tabs. It keeps polling, so everything fills in on its own.
+
+## Tabs
+
+All, TikTok, Instagram and YouTube. The choice is remembered.
+
+- **All** shows a grid of every video in posting order (poster, title, id and date) with each platform's logo and status dot, instead of the week calendar. The stats panel and week navigation are hidden there. The live strip lists due posts from every platform, each labeled with its platform.
+- **A platform** shows the stats panel, the week calendar and that platform's times, statuses and captions.
+
+## Statistics
+
+A section under the calendar (or the video grid) on every tab, scoped to that tab's platform (or all of them):
+
+- **Heading** with when it was last read and a **Refresh** button. The data is reread when you press it, every minute on its own, and whenever you switch tabs.
+- **One row of filters:** a chip per metric (Views, Income, Likes, Comments, Shares) choosing which graphs show (remembered), a select for one video or all, and a Show table toggle.
+- **Tiles:** views with an eye icon, estimated income in dollars to six decimals, likes, comments and shares.
+- **Graphs:** one card per chosen metric, two per row (one on narrow screens), each a 2px line with a 10% wash, round y-axis ticks from zero, the first and last date, and an end dot. Hovering or arrow keys move a crosshair that snaps to the nearest reading, with a tooltip showing the value and time.
+- **Table view:** every reading time, newest first, with a column per chosen metric.
+- With nothing recorded, the tiles show zeros and a note says to ask Claude to update the stats.
+
+Each metric has one color, used for its icon, chip key and graph only: views blue, income green, likes pink, comments amber, shares violet, with separate steps for light and dark. The set was run through a color blind and contrast check on the panel color in both themes. Values and labels stay in the text colors.
 
 ## The live strip
 
