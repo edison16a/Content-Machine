@@ -1,9 +1,8 @@
 import { STAT_METRICS, type StatMetric } from '../../../shared/types.js';
 import type { Context } from '../../context.js';
 import { h } from '../../lib/dom.js';
-import { itemLabel } from '../../lib/format.js';
-import { byId } from '../../lib/selectors.js';
 import { METRICS } from './metrics.js';
+import { videoPicker } from './video-picker.js';
 
 /** A toggle per metric. The short colored line matches that metric's graph. */
 function metricChips(ctx: Context): HTMLElement {
@@ -33,52 +32,34 @@ function metricChips(ctx: Context): HTMLElement {
   );
 }
 
-/** Narrows every number below it to one video, or shows them all. */
-function videoSelect(ctx: Context): HTMLSelectElement {
-  const current = ctx.store.get().statsItem;
-  const select = h(
-    'select',
-    {
-      class: 'stats-video',
-      'aria-label': 'Video',
-      on: {
-        change: () =>
-          ctx.store.set({ statsItem: select.value === 'all' ? 'all' : Number(select.value) }),
-      },
-    },
-    h('option', { value: 'all', text: 'All videos' }),
-    ...byId(ctx.data.items).map((item) =>
-      h('option', { value: item.id, text: `${itemLabel(item.id)} ${item.postTitle}` }),
-    ),
-  );
-  select.value = String(current);
-  return select;
-}
-
 /**
  * The one row of filters above the numbers: which graphs, which video, and
- * whether to read it as a table. They scope everything below them.
+ * whether to read it as a table. They scope everything below them. The row
+ * is built once and updated in place, so the video picker stays open
+ * through background refreshes.
  */
 export function statsControls(
   ctx: Context,
-  table: boolean,
-  onTable: (table: boolean) => void,
-): HTMLElement {
-  return h(
+  onTable: () => void,
+): { element: HTMLElement; update: (table: boolean) => void } {
+  const chips = h('div', { class: 'chips-slot' });
+  const picker = videoPicker(ctx);
+  const tableButton = h('button', {
+    type: 'button',
+    class: 'text-button',
+    on: { click: onTable },
+  });
+  const element = h(
     'div',
     { class: 'stats-controls' },
-    metricChips(ctx),
-    h(
-      'div',
-      { class: 'stats-controls-end' },
-      videoSelect(ctx),
-      h('button', {
-        type: 'button',
-        class: 'text-button',
-        'aria-pressed': String(table),
-        text: table ? 'Show graphs' : 'Show table',
-        on: { click: () => onTable(!table) },
-      }),
-    ),
+    chips,
+    h('div', { class: 'stats-controls-end' }, picker.element, tableButton),
   );
+  const update = (table: boolean): void => {
+    chips.replaceChildren(metricChips(ctx));
+    picker.update();
+    tableButton.textContent = table ? 'Show graphs' : 'Show table';
+    tableButton.setAttribute('aria-pressed', String(table));
+  };
+  return { element, update };
 }

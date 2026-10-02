@@ -40,7 +40,8 @@
   margin-top: 48px;
 }
 
-.stats-body {
+.stats-body,
+.stats-results {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
@@ -60,10 +61,6 @@
   align-items: center;
   gap: var(--space-2);
   min-width: 0;
-}
-
-.stats-video {
-  max-width: 280px;
 }
 
 .chips {
@@ -309,10 +306,18 @@
     width: 100%;
   }
 
-  /* A select is as wide as its longest option unless told it may shrink. */
-  .stats-video {
+  .picker {
     flex: 1;
     min-width: 0;
-    max-width: none;
+  }
+
+  .picker-button {
+    width: 100%;
+  }
+
+  .picker-panel {
+    right: auto;
+    left: 0;
+    width: min(360px, calc(100vw - 32px));
   }
 }

@@ -42,7 +42,10 @@ function bindWeekKeys(store: Store, playerOpen: () => boolean): void {
     if (playerOpen() || event.altKey || event.ctrlKey || event.metaKey) return;
     if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
     const target = event.target instanceof HTMLElement ? event.target : null;
-    if (target !== null && target.closest('[role="tablist"], select, .chart-frame') !== null)
+    if (
+      target !== null &&
+      target.closest('[role="tablist"], select, input, .chart-frame, .picker') !== null
+    )
       return;
     event.preventDefault();
     const { calendar, anchor } = store.get();
