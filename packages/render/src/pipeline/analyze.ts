@@ -10,10 +10,13 @@ import {
 } from '@content-machine/core';
 import { probeMedia, type MediaInfo } from '../probe/ffprobe.js';
 import { detectSilences } from '../probe/silence.js';
+import { locateSource } from './sources.js';
 
 export interface SourceAnalysis {
   media: Record<string, MediaInfo>;
   durations: Record<string, number>;
+  /** Where each source file was found, in source/ or source/downloads/. */
+  paths: Record<string, string>;
   warnings: string[];
 }
 
@@ -25,10 +28,11 @@ export async function analyzeSources(
 ): Promise<SourceAnalysis> {
   const media: Record<string, MediaInfo> = {};
   const durations: Record<string, number> = {};
+  const paths: Record<string, string> = {};
   const warnings: string[] = [];
   for (const source of plan.sources) {
-    const path = join(sourceDir, source.file);
-    if (!(await deps.fs.exists(path))) continue;
+    const path = await locateSource(deps.fs, sourceDir, source.file);
+    if (path === undefined) continue;
     const info = await probeMedia(deps.runner, path);
     if (info.videoStreams === 0) {
       throw new UserError('E_PLAN_INVALID', `${source.file} has no video stream.`, {
@@ -39,8 +43,9 @@ export async function analyzeSources(
       warnings.push(`${source.file} has no audio; its videos get a silent track.`);
     media[source.file] = info;
     durations[source.file] = info.duration;
+    paths[source.file] = path;
   }
-  return { media, durations, warnings };
+  return { media, durations, paths, warnings };
 }
 
 /** Detects pauses in each source (cached) and snaps every cut onto them. */
@@ -48,16 +53,17 @@ export async function snapToAudio(
   deps: { fs: FileSystem; runner: ProcessRunner },
   plan: Plan,
   analysis: SourceAnalysis,
-  dirs: { sourceDir: string; workDir: string },
+  dirs: { workDir: string },
   window: number,
 ): Promise<SnappedItem[]> {
   const silences: Record<string, Silence[]> = {};
   for (const source of plan.sources) {
     const info = analysis.media[source.file];
-    if (info === undefined || info.audioStreams === 0) continue;
+    const path = analysis.paths[source.file];
+    if (info === undefined || path === undefined || info.audioStreams === 0) continue;
     silences[source.file] = await detectSilences(
       deps,
-      join(dirs.sourceDir, source.file),
+      path,
       info.duration,
       join(dirs.workDir, 'cache'),
     );

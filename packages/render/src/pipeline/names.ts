@@ -1,14 +1,17 @@
 import { join } from 'node:path';
+import { DOWNLOADS_FOLDER } from './sources.js';
 
 /** Output base name for an item id: 1 becomes "001". */
 export function outputBase(id: number): string {
   return String(id).padStart(3, '0');
 }
 
-/** The four project folders the render pipeline reads and writes. */
+/** The project folders the render pipeline reads and writes. */
 export interface ProjectDirs {
   root: string;
   sourceDir: string;
+  /** source/downloads, where fetched videos land. */
+  downloadsDir: string;
   videosDir: string;
   thumbsDir: string;
   workDir: string;
@@ -19,6 +22,7 @@ export function projectDirs(root: string): ProjectDirs {
   return {
     root,
     sourceDir: join(root, 'source'),
+    downloadsDir: join(root, 'source', DOWNLOADS_FOLDER),
     videosDir: join(root, 'videos'),
     thumbsDir: join(root, 'thumbs'),
     workDir: join(root, 'work'),

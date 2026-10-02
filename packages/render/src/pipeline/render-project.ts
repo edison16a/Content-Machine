@@ -74,12 +74,17 @@ async function processItem(
   const planItem = ctx.plan.items.find((p) => p.id === item.id);
   const text = planItem === undefined ? undefined : resolveItemText(ctx.plan, planItem);
   const info = ctx.analysis.media[item.source];
-  if (planItem === undefined || text === undefined || info === undefined) {
+  const sourcePath = ctx.analysis.paths[item.source];
+  if (
+    planItem === undefined ||
+    text === undefined ||
+    info === undefined ||
+    sourcePath === undefined
+  ) {
     return {
       outcome: { id: item.id, status: 'failed', item, error: 'Item text or source is missing.' },
     };
   }
-  const sourcePath = join(ctx.dirs.sourceDir, item.source);
   const stat = await ctx.deps.fs.stat(sourcePath);
   const planKey = planKeyFor(ctx.plan, planItem);
   const print = fingerprint({

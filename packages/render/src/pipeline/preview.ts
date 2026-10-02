@@ -12,6 +12,7 @@ import { runTool } from '../ffmpeg/run.js';
 import { probeMedia } from '../probe/ffprobe.js';
 import type { ProjectDirs } from './names.js';
 import { prepareJob } from './render-item.js';
+import { locateSource } from './sources.js';
 
 /**
  * Renders a single frame of one item, with its overlays, to work/preview.png.
@@ -36,7 +37,12 @@ export async function previewItem(
       `Item ${input.itemId} is not in the plan or has no title.`,
     );
   }
-  const sourcePath = join(input.dirs.sourceDir, item.source);
+  const sourcePath = await locateSource(deps.fs, input.dirs.sourceDir, item.source);
+  if (sourcePath === undefined) {
+    throw new UserError('E_FILE_NOT_FOUND', `${item.source} is not in the source folder.`, {
+      hint: 'Copy the video into source/, or fetch it again from its link.',
+    });
+  }
   const source = await probeMedia(deps.runner, sourcePath);
   const outPath = join(input.dirs.workDir, 'preview.png');
   await deps.fs.mkdirp(input.dirs.workDir);
