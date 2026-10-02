@@ -17,7 +17,7 @@ export async function writeDashboard(
   project: Project,
   schedule: Schedule | undefined,
 ): Promise<string> {
-  const data = await projectDashboardData(ctx, project, schedule);
+  const data = await projectDashboardData(ctx, paths, project, schedule);
   const html = renderDashboardHtml({ data, ...(await loadClientBundle()) });
   await ctx.fs.writeText(paths.dashboard, html);
   await writeLiveIndex(ctx);

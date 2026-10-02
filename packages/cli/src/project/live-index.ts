@@ -42,7 +42,12 @@ export async function writeLiveIndex(ctx: CommandContext): Promise<string> {
     const paths = projectPaths(ctx.root, name);
     try {
       const project = await loadProject(ctx.fs, paths);
-      const data = await projectDashboardData(ctx, project, await loadSchedule(ctx.fs, paths));
+      const data = await projectDashboardData(
+        ctx,
+        paths,
+        project,
+        await loadSchedule(ctx.fs, paths),
+      );
       projects.push(withMediaBase(data, `projects/${name}/`));
     } catch (error) {
       const reason = error instanceof Error ? error.message : String(error);

@@ -9,6 +9,7 @@ import {
   projectSchema,
   renderLogSchema,
   scheduleSchema,
+  statsSchema,
   type FileSystem,
   type Ledger,
   type Metadata,
@@ -16,6 +17,7 @@ import {
   type Project,
   type RenderLog,
   type Schedule,
+  type Stats,
 } from '@content-machine/core';
 import type { ProjectPaths } from './paths.js';
 
@@ -69,6 +71,9 @@ export const loadMetadata = (fs: FileSystem, paths: ProjectPaths): Promise<Metad
 
 export const loadSchedule = (fs: FileSystem, paths: ProjectPaths): Promise<Schedule | undefined> =>
   readOptional(fs, scheduleSchema, paths.schedule, 'plan/schedule.json');
+
+export const loadStats = (fs: FileSystem, paths: ProjectPaths): Promise<Stats | undefined> =>
+  readOptional(fs, statsSchema, paths.stats, 'plan/stats.json');
 
 export const loadRenderLog = (
   fs: FileSystem,
