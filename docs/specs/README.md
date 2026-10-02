@@ -4,6 +4,7 @@ Each document describes one part of the engine exactly as it is implemented. Whe
 
 | Spec                                     | Code                                                             |
 | ---------------------------------------- | ---------------------------------------------------------------- |
+| [Fetching from a link](fetch.md)         | `packages/core/src/fetch`, `packages/cli/src/download`           |
 | [Transcript parsing](transcript.md)      | `packages/core/src/transcript`                                   |
 | [Plan format and validation](plan.md)    | `packages/core/src/plan`, `packages/core/src/schemas/plan.ts`    |
 | [Snapping cuts to audio](snapping.md)    | `packages/core/src/snap`, `packages/render/src/probe/silence.ts` |
