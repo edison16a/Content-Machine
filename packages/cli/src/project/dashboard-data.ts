@@ -7,7 +7,7 @@ import {
 } from '@content-machine/dashboard';
 import { BRAND_DIR, logoDataUri } from '@content-machine/render';
 import type { CommandContext } from '../context.js';
-import { loadStats } from './files.js';
+import { loadShownStats } from './files.js';
 import type { ProjectPaths } from './paths.js';
 
 const logoCache = new Map<string, Promise<DashboardLogos>>();
@@ -57,7 +57,7 @@ export async function projectDashboardData(
     logos = dashboardLogos(ctx, project.sourcePlatform);
     logoCache.set(project.sourcePlatform, logos);
   }
-  const stats = await loadStats(ctx.fs, paths);
+  const stats = await loadShownStats(ctx.fs, paths);
   return toDashboardData(data, {
     sourcePlatform: project.sourcePlatform,
     logos: await logos,
@@ -65,7 +65,8 @@ export async function projectDashboardData(
     stats: {
       rates: { ...config.rates },
       // The platform's own title is only kept on disk for checking matches.
-      snapshots: (stats?.snapshots ?? []).map((snapshot) => ({
+      sample: stats.sample,
+      snapshots: stats.snapshots.map((snapshot) => ({
         at: snapshot.at,
         platform: snapshot.platform,
         itemId: snapshot.itemId,

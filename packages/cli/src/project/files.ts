@@ -75,6 +75,25 @@ export const loadSchedule = (fs: FileSystem, paths: ProjectPaths): Promise<Sched
 export const loadStats = (fs: FileSystem, paths: ProjectPaths): Promise<Stats | undefined> =>
   readOptional(fs, statsSchema, paths.stats, 'plan/stats.json');
 
+export const loadSampleStats = (fs: FileSystem, paths: ProjectPaths): Promise<Stats | undefined> =>
+  readOptional(fs, statsSchema, paths.sampleStats, 'plan/sample-stats.json');
+
+/**
+ * Every reading the dashboard should show: the real ones, plus test data
+ * while it is switched on. `sample` says whether test data is mixed in, so
+ * the page and the CLI can say so.
+ */
+export async function loadShownStats(
+  fs: FileSystem,
+  paths: ProjectPaths,
+): Promise<{ snapshots: Stats['snapshots']; sample: boolean }> {
+  const [real, sample] = await Promise.all([loadStats(fs, paths), loadSampleStats(fs, paths)]);
+  return {
+    snapshots: [...(real?.snapshots ?? []), ...(sample?.snapshots ?? [])],
+    sample: sample !== undefined,
+  };
+}
+
 export const loadRenderLog = (
   fs: FileSystem,
   paths: ProjectPaths,

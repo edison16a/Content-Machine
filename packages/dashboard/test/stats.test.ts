@@ -20,6 +20,7 @@ function reading(
 
 const stats: DashboardStats = {
   rates: { tiktok: 0.4, instagram: 0.01, youtube: 0.07 },
+  sample: false,
   snapshots: [
     reading('2026-10-02T00:00:00Z', 'tiktok', 1, 2000),
     reading('2026-10-01T00:00:00Z', 'tiktok', 1, 1000),

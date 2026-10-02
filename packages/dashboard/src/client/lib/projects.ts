@@ -48,6 +48,6 @@ export function placeholderProject(): DashboardData {
       source: null,
     },
     repoUrl: 'https://github.com/edison16a/Content-Machine',
-    stats: { rates: { tiktok: 0, instagram: 0, youtube: 0 }, snapshots: [] },
+    stats: { rates: { tiktok: 0, instagram: 0, youtube: 0 }, snapshots: [], sample: false },
   };
 }

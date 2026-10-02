@@ -14,6 +14,8 @@ export interface ProjectPaths extends ProjectDirs {
   schedule: string;
   /** Recorded views, likes and so on, appended by the `stats` command. */
   stats: string;
+  /** Made-up readings from `testdata on`, kept apart so `off` never touches real ones. */
+  sampleStats: string;
   history: string;
   report: string;
   renderLog: string;
@@ -61,6 +63,7 @@ export function projectPaths(root: string, name: string): ProjectPaths {
     metadata: join(planDir, 'metadata.json'),
     schedule: join(planDir, 'schedule.json'),
     stats: join(planDir, 'stats.json'),
+    sampleStats: join(planDir, 'sample-stats.json'),
     history: join(planDir, 'schedule-history.log'),
     report: join(planDir, 'report.md'),
     renderLog: join(dir, 'work', 'render-log.json'),
