@@ -71,8 +71,9 @@ test.describe('player', () => {
   });
 
   test('works after moving the project folder and explains a missing file', async ({ page, movedDir }) => {
-    await rm(join(movedDir, 'videos', '002.mp4'));
     await openDashboard(page, movedDir);
+    const firstId = Number(await page.locator('.card').first().getAttribute('data-id'));
+    await rm(join(movedDir, 'videos', `${String(firstId + 1).padStart(3, '0')}.mp4`));
     await page.locator('.card').first().click();
     await expect.poll(async () => (await playback(page)).readyState, { timeout: 15_000 }).toBeGreaterThanOrEqual(3);
     expect((await playback(page)).paused).toBe(false);
