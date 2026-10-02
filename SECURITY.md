@@ -13,10 +13,10 @@ Include what you found, how to reproduce it, and what an attacker could do with 
 ## What is in scope
 
 - Path traversal or file access outside a project folder through project names, plan files or transcripts.
-- Command injection through anything passed to ffmpeg or ffprobe (the tool only ever passes argument arrays).
-- Script injection in `dashboard.html` through titles, captions or notes.
-- Anything that makes the tool send data over the network. At runtime it makes no network requests.
+- Command injection through anything passed to ffmpeg, ffprobe or yt-dlp (the tool only ever passes argument arrays, and links go after `--` so they can never be read as options).
+- Script injection in `dashboard.html` or `projects/dashboard-data.js` through titles, captions or notes.
+- Anything that makes the tool send data over the network. The only network use is `fetch`, which runs yt-dlp on a link you gave it.
 
 ## What the tool never does
 
-It never downloads video, never asks for or stores passwords, and never sends your footage, schedules or captions anywhere.
+It only downloads video when you run `fetch` with a link. It never asks for or stores passwords, and never sends your footage, schedules or captions anywhere.
