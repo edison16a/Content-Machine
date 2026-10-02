@@ -1,6 +1,6 @@
 # Content Machine: instructions for Claude
 
-If the user says **"Using Content Machine: <link>"**, asks to make or schedule short videos with this repo, or says "start Content Machine", **read `playbook/run.md` now and follow it.**
+If the user says **"Using Content Machine: <link>"** or **"Use Content Machine to help me create a video"**, asks to make or schedule short videos with this repo, or says "start Content Machine", **read `playbook/run.md` now and follow it.**
 
 If you are working on the codebase itself (fixing bugs, adding features), follow this instead:
 

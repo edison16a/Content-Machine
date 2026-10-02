@@ -21,7 +21,7 @@
 - **Title block:** always two lines tall. Shorter titles are bottom-aligned in it, so the band sits in exactly the same place on every video.
 - **Shadow:** a soft dark glow behind the band (a pre-rendered PNG) lifts it off the background.
 
-For a 16:9 source: title block 422 to 620, band 656 to 1264, credit block 1300 to 1364.
+For a 16:9 source: title block 422 to 620, band 656 to 1264, credit block 1300 to 1364, centered.
 
 ## Portrait sources (width / height under 0.7)
 
@@ -31,5 +31,5 @@ No blur. The source is scaled to cover the full canvas and cropped. The title bl
 
 - Title top at or below `SAFE_TOP`; credit bottom at or above `SAFE_BOTTOM`.
 - Title, band and credit never overlap.
-- The credit block's right edge is at most 864px.
+- The credit block is centered and at most 744px wide (168px to 912px), clear of the buttons on the right.
 - Identical aspect ratios give identical layouts.

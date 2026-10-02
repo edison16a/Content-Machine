@@ -17,7 +17,7 @@ Big, heavy, clean title text directly on the blurred background with **no box or
 
 ## Credit line
 
-The source platform's logo at 56px tall, a 16px gap, then the channel name in Poppins ExtraBold, white, 52px, with the same shadow. It starts 60px from the left and its right edge stays at or before 864px, clear of the platforms' like and comment buttons. Long names shrink to 36px, then are truncated with an ellipsis.
+The source platform's logo at 56px tall, a 16px gap, then the channel name in Poppins ExtraBold, white, 52px, with the same shadow. Logo and name are centered as one unit under the video and never wider than 744px, which keeps them clear of the platforms' like and comment buttons. Long names shrink to 36px, then are truncated with an ellipsis.
 
 ## Logos
 

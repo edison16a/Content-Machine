@@ -11,27 +11,29 @@
 
 ## Design rules
 
-Minimal and calm: one accent color (the Content Machine green, `#35AA0E`) plus black, white and grays. Rounded corners (14px cards), no gradients, no decorative effects. The only motion is the tab underline sliding to the active tab. Light and dark themes follow the system until the viewer picks one with the toggle; the choice is remembered.
+Minimal and calm: one accent color (the Content Machine green, `#35AA0E`) plus black, white and grays. Rounded corners (14px cards), no gradients, no decorative effects, no outlined buttons: buttons are solid and borderless, icon buttons are bare until hovered. The only motion is the tab underline sliding to the active tab. **Dark mode is the default.** A light mode toggle sits in the header and the choice is remembered.
+
+Text is kept to what you need to act. No project names, channel links, handles or counts on the tabs.
 
 ## Layout
 
-- **Header:** the Content Machine logo, the project name, the channel with its platform logo, a theme toggle and a "View on GitHub" button with the GitHub mark.
-- **Overview:** chips for Total, Queued, Scheduled, Posted and Failed on the selected platform, plus "Next up" and "Updated".
-- **Platform tabs:** TikTok, Instagram and YouTube with their official logos and counts. The selected tab switches every time, status and caption to that platform and shows its handle if set. The choice is remembered.
-- **Week navigation:** previous and next week, Today, First unposted, and the week's range ("Sep 28 to Oct 4, 2026"). The first day of the week comes from the project. Left and right arrow keys change weeks when no video is open.
-- **Week grid:** seven day columns with weekday, date and a Today marker. Each day shows its slots with their time for the selected platform. A slot holds a card (9:16 poster with a play mark, id, two-line title, length, status badge) or a quiet dashed "Open slot". A scheduled item whose time has passed shows "Time passed".
+- **Header:** the Content Machine logo and name, a theme toggle and a "View on GitHub" button with the GitHub mark.
+- **Stats:** one panel for the selected platform with Videos, Posted, Scheduled, Queued and Failed as large numbers, "Next up" on the right, and a progress bar underneath (posted in the accent, scheduled in a lighter accent).
+- **Platform tabs:** TikTok, Instagram and YouTube with their official logos. The selected tab switches every time, status and caption to that platform. The choice is remembered.
+- **Week navigation:** previous and next week, the week's range ("Sep 28 to Oct 4, 2026"), Today and First unposted. The first day of the week comes from the project. Left and right arrow keys change weeks when no video is open.
+- **Week grid:** seven day columns with weekday, date and a Today marker. Each day shows its slots with their time for the selected platform. A slot holds a card (9:16 poster with a play mark, the post title and its status) or an empty dashed placeholder.
 - **Hover preview:** on devices that can hover, resting on a card for 400ms plays a silent preview in place. One at a time.
 
-Status badges stay within the palette: queued is a neutral outline, scheduled is outlined in the accent with a clock, posted is filled with the accent with a check, failed is inverted (dark on light, light on dark) with an alert mark.
+Statuses are a small dot and one word: queued is a gray dot, scheduled an accent ring, posted a solid accent dot, failed a bold word with a light dot.
 
 ## Player
 
 Clicking a card opens a modal with a real `<video>` (`controls`, `playsinline`, poster, `preload="metadata"`) that starts playing **with sound** right away; the click is the user gesture. If the browser still blocks it, a large play button appears.
 
-Beside the video: the post title, when it posts on the selected platform, that platform's caption with "Copy caption", all three platforms with logo, time and status, the source file with start and end times, the cut note, "Download video" and "Copy file path" (an absolute path worked out from the page's location).
+Beside the video, kept short: the post title, when it posts on the selected platform, that platform's caption with a copy button, all three platforms with logo, time and status, and two actions: "Download" and "Copy file path" (an absolute path worked out from the page's location).
 
-- **Auto-play next** (on by default): when a video ends, the next one in posting order opens and plays.
-- **Keyboard:** Space play or pause, M mute, F fullscreen, Left and Right previous and next, Esc close.
+- There is no previous or next button and no auto-play: a video plays once and stops.
+- **Keyboard:** Space play or pause, M mute, F fullscreen, Esc close.
 - Volume and mute are remembered. Closing pauses the video and releases it. Only one video plays anywhere on the page.
 - A file that fails to load shows: "Video not found. Keep dashboard.html in the project folder next to the videos folder."
 
