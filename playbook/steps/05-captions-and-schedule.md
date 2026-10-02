@@ -11,7 +11,9 @@ Write `plan/metadata.json` for every rendered item (only the new ones when appen
 }
 ```
 
-- **Post title.** Sequential: the video title as-is on every post, no part numbers. Clip: that clip's title. YouTube titles under 100 characters, written like search-friendly keywords, not just a hook.
+- **Post title.** Sequential: the video title as-is on every post, no part numbers. Clip: start from that clip's title, then apply the stranger test from step 2. The post title is what people see in a feed and search, so it must carry the whole video's context: lead with the creator and the premise ("MrBeast $10 Million Puzzle"), then the moment if it adds something. When the clip's own title is not strong and self-explanatory, keep it basic and close to the source video's title. Never lead with an inside detail. YouTube titles under 100 characters, written like search-friendly keywords, not just a hook.
+  - Bad: "Why a Screaming Painting Means Ice Cream | MrBeast Puzzle". Good: "MrBeast $10 Million Puzzle: The Clue Nobody Could Solve", or "MrBeast $10 Million Puzzle Challenge".
+- **Context line in captions.** The one short line of context names the premise too, so a viewer who lands on a single clip knows what video it is from.
 - **Caption order (same structure every time):** required hashtags, mentions and disclosures from the brief first; then one short line of context; then a credit line ("Credit: <channel>") unless the brief specifies other wording; then the hashtags.
 - **Hashtags are a weak lever; keep them few and specific:** TikTok 3 or 4 niche tags, Instagram 3 to 5, YouTube 2 or 3 (in the description). Name the topic, the creator or the niche. No #fyp or #viral. Vary the wording a little across platforms but keep the structure the same.
 
