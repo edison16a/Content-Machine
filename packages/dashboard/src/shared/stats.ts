@@ -72,3 +72,26 @@ export function statsTotals(stats: DashboardStats, filter: StatsFilter): Totals 
     shares: last.shares,
   };
 }
+
+/**
+ * The same timeline as amounts per reading instead of running totals: each
+ * point minus the one before it (the first counts from zero). With one
+ * reading a day that is views per day, where a video taking off shows as a
+ * spike rather than a steeper slope. A total that went down (a deleted
+ * comment) counts as zero, not as a negative day.
+ */
+export function perDay(points: readonly StatsPoint[]): StatsPoint[] {
+  return points.map((point, i) => {
+    const before = points[i - 1];
+    const step = (metric: StatMetric): number =>
+      Math.max(0, point[metric] - (before?.[metric] ?? 0));
+    return {
+      at: point.at,
+      views: step('views'),
+      income: step('income'),
+      likes: step('likes'),
+      comments: step('comments'),
+      shares: step('shares'),
+    };
+  });
+}

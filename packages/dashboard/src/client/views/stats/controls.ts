@@ -1,6 +1,7 @@
 import { STAT_METRICS, type StatMetric } from '../../../shared/types.js';
 import type { Context } from '../../context.js';
 import { h } from '../../lib/dom.js';
+import type { StatsMode } from '../../state.js';
 import { METRICS } from './metrics.js';
 import { videoPicker } from './video-picker.js';
 
@@ -32,6 +33,37 @@ function metricChips(ctx: Context): HTMLElement {
   );
 }
 
+/** Total or Per day, as one segmented control like the calendar's view switch. */
+function modeSwitch(ctx: Context): { element: HTMLElement; update: () => void } {
+  const choices: [StatsMode, string][] = [
+    ['total', 'Total'],
+    ['daily', 'Per day'],
+  ];
+  const buttons = choices.map(([mode, label]) =>
+    h('button', {
+      type: 'button',
+      class: 'segment',
+      'data-mode': mode,
+      text: label,
+      on: { click: () => ctx.store.set({ statsMode: mode }) },
+    }),
+  );
+  const element = h(
+    'div',
+    { class: 'segments', role: 'group', 'aria-label': 'Graph values' },
+    ...buttons,
+  );
+  const update = (): void => {
+    for (const button of buttons) {
+      button.setAttribute(
+        'aria-pressed',
+        String(button.dataset.mode === ctx.store.get().statsMode),
+      );
+    }
+  };
+  return { element, update };
+}
+
 /**
  * The one row of filters above the numbers: which graphs, which video, and
  * whether to read it as a table. They scope everything below them. The row
@@ -49,14 +81,16 @@ export function statsControls(
     class: 'text-button',
     on: { click: onTable },
   });
+  const modes = modeSwitch(ctx);
   const element = h(
     'div',
     { class: 'stats-controls' },
     chips,
-    h('div', { class: 'stats-controls-end' }, picker.element, tableButton),
+    h('div', { class: 'stats-controls-end' }, modes.element, picker.element, tableButton),
   );
   const update = (table: boolean): void => {
     chips.replaceChildren(metricChips(ctx));
+    modes.update();
     picker.update();
     tableButton.textContent = table ? 'Show graphs' : 'Show table';
     tableButton.setAttribute('aria-pressed', String(table));

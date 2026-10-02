@@ -139,7 +139,11 @@ export function mountApp(root: HTMLElement, options: MountOptions): App {
       stopPreview();
       nav.update();
       renderCalendar(ctx, week);
-    } else if (state.metrics !== previous.metrics || state.statsItem !== previous.statsItem) {
+    } else if (
+      state.metrics !== previous.metrics ||
+      state.statsItem !== previous.statsItem ||
+      state.statsMode !== previous.statsMode
+    ) {
       stats.update();
     }
     if (state.focusKey !== null) {

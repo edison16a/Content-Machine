@@ -1,9 +1,10 @@
-import { ZERO_TOTALS, type StatsPoint, type Totals } from '../../../shared/stats.js';
+import { ZERO_TOTALS, perDay, type StatsPoint, type Totals } from '../../../shared/stats.js';
 import type { Context } from '../../context.js';
 import { h, replace } from '../../lib/dom.js';
 import { clockIn } from '../../lib/format.js';
 import { icon } from '../../lib/icons.js';
-import { loadOverride, shownStats } from '../../lib/override.js';
+import { loadOverride } from '../../lib/override.js';
+import { shownStats } from '../../lib/shown-stats.js';
 import { lineChart } from './chart.js';
 import { emptyChart } from './empty-chart.js';
 import { statsControls } from './controls.js';
@@ -41,9 +42,13 @@ function shownPoints(ctx: Context): { points: StatsPoint[]; custom: boolean } {
   );
 }
 
-/** One card per chosen metric: its name, its latest total and its graph. */
-function chartCards(ctx: Context, points: readonly StatsPoint[]): HTMLElement {
-  const totals = totalsOf(points);
+/**
+ * One card per chosen metric: its name, a number and its graph. As running
+ * totals the number is the total; per day it is the latest day's amount.
+ */
+function chartCards(ctx: Context, points: readonly StatsPoint[], daily: boolean): HTMLElement {
+  const latest = totalsOf(points);
+  const title = (label: string): string => `${label} ${daily ? 'per day' : 'over time'}`;
   return h(
     'div',
     { class: 'chart-grid-cards' },
@@ -57,8 +62,8 @@ function chartCards(ctx: Context, points: readonly StatsPoint[]): HTMLElement {
             'figcaption',
             { class: 'chart-head' },
             h('span', { class: 'line-key', 'aria-hidden': 'true' }),
-            h('span', { class: 'chart-title', text: `${METRICS[metric].label} over time` }),
-            h('span', { class: 'chart-value', text: METRICS[metric].format(totals[metric]) }),
+            h('span', { class: 'chart-title', text: title(METRICS[metric].label) }),
+            h('span', { class: 'chart-value', text: METRICS[metric].format(latest[metric]) }),
           ),
           points.length === 0
             ? emptyChart(metric, ctx.data.timezone, ctx.now())
@@ -119,8 +124,10 @@ export function renderStatsSection(ctx: Context): StatsSection {
   );
 
   function update(): void {
-    const { metrics } = ctx.store.get();
+    const { metrics, statsMode } = ctx.store.get();
     const { points, custom } = shownPoints(ctx);
+    // Tiles always show totals; the graphs and table follow the switch.
+    const plotted = statsMode === 'daily' ? perDay(points) : points;
     sampleBadge.hidden = !ctx.data.stats.sample;
     customBadge.hidden = !custom;
     meta.textContent = `Updated ${clockIn(ctx.data.timezone, ctx.now())}`;
@@ -131,8 +138,8 @@ export function renderStatsSection(ctx: Context): StatsSection {
       metrics.length === 0
         ? h('p', { class: 'section-empty', text: 'Pick a metric above to see its graph.' })
         : table
-          ? statsTable(points, metrics, ctx.data.timezone)
-          : chartCards(ctx, points),
+          ? statsTable(plotted, metrics, ctx.data.timezone)
+          : chartCards(ctx, plotted, statsMode === 'daily'),
     );
   }
 

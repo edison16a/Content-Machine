@@ -8,6 +8,7 @@ import { CALENDAR_VIEWS, type CalendarView } from './lib/calendar.js';
 import { load, loadChoice, save } from './lib/storage.js';
 
 export type Theme = 'light' | 'dark';
+export type StatsMode = 'total' | 'daily';
 
 /** A tab: one platform, or all of them together. */
 export type View = 'all' | DashboardPlatform;
@@ -34,6 +35,8 @@ export interface State {
   metrics: StatMetric[];
   /** Statistics for one video (its key), or "all" for every video. */
   statsItem: string;
+  /** Graphs as running totals, or as amounts per day (where spikes show). */
+  statsMode: StatsMode;
 }
 
 type Listener = (state: State, previous: State) => void;
@@ -71,6 +74,7 @@ export function initialState(anchor: string, project: string): State {
     focusKey: null,
     metrics: loadMetrics(),
     statsItem: 'all',
+    statsMode: loadChoice<StatsMode>('stats-mode', ['total', 'daily'], 'total'),
   };
 }
 
@@ -89,6 +93,7 @@ export function createStore(initial: State, options: { rememberProject: boolean 
       if (patch.project !== undefined && options.rememberProject)
         save('selected-project', state.project);
       if (patch.metrics !== undefined) save('metrics', state.metrics.join(','));
+      if (patch.statsMode !== undefined) save('stats-mode', state.statsMode);
       for (const listener of listeners) listener(state, previous);
     },
     subscribe(listener) {
