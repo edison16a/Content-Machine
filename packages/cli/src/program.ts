@@ -12,6 +12,7 @@ import { registerPreview } from './commands/preview.js';
 import { registerRender } from './commands/render.js';
 import { registerSchedule } from './commands/schedule.js';
 import { registerSchema } from './commands/schema.js';
+import { registerStats } from './commands/stats.js';
 import { registerStatus } from './commands/status.js';
 import { registerTranscript } from './commands/transcript.js';
 import { createContext, type CommandContext, type GlobalOptions } from './context.js';
@@ -44,6 +45,7 @@ export function buildProgram(
     registerMark,
     registerDashboard,
     registerStatus,
+    registerStats,
     registerAutoplan,
     registerDemo,
     registerSchema,
