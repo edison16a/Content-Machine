@@ -55,6 +55,12 @@ function chartCards(ctx: Context, filter: StatsFilter): HTMLElement {
  */
 export function renderStatsSection(ctx: Context): StatsSection {
   const meta = h('span', { class: 'section-meta' });
+  const sampleBadge = h('span', {
+    class: 'sample-badge',
+    text: 'Test data',
+    title: 'Made-up numbers. Turn them off with: npm run cm -- testdata <project> off',
+    hidden: true,
+  });
   const refresh = h(
     'button',
     { type: 'button', class: 'button button-sm' },
@@ -74,6 +80,7 @@ export function renderStatsSection(ctx: Context): StatsSection {
       'div',
       { class: 'section-head' },
       h('h2', { class: 'section-title', text: 'Statistics' }),
+      sampleBadge,
       meta,
       h('span', { class: 'section-spacer' }),
       refresh,
@@ -86,6 +93,7 @@ export function renderStatsSection(ctx: Context): StatsSection {
     const exists = statsItem === 'all' || ctx.data.items.some((item) => item.id === statsItem);
     const filter: StatsFilter = { platform, itemId: exists ? statsItem : 'all' };
     const points = statsTimeline(ctx.data.stats, filter);
+    sampleBadge.hidden = !ctx.data.stats.sample;
     meta.textContent = `Updated ${clockIn(ctx.data.timezone, ctx.now())}`;
     controls.update(table);
     replace(
