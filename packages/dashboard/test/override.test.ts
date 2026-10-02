@@ -57,6 +57,26 @@ describe('custom numbers', () => {
     expect(views.every((v) => v >= 0)).toBe(true);
   });
 
+  it('draws a new month for each seed and the same month for the same seed', () => {
+    const typical = engagementFrom(undefined);
+    const a = customHistory({ ...override, seed: 'a' }, rates, 'all', now, typical);
+    const b = customHistory({ ...override, seed: 'b' }, rates, 'all', now, typical);
+    expect(a).not.toEqual(b);
+    expect(customHistory({ ...override, seed: 'a' }, rates, 'all', now, typical)).toEqual(a);
+    expect(b.at(-1)?.views).toBe(30000);
+  });
+
+  it('gives likes, comments and shares their own shape, not a copy of views', () => {
+    const daily = perDay(customHistory(override, rates, 'all', now, engagementFrom(undefined)));
+    const ratio = (metric: 'likes' | 'comments' | 'shares'): number[] =>
+      daily.map((p) => p[metric] / Math.max(1, p.views));
+    for (const metric of ['likes', 'comments', 'shares'] as const) {
+      const values = ratio(metric);
+      // A copy of views would hold one rate every day; real ones swing.
+      expect(Math.max(...values) / Math.min(...values)).toBeGreaterThan(1.5);
+    }
+  });
+
   it('copies recorded engagement when there is any', () => {
     expect(engagementFrom({ views: 1000, income: 0, likes: 100, comments: 10, shares: 5 })).toEqual(
       {
