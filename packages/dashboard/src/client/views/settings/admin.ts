@@ -98,7 +98,7 @@ export function createAdminPanel(ctx: Context, onChange: () => void): AdminPanel
     const scope = ctx.store.get().project;
     form.fill(startingOverride(loadOverride(scope), ctx.data.stats));
     const name = scope === ALL_PROJECTS ? 'all projects' : scope;
-    scopeNote.textContent = `Set what the statistics show right now for ${name}, across all videos. Saved in this browser only; your recorded numbers stay as they are.`;
+    scopeNote.textContent = `For ${name}. Only saved in this browser.`;
     element.hidden = false;
     document.addEventListener('keydown', keys);
     form.viewsInput.focus();
@@ -111,7 +111,9 @@ export function createAdminPanel(ctx: Context, onChange: () => void): AdminPanel
       form.viewsInput.focus();
       return;
     }
-    saveOverride(ctx.store.get().project, override);
+    // A fresh seed per Apply: the same numbers give a new month each time.
+    const seed = Math.random().toString(36).slice(2);
+    saveOverride(ctx.store.get().project, { ...override, seed });
     close();
     onChange();
   });

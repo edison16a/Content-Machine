@@ -15,14 +15,17 @@ export interface Override {
   views: number;
   /** Relative weights, usually percentages. They need not add up to 100. */
   split: Record<DashboardPlatform, number>;
+  /** Drawn on each Apply, so every Apply makes a new made-up month. */
+  seed?: string;
 }
 
 const storageKey = (scope: string): string => `override:${scope}`;
 
 function isOverride(value: unknown): value is Override {
   if (typeof value !== 'object' || value === null) return false;
-  const { views, split } = value as Partial<Override>;
+  const { views, split, seed } = value as Partial<Override>;
   return (
+    (seed === undefined || typeof seed === 'string') &&
     typeof views === 'number' &&
     Number.isFinite(views) &&
     views >= 0 &&
