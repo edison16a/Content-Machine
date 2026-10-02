@@ -99,3 +99,17 @@ export function initialWeek(
   const upcoming = dates.find((date) => date >= today) ?? dates[0];
   return inWeek || upcoming === undefined ? thisWeek : startOfWeek(upcoming, weekStartsOn);
 }
+
+/**
+ * The date the calendar opens on: today when today's week is the one worth
+ * showing, otherwise the first day of the week that is. Day, week and month
+ * views all start from it.
+ */
+export function initialAnchor(
+  items: readonly DashboardItem[],
+  today: string,
+  weekStartsOn: 'monday' | 'sunday',
+): string {
+  const week = initialWeek(items, today, weekStartsOn);
+  return startOfWeek(today, weekStartsOn) === week ? today : week;
+}

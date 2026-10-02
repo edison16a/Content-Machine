@@ -62,3 +62,38 @@ export function weekRange(start: string): string {
     return `${monthDay(start)}, ${year(start)} to ${monthDay(end)}, ${year(end)}`;
   return `${monthDay(start)} to ${monthDay(end)}, ${year(end)}`;
 }
+
+/**
+ * The same day of the month, some months away, clamped to the month's last
+ * day: Jan 31 plus one month is Feb 28, never Mar 3.
+ */
+export function addMonths(date: string, months: number): string {
+  const [y = 1970, m = 1, d = 1] = date.split('-').map(Number);
+  const first = new Date(Date.UTC(y, m - 1 + months, 1));
+  const last = new Date(Date.UTC(first.getUTCFullYear(), first.getUTCMonth() + 1, 0)).getUTCDate();
+  first.setUTCDate(Math.min(d, last));
+  return iso(first);
+}
+
+/** "2026-10-17" becomes "2026-10-01". */
+export function startOfMonth(date: string): string {
+  return `${date.slice(0, 7)}-01`;
+}
+
+/** "October 2026" */
+export const monthTitle = (date: string): string =>
+  format(date, { month: 'long', year: 'numeric' });
+
+/**
+ * Whole weeks covering a month, for the month grid: from the start of the
+ * week holding the 1st to the end of the week holding the last day.
+ */
+export function monthWeeks(date: string, weekStartsOn: 'monday' | 'sunday'): string[][] {
+  const first = startOfMonth(date);
+  const nextMonth = startOfMonth(addMonths(first, 1));
+  const weeks: string[][] = [];
+  for (let start = startOfWeek(first, weekStartsOn); start < nextMonth; start = addDays(start, 7)) {
+    weeks.push(weekDates(start));
+  }
+  return weeks;
+}
