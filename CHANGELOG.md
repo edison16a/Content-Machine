@@ -20,6 +20,9 @@ All notable changes to this project are documented here. The format is based on 
 - Empty graphs and an empty table before any readings, instead of a note.
 - Every project on one calendar by default, with pooled statistics; videos and readings carry a key that is unique across projects.
 - A Settings gear with a custom project dropdown (each project shows its first video's poster). The visible project picker is gone.
+- `demo --remove`: deletes the demo projects and frees their posting slots.
+- A Total and Per day switch for the graphs; per day shows spikes.
+- Custom numbers draw thirty days of realistic history (growth, weekly rhythm, viral spikes) ending on the typed totals, and test data gets launch peaks, long tails and viral bumps.
 - A hidden admin panel (click Settings three times) to type a number of views and its platform split, see the estimated income, and show those as the current totals in this browser.
 - Payout rates per 1,000 views in config (`rates`), used only for the income estimate.
 - `playbook/steps/09-stats.md`: how Claude reads each platform's analytics and records them.
