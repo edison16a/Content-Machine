@@ -7,3 +7,4 @@ export * from './snap/index.js';
 export * from './layout/index.js';
 export * from './schedule/index.js';
 export * from './status/index.js';
+export * from './fetch/index.js';
