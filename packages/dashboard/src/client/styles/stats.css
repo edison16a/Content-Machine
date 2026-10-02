@@ -59,6 +59,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  min-width: 0;
 }
 
 .stats-video {
@@ -308,8 +309,10 @@
     width: 100%;
   }
 
+  /* A select is as wide as its longest option unless told it may shrink. */
   .stats-video {
     flex: 1;
+    min-width: 0;
     max-width: none;
   }
 }

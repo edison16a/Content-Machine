@@ -39,7 +39,7 @@ function videoSelect(ctx: Context): HTMLSelectElement {
   const select = h(
     'select',
     {
-      class: 'project-select stats-video',
+      class: 'stats-video',
       'aria-label': 'Video',
       on: {
         change: () =>

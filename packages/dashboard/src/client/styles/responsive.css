@@ -48,9 +48,15 @@
     padding: 0;
   }
 
+  /*
+   * One column that never wraps: a wrapping column sizes each line to its
+   * widest item, which would push the tab row and week controls off screen.
+   */
   .toolbar {
     flex-direction: column;
+    flex-wrap: nowrap;
     align-items: stretch;
+    min-width: 0;
   }
 
   /* Flex children default to their content width; let them shrink to the screen. */
@@ -64,7 +70,9 @@
   }
 
   .tab {
-    padding: 0 10px;
+    gap: 6px;
+    padding: 0 6px;
+    font-size: 14px;
   }
 
   .weeknav {

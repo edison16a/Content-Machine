@@ -89,7 +89,8 @@
   margin-top: var(--space-4);
 }
 
-.project-select {
+.project-select,
+.stats-video {
   height: 40px;
   padding: 0 12px;
   border: 1px solid var(--line);
