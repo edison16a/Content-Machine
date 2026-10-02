@@ -17,6 +17,7 @@ import { clipDemo, sequentialDemo } from '../demo/plans.js';
 import { demoStatsRows } from '../demo/stats.js';
 import { Output } from '../io/output.js';
 import { loadSchedule, writeJson } from '../project/files.js';
+import { writeLiveIndex } from '../project/live-index.js';
 import { projectPaths } from '../project/paths.js';
 import { runCheck } from './check.js';
 import { runMark } from './mark.js';
@@ -26,6 +27,7 @@ import { runStats } from './stats.js';
 
 interface DemoFlags {
   clean?: boolean;
+  remove?: boolean;
   preset: X264Preset;
 }
 
@@ -69,6 +71,28 @@ async function recordDemoStats(ctx: CommandContext, workDir: string): Promise<vo
   await writeJson(ctx.fs, file, rows);
   await ctx.fs.remove(projectPaths(ctx.root, 'demo').stats);
   await runStats(ctx, 'demo', { import: file });
+}
+
+/**
+ * Deletes the demo projects and frees the posting slots they held, so they
+ * leave the dashboard and stop pushing real videos to later slots on the
+ * same account. Nothing else is touched.
+ */
+export async function runRemoveDemo(ctx: CommandContext): Promise<void> {
+  const removed: string[] = [];
+  for (const name of DEMO_PROJECTS) {
+    const { root } = projectPaths(ctx.root, name);
+    if (!(await ctx.fs.exists(root))) continue;
+    await ctx.fs.remove(root);
+    removed.push(name);
+  }
+  await clearDemoLedger(ctx);
+  await writeLiveIndex(ctx);
+  ctx.out.result('demo', { removed }, () => [
+    removed.length === 0
+      ? 'There were no demo projects to remove.'
+      : `Removed ${removed.join(' and ')}. Their posting slots are free again.`,
+  ]);
 }
 
 /**
@@ -139,10 +163,13 @@ export function registerDemo(program: Command, context: () => CommandContext): v
     .command('demo')
     .description('Build mock projects (projects/demo, projects/demo-clips) from synthetic video.')
     .option('--clean', 'delete the demo projects first and regenerate everything')
+    .option('--remove', 'delete the demo projects and free their posting slots')
     .addOption(
       new Option('--preset <preset>', 'x264 preset for the demo renders')
         .choices([...X264_PRESETS])
         .default('veryfast'),
     )
-    .action((flags: DemoFlags) => runDemo(context(), flags));
+    .action((flags: DemoFlags) =>
+      flags.remove === true ? runRemoveDemo(context()) : runDemo(context(), flags),
+    );
 }
