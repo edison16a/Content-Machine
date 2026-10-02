@@ -4,6 +4,7 @@ import { h, replace } from '../../lib/dom.js';
 import { clockIn } from '../../lib/format.js';
 import { icon } from '../../lib/icons.js';
 import { lineChart } from './chart.js';
+import { emptyChart } from './empty-chart.js';
 import { statsControls } from './controls.js';
 import { METRICS } from './metrics.js';
 import { statsTable } from './table.js';
@@ -38,7 +39,9 @@ function chartCards(ctx: Context, filter: StatsFilter): HTMLElement {
             h('span', { class: 'chart-title', text: `${METRICS[metric].label} over time` }),
             h('span', { class: 'chart-value', text: METRICS[metric].format(totals[metric]) }),
           ),
-          lineChart(points, metric, ctx.data.timezone),
+          points.length === 0
+            ? emptyChart(metric, ctx.data.timezone, ctx.now())
+            : lineChart(points, metric, ctx.data.timezone),
         ),
       ),
   );
@@ -83,22 +86,16 @@ export function renderStatsSection(ctx: Context): StatsSection {
     const exists = statsItem === 'all' || ctx.data.items.some((item) => item.id === statsItem);
     const filter: StatsFilter = { platform, itemId: exists ? statsItem : 'all' };
     const points = statsTimeline(ctx.data.stats, filter);
-    const recorded = ctx.data.stats.snapshots.length > 0;
     meta.textContent = `Updated ${clockIn(ctx.data.timezone, ctx.now())}`;
     controls.update(table);
     replace(
       body,
       statTiles(statsTotals(ctx.data.stats, filter)),
-      !recorded
-        ? h('p', {
-            class: 'section-empty',
-            text: 'No numbers recorded yet. Ask Claude to update your stats, and they show up here.',
-          })
-        : metrics.length === 0
-          ? h('p', { class: 'section-empty', text: 'Pick a metric above to see its graph.' })
-          : table
-            ? statsTable(points, metrics, ctx.data.timezone)
-            : chartCards(ctx, filter),
+      metrics.length === 0
+        ? h('p', { class: 'section-empty', text: 'Pick a metric above to see its graph.' })
+        : table
+          ? statsTable(points, metrics, ctx.data.timezone)
+          : chartCards(ctx, filter),
     );
   }
 

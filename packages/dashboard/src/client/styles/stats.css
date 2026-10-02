@@ -321,3 +321,15 @@
     width: min(360px, calc(100vw - 32px));
   }
 }
+
+.chart-empty {
+  fill: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.stats-table .stats-table-empty {
+  padding: 24px 16px;
+  color: var(--muted);
+  text-align: center;
+}

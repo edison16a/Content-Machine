@@ -32,6 +32,17 @@ export function statsTable(
       h(
         'tbody',
         {},
+        points.length === 0
+          ? h(
+              'tr',
+              {},
+              h('td', {
+                class: 'stats-table-empty',
+                colspan: metrics.length + 1,
+                text: 'No readings yet',
+              }),
+            )
+          : null,
         ...[...points]
           .reverse()
           .map((point) =>
