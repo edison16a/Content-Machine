@@ -7,7 +7,7 @@ flowchart LR
   cli["cli<br/>commands, config, project folders,<br/>yt-dlp downloads"]
   render["render<br/>ffmpeg, canvas overlays, QA"]
   dashboard["dashboard<br/>dashboard.html generator and client"]
-  core["core (pure)<br/>schemas, transcript, fetch, plan, snap,<br/>layout, schedule, status, errors"]
+  core["core (pure)<br/>schemas, transcript, fetch, stats, plan,<br/>snap, layout, schedule, status, errors"]
   cli --> render
   cli --> dashboard
   cli --> core
@@ -42,6 +42,9 @@ flowchart LR
 | What the dashboard shows or how it looks      | `packages/dashboard/src/client` (views, lib, styles)     |
 | How dashboard.html and the live data are made | `packages/dashboard/src/generate`                        |
 | Which projects the live index lists           | `packages/cli/src/project/live-index.ts`                 |
+| Matching recorded stats to videos             | `packages/core/src/stats`                                |
+| Stats totals, timelines and income            | `packages/dashboard/src/shared/stats.ts`                 |
+| The statistics section and its graphs         | `packages/dashboard/src/client/views/stats`              |
 | A command or flag                             | `packages/cli/src/commands`                              |
 | Project folders, config loading, locks        | `packages/cli/src/project`, `config`, `io`               |
 | What Claude does at runtime                   | `playbook/`                                              |
@@ -54,6 +57,7 @@ flowchart LR
 4. `check` probes every output and writes QA frames and contact sheets.
 5. Claude writes `plan/metadata.json`. `schedule` assigns slots (pure), records them in `plan/schedule.json` and `schedule-ledger.json` under a lock, and regenerates `dashboard.html`.
 6. `mark` moves statuses through the state machine and appends to `plan/schedule-history.log`.
-7. Every step that regenerates a `dashboard.html` also rewrites `projects/dashboard-data.js` from all projects. The open `index.html` rereads it and redraws.
+7. `stats` matches readings copied off each platform's analytics to videos by title and appends them to `plan/stats.json`.
+8. Every step that regenerates a `dashboard.html` also rewrites `projects/dashboard-data.js` from all projects. The open `index.html` rereads it and redraws.
 
 Decisions behind this design are recorded in [`docs/adr/`](adr/).
