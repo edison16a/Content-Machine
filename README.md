@@ -28,8 +28,19 @@ _These are placeholders. Put your handles and links in `docs/accounts.json`, the
 <!-- ACCOUNTS:END -->
 
 <p align="center">
-  <img src="docs/images/dashboard-week.png" alt="The Content Machine dashboard: a week calendar with three timed slots per day, platform tabs and status badges" width="100%">
-  <br><sub>The dashboard, generated from the built-in demo project (mock data, synthetic video).</sub>
+  <img src="docs/images/dashboard-week.png" alt="The Content Machine dashboard: a week calendar with three timed slots per day, platform tabs and posting stats" width="100%">
+</p>
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/images/claude-usage.png" alt="Claude Code: the user asks Content Machine to help create a video, Claude asks six questions, then plans, renders, checks and schedules 24 videos"></td>
+    <td width="50%"><img src="docs/images/dashboard-player.png" alt="The player: a vertical video playing with sound beside its caption and platform statuses"></td>
+  </tr>
+</table>
+
+<p align="center">
+  <img src="docs/images/videos.png" alt="Four finished vertical videos: a bold two-line title with one orange accent word, the full video in a band over a blurred copy of itself, and the source logo and channel name centered underneath" width="100%">
+  <br><sub>Finished videos: the same layout every time. The dashboard and videos above come from the built-in demo, which uses synthetic footage.</sub>
 </p>
 
 ## What it is
@@ -69,10 +80,14 @@ npm install
 Open Claude Code in that folder and say:
 
 ```text
-Using Content Machine: https://github.com/edison16a/Content-Machine
+Use Content Machine to help me create a video
 ```
 
-You can also skip the clone: say the same sentence to Claude Code in any empty folder and it clones the repository itself, following [`playbook/run.md`](playbook/run.md).
+Starting somewhere else? Give Claude the link and it clones the repository itself, following [`playbook/run.md`](playbook/run.md):
+
+```text
+Using Content Machine: https://github.com/edison16a/Content-Machine
+```
 
 Want to see it before using your own footage? Build the demo (synthetic video, about ten minutes) and open it:
 
@@ -83,12 +98,9 @@ npm run cm -- open demo
 
 ## How it looks in Claude
 
-<p align="center">
-  <img src="docs/images/claude-usage.png" alt="An illustrative chat: the user says Using Content Machine, Claude asks six intake questions, reports progress and finishes with 24 videos scheduled" width="720">
-  <br><sub>Illustrative. The same conversation as text is below.</sub>
-</p>
+The conversation from the screenshot at the top, as text:
 
-> **You:** Using Content Machine: https://github.com/edison16a/Content-Machine
+> **You:** Use Content Machine to help me create a video
 >
 > **Claude:** Let's set up your videos. A few quick questions:
 >
@@ -101,32 +113,27 @@ npm run cm -- open demo
 >
 > **You:** Sequential. "How We Built A Tiny House In 30 Days". Call it tiny-house. It's from Example Channel on YouTube. The file is ~/Movies/tiny-house.mp4 and the transcript is pasted below. It's my own video.
 >
-> **Claude:** Planning your cuts… 24 parts. Rendering 24 videos… Checking every video… Scheduling 3 a day per platform…
+> **Claude:** Planned your cuts: 24 parts, each ending on a story beat. Rendered 24 videos. Checked every video: 1080x1920, original audio, nothing over 60 seconds. Scheduled 3 a day per platform.
 >
-> **Claude:** Done. 24 videos scheduled across 8 days. Your dashboard is open. Click any video to watch it with sound. Want me to upload them into each platform's scheduler now?
+> **Claude:** Done. 24 videos scheduled across 8 days, and your dashboard is open. Click any video to watch it with sound. Want me to upload them into each platform's scheduler now?
 
 ## The dashboard
 
-One HTML file per project. It works straight from your disk, makes no network requests, and plays the real files next to it.
-
-<p align="center">
-  <img src="docs/images/dashboard-player.png" alt="The player: a vertical video playing with sound beside its caption, platform statuses and actions" width="100%">
-</p>
+One HTML file per project. It works straight from your disk, makes no network requests, and plays the real files next to it. Dark mode is the default; there is a light mode too.
 
 <table>
   <tr>
-    <td width="68%"><img src="docs/images/dashboard-dark.png" alt="The dashboard in dark mode"></td>
+    <td width="68%"><img src="docs/images/dashboard-light.png" alt="The dashboard in light mode"></td>
     <td width="32%"><img src="docs/images/dashboard-mobile.png" alt="The dashboard on a phone, showing a list of days"></td>
   </tr>
 </table>
 
-- **Play every video with sound.** Click a card and it plays right away. Space, M, F, the arrow keys and Esc work as you would expect.
-- **Auto-play next.** When a video ends, the next one in posting order starts, which is the best way to review a Sequential story.
-- **Platform tabs** with the official logos. Each tab shows that platform's times, statuses, caption and handle.
+- **Play every video with sound.** Click a card and it plays right away. Space, M, F and Esc work as you would expect.
+- **Stats at a glance** for the selected platform: posted, scheduled, queued, failed and what posts next.
+- **Platform tabs** with the official logos. Each tab shows that platform's times, statuses and caption.
 - **A week calendar** with three timed slots per day, Today, and First unposted.
 - **Copy the caption, copy the file path, or download the video** from the player.
-- **Statuses** for every platform: queued, scheduled, posted or failed.
-- Light and dark mode, phone layout, keyboard friendly. Hovering a card plays a silent preview.
+- Phone layout, keyboard friendly. Hovering a card plays a silent preview.
 
 ## Folder structure
 
