@@ -85,11 +85,3 @@ img {
   width: 44px;
   height: 44px;
 }
-
-.eyebrow {
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}

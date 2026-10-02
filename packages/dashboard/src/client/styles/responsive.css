@@ -5,7 +5,7 @@
   }
 
   .card-title {
-    font-size: 13.5px;
+    font-size: 14px;
   }
 }
 
@@ -39,9 +39,7 @@
     grid-template-columns: 1fr;
   }
 
-  .channel,
-  .button .label,
-  .meta div:last-child {
+  .button .label {
     display: none;
   }
 
@@ -60,21 +58,13 @@
     min-width: 0;
   }
 
-  .tab-group {
-    overflow-x: auto;
-  }
-
   .tabs {
     gap: 0;
+    overflow-x: auto;
   }
 
   .tab {
     padding: 0 10px;
-  }
-
-  .tab .count,
-  .handle {
-    display: none;
   }
 
   .weeknav {
@@ -86,31 +76,27 @@
     flex: 1;
   }
 
-  .weeknav .button {
-    width: 36px;
-    padding: 0;
+  .text-button {
+    padding: 0 8px;
   }
 
-  .divider {
-    display: none;
+  .stats {
+    padding: 16px;
   }
 
-  .chips {
+  .stats-row {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    width: 100%;
+    gap: var(--space-4);
   }
 
-  .chip {
-    min-width: 0;
-    padding: 8px 10px;
+  .stat-value {
+    font-size: 22px;
   }
 
-  .chip-value {
-    font-size: 17px;
-  }
-
-  .chip-label {
-    font-size: 11px;
+  .stat-next {
+    grid-column: 1 / -1;
+    margin-left: 0;
+    text-align: left;
   }
 }

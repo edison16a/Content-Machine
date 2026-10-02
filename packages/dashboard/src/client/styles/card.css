@@ -2,23 +2,23 @@
   display: flex;
   gap: 10px;
   width: 100%;
-  min-height: 104px;
+  min-height: 96px;
   padding: 7px;
-  border: 1px solid var(--line);
+  border: 0;
   border-radius: var(--radius-card);
-  background: var(--bg);
+  background: var(--card);
   cursor: pointer;
   text-align: left;
 }
 
 .card:hover {
-  border-color: var(--line-strong);
+  background: var(--card-hover);
 }
 
 .thumb {
   position: relative;
   flex: none;
-  width: 50px;
+  width: 46px;
   aspect-ratio: 9 / 16;
   overflow: hidden;
   border-radius: var(--radius-sm);
@@ -41,8 +41,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: rgb(0 0 0 / 0.55);
   color: #ffffff;
@@ -50,12 +50,11 @@
 }
 
 .play-mark .icon {
-  width: 11px;
-  height: 11px;
+  width: 10px;
+  height: 10px;
   margin-left: 1px;
 }
 
-.thumb .preview + .play-mark,
 .thumb:has(.preview) .play-mark {
   display: none;
 }
@@ -64,43 +63,19 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 3px;
-  min-width: 0;
-}
-
-.card-meta {
-  display: flex;
   justify-content: space-between;
-  color: var(--muted);
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
-}
-
-.card-id {
-  color: var(--text);
-  font-weight: 700;
+  gap: 6px;
+  min-width: 0;
+  padding: 2px 0;
 }
 
 .card-title {
   display: -webkit-box;
   overflow: hidden;
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 600;
   line-height: 1.3;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-}
-
-.card-foot {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 4px 6px;
-  margin-top: auto;
-}
-
-.passed {
-  color: var(--muted);
-  font-size: 11px;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
 }

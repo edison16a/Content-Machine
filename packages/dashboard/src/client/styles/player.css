@@ -16,10 +16,9 @@
 .player-panel {
   position: relative;
   display: grid;
-  grid-template-columns: auto minmax(340px, 420px);
+  grid-template-columns: auto minmax(320px, 380px);
   max-height: calc(100vh - 48px);
   overflow: hidden;
-  border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   background: var(--bg);
 }
@@ -33,7 +32,7 @@
 
 .frame {
   position: relative;
-  height: min(calc(100vh - 50px), 860px);
+  height: min(calc(100vh - 48px), 860px);
   aspect-ratio: 9 / 16;
 }
 
@@ -82,36 +81,22 @@
 }
 
 .player-side {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
+  position: relative;
   min-height: 0;
-  padding: var(--space-4) var(--space-5) var(--space-5);
+  padding: 56px var(--space-5) var(--space-5);
   overflow-y: auto;
 }
 
-.side-top,
-.side-nav,
-.panel-head,
-.detail-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.side-top,
-.panel-head {
-  justify-content: space-between;
-}
-
-.side-body {
-  flex: 1;
+.close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
 }
 
 .details {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-4);
 }
 
 .details h2 {
@@ -121,6 +106,7 @@
 }
 
 .when {
+  margin-top: -8px;
   color: var(--muted);
   font-weight: 600;
 }
@@ -128,15 +114,11 @@
 .panel {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  align-items: flex-start;
+  gap: var(--space-3);
   padding: 14px;
   border-radius: 12px;
-  background: var(--surface);
-}
-
-.panel h3 {
-  font-size: 13px;
-  font-weight: 700;
+  background: var(--panel);
 }
 
 .caption {
@@ -155,9 +137,9 @@
 
 .platform-row {
   display: grid;
-  grid-template-columns: 20px auto 1fr auto;
+  grid-template-columns: 20px 1fr auto;
   align-items: center;
-  gap: 4px 10px;
+  gap: 10px;
 }
 
 .row-logo {
@@ -166,34 +148,15 @@
   height: 16px;
 }
 
-.row-name {
-  font-weight: 600;
-}
-
 .row-time {
   color: var(--muted);
-  white-space: nowrap;
   font-size: 13px;
   font-variant-numeric: tabular-nums;
-}
-
-.row-note {
-  grid-column: 2 / -1;
-  color: var(--muted);
-  font-size: 12px;
-}
-
-.facts {
-  display: grid;
-  gap: 10px;
-}
-
-.facts dt {
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 600;
+  white-space: nowrap;
 }
 
 .detail-actions {
+  display: flex;
   flex-wrap: wrap;
+  gap: var(--space-2);
 }

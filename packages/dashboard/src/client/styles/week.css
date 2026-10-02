@@ -12,7 +12,7 @@
   padding: var(--space-3) 10px;
   border: 1px solid transparent;
   border-radius: var(--radius-card);
-  background: var(--surface);
+  background: var(--panel);
 }
 
 .day.is-today {
@@ -63,14 +63,10 @@
 }
 
 .slot-empty {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 104px;
-  border: 1px dashed var(--line-strong);
+  display: block;
+  height: 96px;
+  border: 1px dashed var(--line);
   border-radius: var(--radius-card);
-  color: var(--muted);
-  font-size: 12px;
 }
 
 .empty {
@@ -80,8 +76,8 @@
   align-items: center;
   gap: var(--space-3);
   padding: 96px var(--space-5);
-  border: 1px dashed var(--line-strong);
   border-radius: var(--radius-lg);
+  background: var(--panel);
   color: var(--muted);
   text-align: center;
 }
