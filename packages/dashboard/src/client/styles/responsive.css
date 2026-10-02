@@ -55,12 +55,26 @@
     align-items: stretch;
   }
 
+  /* Flex children default to their content width; let them shrink to the screen. */
+  .toolbar > * {
+    min-width: 0;
+  }
+
   .tab-group {
     overflow-x: auto;
   }
 
+  .tabs {
+    gap: 0;
+  }
+
   .tab {
     padding: 0 10px;
+  }
+
+  .tab .count,
+  .handle {
+    display: none;
   }
 
   .weeknav {
@@ -81,15 +95,15 @@
     display: none;
   }
 
-  .chip {
-    min-width: 0;
-    flex: 1;
-    padding: 8px 10px;
+  .chips {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
   }
 
-  .chips {
-    width: 100%;
-    flex-wrap: nowrap;
+  .chip {
+    min-width: 0;
+    padding: 8px 10px;
   }
 
   .chip-value {
