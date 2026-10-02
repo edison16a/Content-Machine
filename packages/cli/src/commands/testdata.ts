@@ -1,7 +1,7 @@
 import type { Command } from 'commander';
 import { Argument, InvalidArgumentError } from 'commander';
 import { UserError, sampleSnapshots } from '@content-machine/core';
-import { statsTotals } from '@content-machine/dashboard';
+import { statsTotals, toDashboardSnapshots } from '@content-machine/dashboard';
 import type { CommandContext } from '../context.js';
 import { writeDashboard } from '../project/dashboard.js';
 import { loadSchedule, writeJson } from '../project/files.js';
@@ -62,8 +62,8 @@ export async function runTestData(
   await writeJson(ctx.fs, paths.sampleStats, { schemaVersion: 1, project: name, snapshots });
   await writeDashboard(ctx, paths, project, schedule);
   const totals = statsTotals(
-    { rates: { ...config.rates }, snapshots, sample: true },
-    { platform: 'all', itemId: 'all' },
+    { rates: { ...config.rates }, snapshots: toDashboardSnapshots(name, snapshots), sample: true },
+    { platform: 'all', itemKey: 'all' },
   );
   ctx.out.result('testdata', { mode, readings: snapshots.length, totals }, () => [
     `Test data is on for ${name}: ${flags.days} days of made-up readings for ${schedule.items.length} videos.`,

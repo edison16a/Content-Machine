@@ -7,7 +7,12 @@ import {
   type Platform,
   type RowOutcome,
 } from '@content-machine/core';
-import { statsTotals, type DashboardStats, type Totals } from '@content-machine/dashboard';
+import {
+  statsTotals,
+  toDashboardSnapshots,
+  type DashboardStats,
+  type Totals,
+} from '@content-machine/dashboard';
 import type { CommandContext } from '../context.js';
 import { withLock } from '../io/lock.js';
 import { writeDashboard } from '../project/dashboard.js';
@@ -76,11 +81,15 @@ export async function runStats(
     await writeDashboard(ctx, paths, project, schedule);
   }
   const shown = await loadShownStats(ctx.fs, paths);
-  const stats: DashboardStats = { rates: { ...config.rates }, ...shown };
+  const stats: DashboardStats = {
+    rates: { ...config.rates },
+    sample: shown.sample,
+    snapshots: toDashboardSnapshots(name, shown.snapshots),
+  };
   const slices: ('all' | Platform)[] = ['all', ...PLATFORMS];
   const totals = slices.map((platform) => ({
     platform,
-    ...statsTotals(stats, { platform, itemId: 'all' }),
+    ...statsTotals(stats, { platform, itemKey: 'all' }),
   }));
   const missed = outcomes.filter((o) => o.kind !== 'recorded').length;
   ctx.out.result('stats', { outcomes, totals, rates: config.rates }, () => [

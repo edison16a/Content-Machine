@@ -17,7 +17,12 @@ export interface DashboardEntry {
 }
 
 export interface DashboardItem {
+  /** The item's number within its project, shown as "#001". Not unique across projects. */
   id: number;
+  /** Unique across every project: "<project>#<id>". Use it to find or remember an item. */
+  key: string;
+  /** The project folder this video belongs to. */
+  project: string;
   /** Relative to dashboard.html, e.g. "videos/001.mp4". */
   video: string;
   thumb: string;
@@ -50,6 +55,8 @@ export interface DashboardSnapshot {
   at: string;
   platform: DashboardPlatform;
   itemId: number;
+  /** The item's `key`, so readings from several projects never mix up. */
+  itemKey: string;
   views: number;
   likes: number;
   comments: number;

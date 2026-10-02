@@ -2,6 +2,7 @@ import { join } from 'node:path';
 import { buildSchedule, type Project, type Schedule } from '@content-machine/core';
 import {
   toDashboardData,
+  toDashboardSnapshots,
   type DashboardData,
   type DashboardLogos,
 } from '@content-machine/dashboard';
@@ -64,17 +65,8 @@ export async function projectDashboardData(
     repoUrl: config.repoUrl,
     stats: {
       rates: { ...config.rates },
-      // The platform's own title is only kept on disk for checking matches.
       sample: stats.sample,
-      snapshots: stats.snapshots.map((snapshot) => ({
-        at: snapshot.at,
-        platform: snapshot.platform,
-        itemId: snapshot.itemId,
-        views: snapshot.views,
-        likes: snapshot.likes,
-        comments: snapshot.comments,
-        shares: snapshot.shares,
-      })),
+      snapshots: toDashboardSnapshots(project.name, stats.snapshots),
     },
   });
 }

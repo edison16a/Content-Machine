@@ -11,10 +11,11 @@ export interface StatsPoint extends Totals {
   at: string;
 }
 
-/** Which slice of the numbers to show: one platform or all, one video or all. */
+/** Which slice of the numbers to show: one platform or all, one video (by key) or all. */
 export interface StatsFilter {
   platform: DashboardPlatform | 'all';
-  itemId: number | 'all';
+  /** An item's key, or "all" for every video. */
+  itemKey: string;
 }
 
 export const ZERO_TOTALS: Totals = { views: 0, income: 0, likes: 0, comments: 0, shares: 0 };
@@ -27,7 +28,7 @@ export function incomeFor(views: number, ratePerThousand: number): number {
 function included(snapshot: DashboardSnapshot, filter: StatsFilter): boolean {
   return (
     (filter.platform === 'all' || snapshot.platform === filter.platform) &&
-    (filter.itemId === 'all' || snapshot.itemId === filter.itemId)
+    (filter.itemKey === 'all' || snapshot.itemKey === filter.itemKey)
   );
 }
 
@@ -44,7 +45,7 @@ export function statsTimeline(stats: DashboardStats, filter: StatsFilter): Stats
   const latest = new Map<string, DashboardSnapshot>();
   const points: StatsPoint[] = [];
   for (const [index, snapshot] of sorted.entries()) {
-    latest.set(`${snapshot.platform}#${snapshot.itemId}`, snapshot);
+    latest.set(`${snapshot.platform}|${snapshot.itemKey}`, snapshot);
     if (sorted[index + 1]?.at === snapshot.at) continue;
     const point: StatsPoint = { at: snapshot.at, ...ZERO_TOTALS };
     for (const reading of latest.values()) {

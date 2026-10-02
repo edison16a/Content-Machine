@@ -1,11 +1,42 @@
-import type { Schedule } from '@content-machine/core';
-import type { DashboardData, DashboardLogos, DashboardStats } from '../shared/types.js';
+import type { Schedule, StatsSnapshot } from '@content-machine/core';
+import type {
+  DashboardData,
+  DashboardLogos,
+  DashboardSnapshot,
+  DashboardStats,
+} from '../shared/types.js';
 
 export interface DashboardExtras {
   sourcePlatform: string;
   logos: DashboardLogos;
   repoUrl: string;
   stats: DashboardStats;
+}
+
+/** The key that names one video across every project. */
+export function itemKey(project: string, id: number): string {
+  return `${project}#${id}`;
+}
+
+/**
+ * Readings as the page needs them: keyed to their project's items, and
+ * without the platform's own title, which is only kept on disk for checking
+ * matches.
+ */
+export function toDashboardSnapshots(
+  project: string,
+  snapshots: readonly StatsSnapshot[],
+): DashboardSnapshot[] {
+  return snapshots.map((snapshot) => ({
+    at: snapshot.at,
+    platform: snapshot.platform,
+    itemId: snapshot.itemId,
+    itemKey: itemKey(project, snapshot.itemId),
+    views: snapshot.views,
+    likes: snapshot.likes,
+    comments: snapshot.comments,
+    shares: snapshot.shares,
+  }));
 }
 
 /**
@@ -27,6 +58,8 @@ export function toDashboardData(schedule: Schedule, extras: DashboardExtras): Da
     updatedAt: schedule.updatedAt,
     items: schedule.items.map((item) => ({
       id: item.id,
+      key: itemKey(schedule.project, item.id),
+      project: schedule.project,
       video: item.video,
       thumb: item.thumb,
       duration: item.duration,
