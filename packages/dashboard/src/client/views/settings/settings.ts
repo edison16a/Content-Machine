@@ -53,12 +53,9 @@ export function renderSettings(
       ? h('label', { class: 'settings-label', for: projectPicker.button.id, text: 'Project' })
       : null,
     ctx.live ? projectPicker.element : null,
-    h('p', {
-      class: 'settings-note',
-      text: ctx.live
-        ? 'All projects shows every video on one calendar, with statistics for all of them.'
-        : 'This page shows one project. Open index.html to see every project together.',
-    }),
+    ctx.live
+      ? null
+      : h('p', { class: 'settings-note', text: 'Open index.html for every project.' }),
   );
   const element = h('div', { class: 'settings' }, button, panel);
 

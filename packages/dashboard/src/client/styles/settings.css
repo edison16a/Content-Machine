@@ -129,7 +129,7 @@
 
 .admin-row {
   display: grid;
-  grid-template-columns: 100px minmax(140px, 1fr) 40px 104px 86px;
+  grid-template-columns: 96px minmax(110px, 1fr) 40px 84px 104px;
   align-items: center;
   gap: var(--space-3);
   font-variant-numeric: tabular-nums;

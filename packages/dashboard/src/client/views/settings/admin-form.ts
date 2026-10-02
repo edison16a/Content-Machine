@@ -105,7 +105,7 @@ export function adminForm(ctx: Context): AdminForm {
     for (const platform of DASHBOARD_PLATFORMS) {
       const row = cells.get(platform);
       if (row === undefined) continue;
-      row.views.textContent = `${count(views[platform])} views`;
+      row.views.textContent = count(views[platform]);
       row.income.textContent = money(income.perPlatform[platform]);
     }
     total.textContent = money(income.total);
