@@ -79,3 +79,46 @@
   -webkit-line-clamp: 3;
   line-clamp: 3;
 }
+
+/* On the All tab a card shows every platform's logo with its status dot. */
+.video-platforms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+}
+
+.video-platform {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.video-platform .row-logo {
+  width: auto;
+  height: 12px;
+}
+
+.day-large .video-platforms {
+  gap: var(--space-3);
+}
+
+.day-large .video-platform .row-logo {
+  height: 16px;
+}
+
+.video-platform.status-scheduled .dot {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--accent);
+}
+
+.video-platform.status-posted .dot {
+  background: var(--accent);
+  box-shadow: none;
+}
+
+.video-platform.status-failed .dot {
+  background: var(--text);
+  box-shadow: none;
+}
