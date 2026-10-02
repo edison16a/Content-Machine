@@ -6,6 +6,7 @@ import {
   type LiveData,
 } from '../../shared/types.js';
 import { load, save } from './storage.js';
+import { withKeys } from './upgrade.js';
 
 /** How often the live index rereads its data file. It is a small local file. */
 export const POLL_MS = 4000;
@@ -34,9 +35,10 @@ function liveGlobal(): LiveData | undefined {
 export function readSource(): Source {
   const node = document.getElementById(DATA_ELEMENT_ID);
   if (node !== null) {
-    return { kind: 'snapshot', projects: [JSON.parse(node.textContent || '{}') as DashboardData] };
+    const data = JSON.parse(node.textContent || '{}') as DashboardData;
+    return { kind: 'snapshot', projects: [withKeys(data)] };
   }
-  return { kind: 'live', projects: liveGlobal()?.projects ?? [] };
+  return { kind: 'live', projects: (liveGlobal()?.projects ?? []).map(withKeys) };
 }
 
 /**
@@ -78,7 +80,7 @@ export function watchLive(
     const text = JSON.stringify(data.projects);
     if (text !== last) {
       last = text;
-      onChange(data.projects);
+      onChange(data.projects.map(withKeys));
     }
   };
 
