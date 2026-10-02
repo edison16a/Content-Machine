@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "slots": ["12:00", "17:00", "20:00"],
+  "stagger": { "tiktok": 0, "instagram": 15, "youtube": 30 },
+  "weekStartsOn": "monday",
+  "account": "default",
+  "handles": { "tiktok": "", "instagram": "", "youtube": "" },
+  "brand": {
+    "font": "Poppins ExtraBold",
+    "textColor": "#FFFFFF",
+    "accentColor": "#FF8A1F"
+  },
+  "layout": {
+    "canvasWidth": 1080,
+    "canvasHeight": 1920,
+    "safeTop": 230,
+    "safeBottom": 1540,
+    "gap": 36
+  },
+  "maxDurationSeconds": 59.98,
+  "repoUrl": "https://github.com/edison16a/Content-Machine"
+}
