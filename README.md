@@ -135,9 +135,9 @@ The conversation from the screenshot at the top, as text:
   </tr>
 </table>
 
-- **Live strip.** The time where you post and anything due to post right now.
+- **Post now.** A strip that appears only when a post is due, listing what to post right now.
 - **All tab.** The same calendar with every video's status on TikTok, Instagram and YouTube on each card.
-- **Statistics.** Total views, estimated income (to six decimals), likes, comments and shares per platform or all together, and a color-coded graph of each over time. Pick which graphs show, search for one video, or read it as a table. Ask Claude to "update my stats" and it reads each platform's analytics for you.
+- **Statistics.** Total views, estimated income (to six decimals), likes, comments and shares per platform or all together, and a color-coded graph of each over time. Pick which graphs show, search for one video, or read it as a table. Ask Claude to "update my stats" and it reads each platform's analytics for you, or say "activate test data" to see it filled with 30 days of made-up numbers first.
 - **Every project in one place.** A picker appears when you have more than one.
 - **Play every video with sound.** Click a card and it plays right away. Space, M, F and Esc work as you would expect.
 - **Stats at a glance** for the selected platform: posted, scheduled, queued, failed and what posts next.
@@ -199,7 +199,7 @@ playbook/            what Claude reads at runtime
 docs/                specs, architecture, ADRs, JSON Schemas
 ```
 
-Every command: `npm run cm -- <command>`. Run `npm run cm -- --help` for the list (`doctor`, `new`, `fetch`, `stats`, `transcript`, `render`, `preview`, `check`, `schedule`, `mark`, `dashboard`, `open`, `status`, `autoplan`, `demo`, `schema`). Each one takes `--json` for machine-readable output. Read [docs/architecture.md](docs/architecture.md) for how it fits together.
+Every command: `npm run cm -- <command>`. Run `npm run cm -- --help` for the list (`doctor`, `new`, `fetch`, `stats`, `testdata`, `transcript`, `render`, `preview`, `check`, `schedule`, `mark`, `dashboard`, `open`, `status`, `autoplan`, `demo`, `schema`). Each one takes `--json` for machine-readable output. Read [docs/architecture.md](docs/architecture.md) for how it fits together.
 
 ## Development
 
