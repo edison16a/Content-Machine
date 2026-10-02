@@ -4,6 +4,7 @@ import type { Command } from 'commander';
 import { MissingDependencyError, SOURCE_PLATFORMS, type ErrorCode } from '@content-machine/core';
 import { FONT_PATH, detectTools, ensureFont, resolveLogo } from '@content-machine/render';
 import type { CommandContext } from '../context.js';
+import { YTDLP_INSTALL, ytDlpVersion } from '../download/ytdlp.js';
 
 export interface Check {
   name: string;
@@ -45,7 +46,7 @@ function fontCheck(): Check {
 
 export async function collectChecks(ctx: CommandContext): Promise<Check[]> {
   const major = Number(process.versions.node.split('.')[0]);
-  const tools = await detectTools(ctx.runner);
+  const [tools, ytdlp] = await Promise.all([detectTools(ctx.runner), ytDlpVersion(ctx.runner)]);
   const install = 'macOS: brew install ffmpeg. Debian or Ubuntu: sudo apt install ffmpeg.';
   const chrome = findChrome();
   const logos: string[] = [];
@@ -89,6 +90,14 @@ export async function collectChecks(ctx: CommandContext): Promise<Check[]> {
     },
     fontCheck(),
     {
+      name: 'yt-dlp',
+      code: 'E_YTDLP_MISSING',
+      ok: ytdlp !== undefined,
+      required: false,
+      detail: ytdlp === undefined ? 'not found' : `version ${ytdlp}`,
+      fix: `Only needed to download videos from a link. ${YTDLP_INSTALL}`,
+    },
+    {
       name: 'Hardware encoder',
       ok: tools.videotoolbox,
       required: false,
@@ -131,7 +140,7 @@ export function registerDoctor(program: Command, context: () => CommandContext):
   program
     .command('doctor')
     .description(
-      'Check Node, ffmpeg, libx264, the font, Chrome and logos, with fixes for anything missing.',
+      'Check Node, ffmpeg, libx264, the font, yt-dlp, Chrome and logos, with fixes for anything missing.',
     )
     .action(() => runDoctor(context()).then(() => undefined));
 }
