@@ -50,6 +50,7 @@ export async function loadConfig(fs: FileSystem, root: string): Promise<Resolved
     account: local.account ?? defaults.account,
     handles: overlay(defaults.handles, local.handles),
     brand: overlay(defaults.brand, local.brand),
+    rates: overlay(defaults.rates, local.rates),
     timezone: local.timezone ?? defaults.timezone ?? systemTimeZone(),
   };
 }

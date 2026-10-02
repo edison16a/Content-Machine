@@ -25,6 +25,17 @@ export const layoutConstantsSchema = z.object({
 });
 export type LayoutConstants = z.infer<typeof layoutConstantsSchema>;
 
+/**
+ * Estimated payout in US dollars per 1,000 views, per platform. These only
+ * feed the income estimate on the dashboard; nobody is paid from them.
+ */
+export const ratesSchema = z.object({
+  tiktok: z.number().min(0),
+  instagram: z.number().min(0),
+  youtube: z.number().min(0),
+});
+export type Rates = z.infer<typeof ratesSchema>;
+
 /** `config/defaults.json`, committed. Shared starting point for every project. */
 export const configSchema = z.object({
   schemaVersion,
@@ -38,6 +49,7 @@ export const configSchema = z.object({
   layout: layoutConstantsSchema,
   maxDurationSeconds: z.number().positive().max(59.98),
   repoUrl: z.url(),
+  rates: ratesSchema,
 });
 export type Config = z.output<typeof configSchema>;
 
@@ -51,5 +63,6 @@ export const localConfigSchema = z.object({
   account: z.string().min(1).optional(),
   handles: handlesSchema.partial().optional(),
   brand: brandSchema.partial().optional(),
+  rates: ratesSchema.partial().optional(),
 });
 export type LocalConfig = z.output<typeof localConfigSchema>;

@@ -84,6 +84,23 @@
           "pattern": "^#[0-9A-Fa-f]{6}$"
         }
       }
+    },
+    "rates": {
+      "type": "object",
+      "properties": {
+        "tiktok": {
+          "type": "number",
+          "minimum": 0
+        },
+        "instagram": {
+          "type": "number",
+          "minimum": 0
+        },
+        "youtube": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
     }
   }
 }

@@ -1,10 +1,18 @@
 {
   "schemaVersion": 1,
   "slots": ["12:00", "17:00", "20:00"],
-  "stagger": { "tiktok": 0, "instagram": 15, "youtube": 30 },
+  "stagger": {
+    "tiktok": 0,
+    "instagram": 15,
+    "youtube": 30
+  },
   "weekStartsOn": "monday",
   "account": "default",
-  "handles": { "tiktok": "", "instagram": "", "youtube": "" },
+  "handles": {
+    "tiktok": "",
+    "instagram": "",
+    "youtube": ""
+  },
   "brand": {
     "font": "Poppins ExtraBold",
     "textColor": "#FFFFFF",
@@ -18,5 +26,10 @@
     "gap": 36
   },
   "maxDurationSeconds": 59.98,
-  "repoUrl": "https://github.com/edison16a/Content-Machine"
+  "repoUrl": "https://github.com/edison16a/Content-Machine",
+  "rates": {
+    "tiktok": 0.4,
+    "instagram": 0.01,
+    "youtube": 0.07
+  }
 }
