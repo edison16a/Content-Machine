@@ -55,6 +55,9 @@ describe('matchesQuery', () => {
 
   it('finds a video by its number', () => {
     expect(matchesQuery(title, '#3')).toBe(true);
+    expect(matchesQuery(title, '#003')).toBe(true);
     expect(matchesQuery(title, '003')).toBe(true);
+    expect(matchesQuery('#013 Other', '#3')).toBe(false);
+    expect(matchesQuery('No number', '#3')).toBe(false);
   });
 });
