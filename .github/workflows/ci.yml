@@ -1,0 +1,107 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Check (${{ matrix.os }}, Node ${{ matrix.node }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        node: [20, 22]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - name: Install ffmpeg (Ubuntu)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Install ffmpeg (macOS)
+        if: runner.os == 'macOS'
+        run: brew install ffmpeg
+
+      - name: Install dependencies (also builds every package)
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test with coverage
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: JSON Schemas are up to date
+        run: |
+          npm run docs:schemas
+          git diff --exit-code -- docs/schemas
+
+      - name: Audit dependencies (reported, not blocking)
+        if: matrix.os == 'ubuntu-latest' && matrix.node == 22
+        continue-on-error: true
+        run: npm audit
+
+  e2e:
+    name: Demo and dashboard browser tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Make sure Google Chrome is installed
+        run: |
+          if ! command -v google-chrome >/dev/null; then npx playwright install --with-deps chrome; fi
+          google-chrome --version
+
+      - name: Build the demo projects
+        run: npm run demo
+
+      - name: Render again (should be a no-op) and check
+        run: |
+          npm run cm -- render demo
+          npm run cm -- check demo
+
+      - name: Dashboard browser tests
+        run: npm run test:e2e
+
+      - name: Upload reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-reports
+          path: |
+            playwright-report/
+            test-results/
+            docs/images/
+            projects/demo/work/qa/
+          if-no-files-found: ignore
