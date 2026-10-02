@@ -14,6 +14,7 @@ import { registerSchedule } from './commands/schedule.js';
 import { registerSchema } from './commands/schema.js';
 import { registerStats } from './commands/stats.js';
 import { registerStatus } from './commands/status.js';
+import { registerTestData } from './commands/testdata.js';
 import { registerTranscript } from './commands/transcript.js';
 import { createContext, type CommandContext, type GlobalOptions } from './context.js';
 import { Output } from './io/output.js';
@@ -46,6 +47,7 @@ export function buildProgram(
     registerDashboard,
     registerStatus,
     registerStats,
+    registerTestData,
     registerAutoplan,
     registerDemo,
     registerSchema,

@@ -11,12 +11,9 @@ import { statsTotals, type DashboardStats, type Totals } from '@content-machine/
 import type { CommandContext } from '../context.js';
 import { withLock } from '../io/lock.js';
 import { writeDashboard } from '../project/dashboard.js';
-import { loadSchedule, loadStats, writeJson } from '../project/files.js';
+import { loadSchedule, loadShownStats, loadStats, writeJson } from '../project/files.js';
 import { candidatesFrom, rowsFrom, type StatsFlags } from '../project/stats-input.js';
-import { openProject, parsePositiveInt } from './shared.js';
-
-/** Plenty of decimals: the estimate is tiny per view and people like watching it move. */
-const money = (value: number): string => `$${value.toFixed(6)}`;
+import { money, openProject, parsePositiveInt } from './shared.js';
 
 function describe(outcome: RowOutcome): string {
   const where = `row ${outcome.row} (${outcome.platform})`;
@@ -78,10 +75,8 @@ export async function runStats(
     });
     await writeDashboard(ctx, paths, project, schedule);
   }
-  const stats: DashboardStats = {
-    rates: { ...config.rates },
-    snapshots: (await loadStats(ctx.fs, paths))?.snapshots ?? [],
-  };
+  const shown = await loadShownStats(ctx.fs, paths);
+  const stats: DashboardStats = { rates: { ...config.rates }, ...shown };
   const slices: ('all' | Platform)[] = ['all', ...PLATFORMS];
   const totals = slices.map((platform) => ({
     platform,
@@ -92,6 +87,9 @@ export async function runStats(
     ...(recording ? [`Recorded ${outcomes.length - missed} of ${outcomes.length} readings.`] : []),
     ...outcomes.filter((o) => o.kind !== 'recorded').map(describe),
     ...totals.map((slice) => totalsLine(slice.platform, slice)),
+    ...(shown.sample
+      ? [`These totals include test data. Turn it off with: npm run cm -- testdata ${name} off`]
+      : []),
     'Income is an estimate from the rates in config (US dollars per 1,000 views).',
   ]);
   return outcomes;

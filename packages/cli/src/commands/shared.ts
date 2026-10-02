@@ -65,6 +65,14 @@ export function parseSeconds(value: string): number {
   return number;
 }
 
+/**
+ * Money as the dashboard shows it: commas and six decimals. The estimate is
+ * a fraction of a cent per view, and the decimals are what make it move.
+ */
+export function money(value: number): string {
+  return `$${value.toLocaleString('en-US', { minimumFractionDigits: 6, maximumFractionDigits: 6 })}`;
+}
+
 /** Relative path for messages, so output stays short and readable. */
 export function display(ctx: CommandContext, path: string): string {
   return path.startsWith(ctx.root) ? path.slice(ctx.root.length).replace(/^\/+/, '') : path;
