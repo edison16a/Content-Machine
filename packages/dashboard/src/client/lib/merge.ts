@@ -20,8 +20,10 @@ export function mergeProjects(projects: readonly DashboardData[]): DashboardData
   const slots = [...new Set(projects.flatMap((project) => project.slots))].sort();
   const items = projects.flatMap((project) =>
     project.items.map((item) => {
-      const time = project.slots[item.slot];
-      return { ...item, slot: time === undefined ? item.slot : slots.indexOf(time) };
+      // An item past the end of its project's slots goes to the first slot,
+      // the same fallback the scheduler uses for its posting time.
+      const time = project.slots[item.slot] ?? project.slots[0];
+      return { ...item, slot: time === undefined ? 0 : slots.indexOf(time) };
     }),
   );
   return {
