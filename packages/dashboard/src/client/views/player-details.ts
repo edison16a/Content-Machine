@@ -53,7 +53,9 @@ function platformRows(ctx: Context, item: DashboardItem): HTMLElement {
 export function playerDetails(ctx: Context, item: DashboardItem): HTMLElement {
   const platform = focusPlatform(ctx.store.get().platform);
   const caption = item.captions[platform];
-  const fileName = item.video.split('/').pop() ?? item.video;
+  // The folder that holds the video, relative to the page: "videos/" or
+  // "projects/demo/videos/" on the live index.
+  const folder = item.video.slice(0, item.video.lastIndexOf('/') + 1) || './';
   return h(
     'div',
     { class: 'details' },
@@ -74,9 +76,15 @@ export function playerDetails(ctx: Context, item: DashboardItem): HTMLElement {
       { class: 'detail-actions' },
       h(
         'a',
-        { class: 'button button-sm', href: item.video, download: fileName },
-        icon('download'),
-        h('span', { class: 'label', text: 'Download' }),
+        {
+          class: 'button button-sm',
+          href: folder,
+          target: '_blank',
+          rel: 'noopener',
+          title: 'Opens the folder with this video in a new tab',
+        },
+        icon('folder'),
+        h('span', { class: 'label', text: 'Open folder' }),
       ),
       copyAction('Copy file path', () => absolutePath(item.video, window.location.href)),
     ),

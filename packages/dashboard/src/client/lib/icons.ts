@@ -16,7 +16,7 @@ const PATHS = {
   close: `<path ${STROKE} d="M6 6l12 12M18 6L6 18"/>`,
   alert: `<circle ${STROKE} cx="12" cy="12" r="9"/><path ${STROKE} d="M12 7.5v5.5M12 16.5v.01"/>`,
   copy: `<rect ${STROKE} x="9" y="9" width="11" height="11" rx="2"/><path ${STROKE} d="M5 15V5a1 1 0 0 1 1-1h9"/>`,
-  download: `<path ${STROKE} d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/>`,
+  folder: `<path ${STROKE} d="M3.5 7a2 2 0 0 1 2-2h4l2 2.5h7a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z"/>`,
   today: `<rect ${STROKE} x="3.5" y="5" width="17" height="15" rx="2"/><path ${STROKE} d="M3.5 10h17M8 3v4M16 3v4"/>`,
   target: `<circle ${STROKE} cx="12" cy="12" r="8"/><circle ${STROKE} cx="12" cy="12" r="3"/>`,
   previous: `<path ${STROKE} d="M18 6l-8 6 8 6zM6 6v12"/>`,
