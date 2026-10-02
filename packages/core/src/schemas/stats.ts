@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { platformSchema, projectNameSchema, schemaVersion } from './common.js';
+import { localDateSchema, platformSchema, projectNameSchema, schemaVersion } from './common.js';
 
 const count = z.number().int().min(0);
 
@@ -41,6 +41,8 @@ export const statsImportRowSchema = z
     platform: platformSchema,
     item: z.number().int().positive().optional(),
     title: z.string().min(1).optional(),
+    /** The day it went up, "YYYY-MM-DD". Tells apart Sequential parts that share a title. */
+    postedOn: localDateSchema.optional(),
     views: count,
     likes: count.default(0),
     comments: count.default(0),
