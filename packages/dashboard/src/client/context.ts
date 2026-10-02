@@ -11,6 +11,8 @@ export interface Context {
   data: DashboardData;
   /** True on the root index.html, which updates itself. */
   live: boolean;
+  /** Rereads the data file now. A snapshot dashboard has nothing to reread. */
+  refresh: () => Promise<void>;
   store: Store;
   now: () => Date;
   openItem: (item: DashboardItem, opener?: HTMLElement) => void;
