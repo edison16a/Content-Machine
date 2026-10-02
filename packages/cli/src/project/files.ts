@@ -79,19 +79,18 @@ export const loadSampleStats = (fs: FileSystem, paths: ProjectPaths): Promise<St
   readOptional(fs, statsSchema, paths.sampleStats, 'plan/sample-stats.json');
 
 /**
- * Every reading the dashboard should show: the real ones, plus test data
- * while it is switched on. `sample` says whether test data is mixed in, so
- * the page and the CLI can say so.
+ * The readings the dashboard should show. While test data is on it shows
+ * only the test data: mixing made-up numbers into real ones for the same
+ * videos would give totals that mean nothing. `sample` says which it is, so
+ * the page and the CLI can label it. Real readings are never touched.
  */
 export async function loadShownStats(
   fs: FileSystem,
   paths: ProjectPaths,
 ): Promise<{ snapshots: Stats['snapshots']; sample: boolean }> {
-  const [real, sample] = await Promise.all([loadStats(fs, paths), loadSampleStats(fs, paths)]);
-  return {
-    snapshots: [...(real?.snapshots ?? []), ...(sample?.snapshots ?? [])],
-    sample: sample !== undefined,
-  };
+  const sample = await loadSampleStats(fs, paths);
+  if (sample !== undefined) return { snapshots: sample.snapshots, sample: true };
+  return { snapshots: (await loadStats(fs, paths))?.snapshots ?? [], sample: false };
 }
 
 export const loadRenderLog = (

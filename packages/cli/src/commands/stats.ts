@@ -88,7 +88,9 @@ export async function runStats(
     ...outcomes.filter((o) => o.kind !== 'recorded').map(describe),
     ...totals.map((slice) => totalsLine(slice.platform, slice)),
     ...(shown.sample
-      ? [`These totals include test data. Turn it off with: npm run cm -- testdata ${name} off`]
+      ? [
+          `Test data is on, so these totals are made up. Turn it off with: npm run cm -- testdata ${name} off`,
+        ]
       : []),
     'Income is an estimate from the rates in config (US dollars per 1,000 views).',
   ]);

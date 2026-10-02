@@ -58,7 +58,8 @@ export function renderStatsSection(ctx: Context): StatsSection {
   const sampleBadge = h('span', {
     class: 'sample-badge',
     text: 'Test data',
-    title: 'Made-up numbers. Turn them off with: npm run cm -- testdata <project> off',
+    title:
+      'Made-up numbers, shown instead of your real ones. Turn off with: npm run cm -- testdata <project> off',
     hidden: true,
   });
   const refresh = h(

@@ -60,7 +60,7 @@ export interface DashboardStats {
   /** Estimated US dollars paid per 1,000 views, from config. */
   rates: Record<DashboardPlatform, number>;
   snapshots: DashboardSnapshot[];
-  /** True while made-up test data is mixed in (`testdata on`). */
+  /** True while made-up test data is shown instead of real readings (`testdata on`). */
   sample: boolean;
 }
 
