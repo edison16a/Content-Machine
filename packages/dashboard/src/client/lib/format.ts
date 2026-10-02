@@ -62,3 +62,33 @@ export function platformSlotTime(base: string, stagger: number): string {
   const total = (((h0 * 60 + m0 + stagger) % 1440) + 1440) % 1440;
   return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
 }
+
+/**
+ * How long until something happens, in words: "in 45 min", "in 2 h 5 min",
+ * "in 3 days". Rounds up to the minute so it never says "in 0 min".
+ */
+export function untilText(ms: number): string {
+  const minutes = Math.max(1, Math.ceil(ms / 60_000));
+  if (minutes < 60) return `in ${minutes} min`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 48) return `in ${hours} h${minutes % 60 === 0 ? '' : ` ${minutes % 60} min`}`;
+  return `in ${Math.round(hours / 24)} days`;
+}
+
+/** How long ago something was due, in the same style: "12 min ago", "3 h ago". */
+export function agoText(ms: number): string {
+  const minutes = Math.max(0, Math.floor(ms / 60_000));
+  if (minutes < 1) return 'just now';
+  if (minutes < 60) return `${minutes} min ago`;
+  const hours = Math.floor(minutes / 60);
+  return hours < 48 ? `${hours} h ago` : `${Math.round(hours / 24)} days ago`;
+}
+
+/** The current wall clock time in the project's time zone, like "3:42 PM". */
+export function clockIn(timeZone: string, now: Date): string {
+  return new Intl.DateTimeFormat('en-US', {
+    timeZone,
+    hour: 'numeric',
+    minute: '2-digit',
+  }).format(now);
+}

@@ -50,6 +50,23 @@ export function nextUp(
     )[0];
 }
 
+/**
+ * Posts whose time has come but that nobody has scheduled or posted yet.
+ * These are the ones to post by hand right now, oldest first.
+ */
+export function dueNow(
+  items: readonly DashboardItem[],
+  platform: DashboardPlatform,
+  now: Date,
+): DashboardItem[] {
+  return items
+    .filter((item) => {
+      const entry = item.platforms[platform];
+      return entry.status === 'queued' && Date.parse(entry.iso) <= now.getTime();
+    })
+    .sort((a, b) => Date.parse(a.platforms[platform].iso) - Date.parse(b.platforms[platform].iso));
+}
+
 /** A post marked scheduled whose time is behind us: worth checking if it went live. */
 export function timePassed(item: DashboardItem, platform: DashboardPlatform, now: Date): boolean {
   const entry = item.platforms[platform];
