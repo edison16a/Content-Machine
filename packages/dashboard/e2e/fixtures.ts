@@ -15,7 +15,10 @@ export async function demoNow(): Promise<Date> {
 }
 
 /** Opens a dashboard with the clock frozen at the demo's "now" and records any network use. */
-export async function openDashboard(page: Page, dir = DEMO_DIR): Promise<{ requests: string[]; errors: string[] }> {
+export async function openDashboard(
+  page: Page,
+  dir = DEMO_DIR,
+): Promise<{ requests: string[]; errors: string[] }> {
   const requests: string[] = [];
   const errors: string[] = [];
   page.on('request', (request) => {

@@ -20,7 +20,10 @@ async function ensureDemo(): Promise<void> {
   const clock = await readFile(join(DEMO, 'work', 'demo-clock.json'), 'utf8').catch(() => '');
   if (clock.includes(NOW)) return;
   console.log('Building the demo at a fixed date...');
-  const result = spawnSync('node', ['packages/cli/dist/bin.js', '--now', NOW, 'demo'], { cwd: ROOT, stdio: 'inherit' });
+  const result = spawnSync('node', ['packages/cli/dist/bin.js', '--now', NOW, 'demo'], {
+    cwd: ROOT,
+    stdio: 'inherit',
+  });
   if (result.status !== 0) throw new Error('npm run demo failed');
 }
 
@@ -39,7 +42,8 @@ async function openPlayer(page: Page): Promise<void> {
   const video = page.locator('.player video');
   await video.evaluate(async (el) => {
     const v = el as HTMLVideoElement;
-    if (v.readyState < 1) await new Promise((r) => v.addEventListener('loadedmetadata', r, { once: true }));
+    if (v.readyState < 1)
+      await new Promise((r) => v.addEventListener('loadedmetadata', r, { once: true }));
     v.pause();
     v.currentTime = 2.5;
     await new Promise((r) => v.addEventListener('seeked', r, { once: true }));
@@ -56,7 +60,11 @@ const SHOTS: Shot[] = [
 ];
 
 async function capture(browser: Browser, shot: Shot): Promise<void> {
-  const context = await browser.newContext({ viewport: { width: shot.width, height: shot.height }, colorScheme: shot.scheme, deviceScaleFactor: shot.scale ?? 1 });
+  const context = await browser.newContext({
+    viewport: { width: shot.width, height: shot.height },
+    colorScheme: shot.scheme,
+    deviceScaleFactor: shot.scale ?? 1,
+  });
   const page = await context.newPage();
   await page.clock.setFixedTime(new Date(NOW));
   await page.goto(`file://${join(DEMO, 'dashboard.html')}`);
@@ -69,7 +77,10 @@ async function capture(browser: Browser, shot: Shot): Promise<void> {
 }
 
 async function chatImage(browser: Browser): Promise<void> {
-  const page = await browser.newPage({ viewport: { width: 880, height: 600 }, deviceScaleFactor: 1.5 });
+  const page = await browser.newPage({
+    viewport: { width: 880, height: 600 },
+    deviceScaleFactor: 1.5,
+  });
   await page.goto(`file://${join(ROOT, 'docs', 'mock', 'claude-usage.html')}`);
   await page.locator('.chat').screenshot({ path: join(OUT, 'claude-usage.png') });
   await page.close();

@@ -18,11 +18,13 @@
 ## Results
 
 <!-- ACCOUNTS:START -->
+
 **Real accounts running on Content Machine:**
 
 [![TikTok: @YOUR_TIKTOK_HANDLE](https://img.shields.io/badge/TikTok-%40YOUR__TIKTOK__HANDLE-000000?style=for-the-badge&logo=tiktok&logoColor=white)](https://www.tiktok.com/@YOUR_TIKTOK_HANDLE) [![Instagram: YOUR_INSTAGRAM_HANDLE](https://img.shields.io/badge/Instagram-YOUR__INSTAGRAM__HANDLE-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/YOUR_INSTAGRAM_HANDLE) [![YouTube: @YOUR_YOUTUBE_HANDLE](https://img.shields.io/badge/YouTube-%40YOUR__YOUTUBE__HANDLE-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/@YOUR_YOUTUBE_HANDLE)
 
 _These are placeholders. Put your handles and links in `docs/accounts.json`, then run `npm run docs:accounts`._
+
 <!-- ACCOUNTS:END -->
 
 <p align="center">
@@ -36,12 +38,12 @@ You give Claude a long video you have the rights to, plus its transcript. Claude
 
 Two modes, one plan format:
 
-| | Sequential | Clip |
-| --- | --- | --- |
-| What it posts | The whole video, start to finish, in parts | Only the best moments |
-| Length | Up to 60 seconds per part, cut at story beats | 8 to 59 seconds per clip |
-| On-video title | The video's title, identical on every part | A fresh title for each clip that says what happened |
-| Editing | None. Original audio, the layout, the title and the credit | Same: just the cut, the layout, the title and the credit |
+|                | Sequential                                                 | Clip                                                     |
+| -------------- | ---------------------------------------------------------- | -------------------------------------------------------- |
+| What it posts  | The whole video, start to finish, in parts                 | Only the best moments                                    |
+| Length         | Up to 60 seconds per part, cut at story beats              | 8 to 59 seconds per clip                                 |
+| On-video title | The video's title, identical on every part                 | A fresh title for each clip that says what happened      |
+| Editing        | None. Original audio, the layout, the title and the credit | Same: just the cut, the layout, the title and the credit |
 
 ## How it works
 
@@ -89,6 +91,7 @@ npm run cm -- open demo
 > **You:** Using Content Machine: https://github.com/edison16a/Content-Machine
 >
 > **Claude:** Let's set up your videos. A few quick questions:
+>
 > 1. What type of video? Sequential (the whole video in parts, up to 60 seconds each) or Clip (only the best moments).
 > 2. What's the title of the video?
 > 3. What should the project folder be called?
@@ -153,11 +156,11 @@ projects/<project-name>/
 
 As of October 2026. **Verify in your account:** platforms change these often, and this project has not tested them.
 
-| Platform | Desktop scheduler | Needs | How far ahead |
-| --- | --- | --- | --- |
-| TikTok | TikTok Studio | Business or Creator account | About 10 days |
-| Instagram Reels | Meta Business Suite | Professional account | Weeks |
-| YouTube Shorts | YouTube Studio | Any channel | No published limit, but every upload counts toward a daily limit |
+| Platform        | Desktop scheduler   | Needs                       | How far ahead                                                    |
+| --------------- | ------------------- | --------------------------- | ---------------------------------------------------------------- |
+| TikTok          | TikTok Studio       | Business or Creator account | About 10 days                                                    |
+| Instagram Reels | Meta Business Suite | Professional account        | Weeks                                                            |
+| YouTube Shorts  | YouTube Studio      | Any channel                 | No published limit, but every upload counts toward a daily limit |
 
 When a scheduler refuses a date, Claude stops that platform, leaves the rest queued and tells you when to come back. Details in [docs/platform-scheduling.md](docs/platform-scheduling.md).
 

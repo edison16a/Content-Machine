@@ -7,9 +7,13 @@ test.describe('player', () => {
     await openDashboard(page);
     await page.locator('.card').first().click();
     await expect(page.locator('.player')).toBeVisible();
-    await expect.poll(async () => (await playback(page)).readyState, { timeout: 15_000 }).toBeGreaterThanOrEqual(3);
+    await expect
+      .poll(async () => (await playback(page)).readyState, { timeout: 15_000 })
+      .toBeGreaterThanOrEqual(3);
     const first = await playback(page);
-    await expect.poll(async () => (await playback(page)).currentTime).toBeGreaterThan(first.currentTime);
+    await expect
+      .poll(async () => (await playback(page)).currentTime)
+      .toBeGreaterThan(first.currentTime);
     const state = await playback(page);
     expect(state.paused).toBe(false);
     expect(state.muted).toBe(false);
@@ -45,7 +49,9 @@ test.describe('player', () => {
     await openDashboard(page);
     await page.locator('.card').first().click();
     const id = await page.locator('.details .eyebrow').textContent();
-    await expect.poll(async () => (await playback(page)).readyState, { timeout: 15_000 }).toBeGreaterThanOrEqual(1);
+    await expect
+      .poll(async () => (await playback(page)).readyState, { timeout: 15_000 })
+      .toBeGreaterThanOrEqual(1);
     await page.locator('.player video').evaluate((el) => {
       const video = el as HTMLVideoElement;
       video.currentTime = video.duration - 0.3;
@@ -58,27 +64,43 @@ test.describe('player', () => {
     await page.addInitScript(() => {
       const copied: string[] = [];
       Object.defineProperty(window, '__copied', { value: copied });
-      Object.defineProperty(navigator, 'clipboard', { value: { writeText: (text: string) => { copied.push(text); return Promise.resolve(); } } });
+      Object.defineProperty(navigator, 'clipboard', {
+        value: {
+          writeText: (text: string) => {
+            copied.push(text);
+            return Promise.resolve();
+          },
+        },
+      });
     });
     await openDashboard(page);
     await page.locator('.card').first().click();
     await page.getByRole('button', { name: 'Copy caption' }).click();
     await page.getByRole('button', { name: 'Copy file path' }).click();
     await expect(page.getByRole('button', { name: 'Copied' }).first()).toBeVisible();
-    const copied = await page.evaluate(() => (window as unknown as { __copied: string[] }).__copied);
+    const copied = await page.evaluate(
+      () => (window as unknown as { __copied: string[] }).__copied,
+    );
     expect(copied[0]).toContain('Credit: Example Channel');
     expect(copied[1]).toMatch(/projects\/demo\/videos\/\d{3}\.mp4$/);
   });
 
-  test('works after moving the project folder and explains a missing file', async ({ page, movedDir }) => {
+  test('works after moving the project folder and explains a missing file', async ({
+    page,
+    movedDir,
+  }) => {
     await openDashboard(page, movedDir);
     const firstId = Number(await page.locator('.card').first().getAttribute('data-id'));
     await rm(join(movedDir, 'videos', `${String(firstId + 1).padStart(3, '0')}.mp4`));
     await page.locator('.card').first().click();
-    await expect.poll(async () => (await playback(page)).readyState, { timeout: 15_000 }).toBeGreaterThanOrEqual(3);
+    await expect
+      .poll(async () => (await playback(page)).readyState, { timeout: 15_000 })
+      .toBeGreaterThanOrEqual(3);
     expect((await playback(page)).paused).toBe(false);
     await page.keyboard.press('ArrowRight');
     await expect(page.locator('.video-error')).toBeVisible();
-    await expect(page.locator('.video-error')).toContainText('Keep dashboard.html in the project folder next to the videos folder.');
+    await expect(page.locator('.video-error')).toContainText(
+      'Keep dashboard.html in the project folder next to the videos folder.',
+    );
   });
 });

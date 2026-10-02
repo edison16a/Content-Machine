@@ -10,10 +10,10 @@ Transcript timestamps are approximate, often off by a second or two. Before rend
 
 For each boundary, only pauses within `--snap-window` seconds (default 2) count. Each pause gives one candidate cut time depending on the kind of boundary, and the candidate nearest the planned time wins:
 
-| Boundary | Cut lands at |
-| --- | --- |
-| Clip start | pause end minus 0.1s (just before speech resumes) |
-| Clip end | pause start plus 0.2s (just after speech stops) |
+| Boundary                                | Cut lands at                                                                |
+| --------------------------------------- | --------------------------------------------------------------------------- |
+| Clip start                              | pause end minus 0.1s (just before speech resumes)                           |
+| Clip end                                | pause start plus 0.2s (just after speech stops)                             |
 | Sequential boundary shared by two parts | the pause's midpoint, used as the end of one part and the start of the next |
 
 Sequential parts also pin their outer edges: the first part starts at exactly 0 and the last ends at the source's true duration, so parts always tile the whole video.

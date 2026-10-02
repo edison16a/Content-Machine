@@ -1,5 +1,11 @@
 {
   "tiktok": { "handle": "YOUR_TIKTOK_HANDLE", "url": "https://www.tiktok.com/@YOUR_TIKTOK_HANDLE" },
-  "instagram": { "handle": "YOUR_INSTAGRAM_HANDLE", "url": "https://www.instagram.com/YOUR_INSTAGRAM_HANDLE" },
-  "youtube": { "handle": "YOUR_YOUTUBE_HANDLE", "url": "https://www.youtube.com/@YOUR_YOUTUBE_HANDLE" }
+  "instagram": {
+    "handle": "YOUR_INSTAGRAM_HANDLE",
+    "url": "https://www.instagram.com/YOUR_INSTAGRAM_HANDLE"
+  },
+  "youtube": {
+    "handle": "YOUR_YOUTUBE_HANDLE",
+    "url": "https://www.youtube.com/@YOUR_YOUTUBE_HANDLE"
+  }
 }

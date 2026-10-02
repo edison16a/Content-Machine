@@ -7,3 +7,4 @@ docs/images
 playwright-report
 test-results
 *.min.*
+CODE_OF_CONDUCT.md

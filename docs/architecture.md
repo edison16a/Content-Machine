@@ -25,23 +25,23 @@ flowchart LR
 
 ## Where does X go?
 
-| You want to change | Put it in |
-| --- | --- |
-| A JSON file's shape | `packages/core/src/schemas`, then `npm run docs:schemas` |
-| How transcripts are read | `packages/core/src/transcript` |
-| Plan rules (lengths, gaps, accents) | `packages/core/src/plan` |
-| How cuts move onto pauses, or autoplan | `packages/core/src/snap` |
-| Where things sit on the canvas, line breaking | `packages/core/src/layout` |
-| Posting dates, slots, statuses | `packages/core/src/schedule`, `packages/core/src/status` |
-| ffmpeg arguments and the filter graph | `packages/render/src/ffmpeg` |
-| Title, credit, shadow and logo drawing | `packages/render/src/overlays` |
-| The render loop, thumbnails, preview | `packages/render/src/pipeline` |
-| Output checks and contact sheets | `packages/render/src/qa` |
-| What the dashboard shows or how it looks | `packages/dashboard/src/client` (views, lib, styles) |
-| How dashboard.html is assembled | `packages/dashboard/src/generate` |
-| A command or flag | `packages/cli/src/commands` |
-| Project folders, config loading, locks | `packages/cli/src/project`, `config`, `io` |
-| What Claude does at runtime | `playbook/` |
+| You want to change                            | Put it in                                                |
+| --------------------------------------------- | -------------------------------------------------------- |
+| A JSON file's shape                           | `packages/core/src/schemas`, then `npm run docs:schemas` |
+| How transcripts are read                      | `packages/core/src/transcript`                           |
+| Plan rules (lengths, gaps, accents)           | `packages/core/src/plan`                                 |
+| How cuts move onto pauses, or autoplan        | `packages/core/src/snap`                                 |
+| Where things sit on the canvas, line breaking | `packages/core/src/layout`                               |
+| Posting dates, slots, statuses                | `packages/core/src/schedule`, `packages/core/src/status` |
+| ffmpeg arguments and the filter graph         | `packages/render/src/ffmpeg`                             |
+| Title, credit, shadow and logo drawing        | `packages/render/src/overlays`                           |
+| The render loop, thumbnails, preview          | `packages/render/src/pipeline`                           |
+| Output checks and contact sheets              | `packages/render/src/qa`                                 |
+| What the dashboard shows or how it looks      | `packages/dashboard/src/client` (views, lib, styles)     |
+| How dashboard.html is assembled               | `packages/dashboard/src/generate`                        |
+| A command or flag                             | `packages/cli/src/commands`                              |
+| Project folders, config loading, locks        | `packages/cli/src/project`, `config`, `io`               |
+| What Claude does at runtime                   | `playbook/`                                              |
 
 ## Data flow
 

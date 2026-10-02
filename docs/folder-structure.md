@@ -16,12 +16,12 @@ projects/<project-name>/
 
 ## Four kinds of folders, one job each
 
-| Kind | Folders | Who writes it |
-| --- | --- | --- |
-| Inputs | `source/` | You |
-| Decisions | `plan/` | Claude writes `plan.json`, `metadata.json` and `report.md`; the tool owns `schedule.json` and `schedule-history.log` |
-| Deliverables | `videos/`, `thumbs/`, `dashboard.html` | The tool |
-| Disposable | `work/` | The tool |
+| Kind         | Folders                                | Who writes it                                                                                                        |
+| ------------ | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Inputs       | `source/`                              | You                                                                                                                  |
+| Decisions    | `plan/`                                | Claude writes `plan.json`, `metadata.json` and `report.md`; the tool owns `schedule.json` and `schedule-history.log` |
+| Deliverables | `videos/`, `thumbs/`, `dashboard.html` | The tool                                                                                                             |
+| Disposable   | `work/`                                | The tool                                                                                                             |
 
 Nobody edits `plan/schedule.json`, `videos/`, `thumbs/` or `work/` by hand. Deleting `work/` only costs a little time: the next run rebuilds caches. (It also holds `render-log.json`, so the next `render` re-renders everything and `schedule` needs a render first.)
 

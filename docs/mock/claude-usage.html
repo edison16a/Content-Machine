@@ -1,56 +1,167 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Using Content Machine (illustrative)</title>
-<style>
-  :root { --bg: #ffffff; --surface: #f4f4f4; --line: #e3e3e3; --text: #111111; --muted: #6b6b6b; --accent: #35aa0e; }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; }
-  .chat { width: 820px; margin: 0 auto; padding: 28px 28px 20px; }
-  .caption { margin: 0 0 20px; color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
-  .row { display: flex; margin: 0 0 14px; }
-  .row.user { justify-content: flex-end; }
-  .bubble { max-width: 640px; padding: 12px 16px; border-radius: 16px; }
-  .user .bubble { background: var(--text); color: #ffffff; border-bottom-right-radius: 6px; }
-  .assistant .bubble { background: var(--surface); border: 1px solid var(--line); border-bottom-left-radius: 6px; }
-  .who { margin: 0 0 4px; color: var(--muted); font-size: 12px; font-weight: 700; }
-  .user .who { color: #bdbdbd; }
-  code { font: 14px ui-monospace, SFMono-Regular, Menlo, monospace; }
-  ol { margin: 8px 0 0; padding-left: 20px; }
-  li { margin: 3px 0; }
-  .progress { margin: 0; padding: 0; list-style: none; }
-  .progress li { display: flex; gap: 8px; align-items: center; }
-  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex: none; }
-  .done { font-weight: 700; }
-</style>
-</head>
-<body>
-<main class="chat">
-  <p class="caption">Illustrative conversation. Not a real product screenshot.</p>
-  <div class="row user"><div class="bubble"><p class="who">You</p><code>Using Content Machine: https://github.com/edison16a/Content-Machine</code></div></div>
-  <div class="row assistant"><div class="bubble"><p class="who">Claude</p>
-    Let's set up your videos. A few quick questions:
-    <ol>
-      <li><b>What type of video?</b> Sequential (the whole video in parts, up to 60 seconds each) or Clip (only the best moments).</li>
-      <li><b>What's the title of the video?</b></li>
-      <li><b>What should the project folder be called?</b></li>
-      <li><b>Which channel is it from, and which platform?</b></li>
-      <li><b>Where is the video file, and can you paste the transcript?</b></li>
-      <li><b>Do you own this footage or have permission to use it?</b></li>
-    </ol>
-  </div></div>
-  <div class="row user"><div class="bubble"><p class="who">You</p>Sequential. "How We Built A Tiny House In 30 Days". Call it tiny-house. It's from Example Channel on YouTube. The file is ~/Movies/tiny-house.mp4 and the transcript is pasted below. It's my own video.</div></div>
-  <div class="row assistant"><div class="bubble"><p class="who">Claude</p>
-    <ul class="progress">
-      <li><span class="dot"></span>Planning your cuts… 24 parts</li>
-      <li><span class="dot"></span>Rendering 24 videos…</li>
-      <li><span class="dot"></span>Checking every video…</li>
-      <li><span class="dot"></span>Scheduling 3 a day per platform…</li>
-    </ul>
-  </div></div>
-  <div class="row assistant"><div class="bubble"><p class="who">Claude</p><span class="done">Done. 24 videos scheduled across 8 days. Your dashboard is open.</span> Click any video to watch it with sound. Want me to upload them into each platform's scheduler now?</div></div>
-</main>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Using Content Machine (illustrative)</title>
+    <style>
+      :root {
+        --bg: #ffffff;
+        --surface: #f4f4f4;
+        --line: #e3e3e3;
+        --text: #111111;
+        --muted: #6b6b6b;
+        --accent: #35aa0e;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font:
+          15px/1.5 ui-sans-serif,
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          Roboto,
+          Arial,
+          sans-serif;
+      }
+      .chat {
+        width: 820px;
+        margin: 0 auto;
+        padding: 28px 28px 20px;
+      }
+      .caption {
+        margin: 0 0 20px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      .row {
+        display: flex;
+        margin: 0 0 14px;
+      }
+      .row.user {
+        justify-content: flex-end;
+      }
+      .bubble {
+        max-width: 640px;
+        padding: 12px 16px;
+        border-radius: 16px;
+      }
+      .user .bubble {
+        background: var(--text);
+        color: #ffffff;
+        border-bottom-right-radius: 6px;
+      }
+      .assistant .bubble {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-bottom-left-radius: 6px;
+      }
+      .who {
+        margin: 0 0 4px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .user .who {
+        color: #bdbdbd;
+      }
+      code {
+        font:
+          14px ui-monospace,
+          SFMono-Regular,
+          Menlo,
+          monospace;
+      }
+      ol {
+        margin: 8px 0 0;
+        padding-left: 20px;
+      }
+      li {
+        margin: 3px 0;
+      }
+      .progress {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      .progress li {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--accent);
+        flex: none;
+      }
+      .done {
+        font-weight: 700;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="chat">
+      <p class="caption">Illustrative conversation. Not a real product screenshot.</p>
+      <div class="row user">
+        <div class="bubble">
+          <p class="who">You</p>
+          <code>Using Content Machine: https://github.com/edison16a/Content-Machine</code>
+        </div>
+      </div>
+      <div class="row assistant">
+        <div class="bubble">
+          <p class="who">Claude</p>
+          Let's set up your videos. A few quick questions:
+          <ol>
+            <li>
+              <b>What type of video?</b> Sequential (the whole video in parts, up to 60 seconds
+              each) or Clip (only the best moments).
+            </li>
+            <li><b>What's the title of the video?</b></li>
+            <li><b>What should the project folder be called?</b></li>
+            <li><b>Which channel is it from, and which platform?</b></li>
+            <li><b>Where is the video file, and can you paste the transcript?</b></li>
+            <li><b>Do you own this footage or have permission to use it?</b></li>
+          </ol>
+        </div>
+      </div>
+      <div class="row user">
+        <div class="bubble">
+          <p class="who">You</p>
+          Sequential. "How We Built A Tiny House In 30 Days". Call it tiny-house. It's from Example
+          Channel on YouTube. The file is ~/Movies/tiny-house.mp4 and the transcript is pasted
+          below. It's my own video.
+        </div>
+      </div>
+      <div class="row assistant">
+        <div class="bubble">
+          <p class="who">Claude</p>
+          <ul class="progress">
+            <li><span class="dot"></span>Planning your cuts… 24 parts</li>
+            <li><span class="dot"></span>Rendering 24 videos…</li>
+            <li><span class="dot"></span>Checking every video…</li>
+            <li><span class="dot"></span>Scheduling 3 a day per platform…</li>
+          </ul>
+        </div>
+      </div>
+      <div class="row assistant">
+        <div class="bubble">
+          <p class="who">Claude</p>
+          <span class="done">Done. 24 videos scheduled across 8 days. Your dashboard is open.</span>
+          Click any video to watch it with sound. Want me to upload them into each platform's
+          scheduler now?
+        </div>
+      </div>
+    </main>
+  </body>
 </html>

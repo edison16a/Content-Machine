@@ -6,8 +6,8 @@ Arguments are always an array passed to `spawn`, never a shell string. Inputs:
 
 0. The source, with `-ss <start>` before `-i` (frame accurate, because we re-encode).
 1. The title PNG and 2. the credit PNG, looped at the source frame rate.
-3. The band shadow PNG (band layouts only).
-4. A silent `anullsrc` track, only when the source has no audio.
+2. The band shadow PNG (band layouts only).
+3. A silent `anullsrc` track, only when the source has no audio.
 
 The filter graph: split the source; shrink, blur, darken and saturate the background at 270x480 and composite the shadow there; scale up; overlay the scaled foreground; overlay the title with a fade and an eased rise; overlay the credit with a fade; convert to `yuv420p`. Sources faster than 60 fps are capped at 60. The output is limited with `-t <duration>`.
 

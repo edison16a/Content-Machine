@@ -11,7 +11,10 @@ const outDir = fileURLToPath(new URL('../docs/schemas/', import.meta.url));
 
 await mkdir(outDir, { recursive: true });
 for (const name of SCHEMA_NAMES) {
-  const schema = { $schema: 'https://json-schema.org/draft/2020-12/schema', ...jsonSchemaFor(name) };
+  const schema = {
+    $schema: 'https://json-schema.org/draft/2020-12/schema',
+    ...jsonSchemaFor(name),
+  };
   await writeFile(`${outDir}${name}.schema.json`, `${JSON.stringify(schema, null, 2)}\n`);
 }
 console.log(`Wrote ${SCHEMA_NAMES.length} schemas to docs/schemas/`);

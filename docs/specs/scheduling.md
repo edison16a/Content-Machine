@@ -24,11 +24,11 @@ The scheduler is a pure function of (items, existing assignments, ledger, config
 
 ## Statuses (`packages/core/src/status`)
 
-| Status | Meaning |
-| --- | --- |
-| `queued` | Has a slot, not yet in the platform's own scheduler |
-| `scheduled` | Entered in the platform's scheduler |
-| `posted` | Confirmed live |
-| `failed` | Something went wrong; see the note |
+| Status      | Meaning                                             |
+| ----------- | --------------------------------------------------- |
+| `queued`    | Has a slot, not yet in the platform's own scheduler |
+| `scheduled` | Entered in the platform's scheduler                 |
+| `posted`    | Confirmed live                                      |
+| `failed`    | Something went wrong; see the note                  |
 
 Allowed moves: queued to scheduled, scheduled to posted, anything to failed, failed back to queued. Everything else is refused (`E_STATUS_TRANSITION`). A `mark` request is all or nothing; setting a status an entry already has is a quiet no-op. Every change is appended to `plan/schedule-history.log` as a tab-separated line: time, item, platform, from, to, note.

@@ -5,7 +5,9 @@ Write `plan/metadata.json` for every rendered item (only the new ones when appen
 ```json
 {
   "schemaVersion": 1,
-  "items": [{ "id": 1, "postTitle": "…", "captions": { "tiktok": "…", "instagram": "…", "youtube": "…" } }]
+  "items": [
+    { "id": 1, "postTitle": "…", "captions": { "tiktok": "…", "instagram": "…", "youtube": "…" } }
+  ]
 }
 ```
 

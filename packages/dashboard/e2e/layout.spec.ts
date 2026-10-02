@@ -6,7 +6,9 @@ test.describe('layout and previews', () => {
     const cards = page.locator('.card');
     await cards.nth(0).hover();
     await expect(page.locator('.thumb .preview')).toHaveCount(1, { timeout: 3000 });
-    expect(await page.locator('.thumb .preview').evaluate((v) => (v as HTMLVideoElement).muted)).toBe(true);
+    expect(
+      await page.locator('.thumb .preview').evaluate((v) => (v as HTMLVideoElement).muted),
+    ).toBe(true);
     await cards.nth(1).hover();
     await expect(page.locator('.thumb .preview')).toHaveCount(1, { timeout: 3000 });
     await cards.nth(1).click();
@@ -16,7 +18,9 @@ test.describe('layout and previews', () => {
   test('switches to a list of days and a full screen player on phones', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await openDashboard(page);
-    const columns = await page.locator('.week').evaluate((el) => getComputedStyle(el).gridTemplateColumns.split(' ').length);
+    const columns = await page
+      .locator('.week')
+      .evaluate((el) => getComputedStyle(el).gridTemplateColumns.split(' ').length);
     expect(columns).toBe(1);
     const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
     expect(scrollWidth).toBeLessThanOrEqual(390);

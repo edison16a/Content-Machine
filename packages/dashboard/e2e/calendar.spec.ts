@@ -14,18 +14,27 @@ test.describe('calendar', () => {
   test('shows official logos on the tabs and switches times per platform', async ({ page }) => {
     await openDashboard(page);
     for (const platform of ['tiktok', 'instagram', 'youtube']) {
-      await expect(page.locator(`.tab[data-platform="${platform}"] img`)).toHaveAttribute('src', /^data:image\/png;base64,/);
+      await expect(page.locator(`.tab[data-platform="${platform}"] img`)).toHaveAttribute(
+        'src',
+        /^data:image\/png;base64,/,
+      );
     }
     const firstTime = page.locator('.slot-time').first();
     await expect(firstTime).toHaveText('12:00 PM');
     await page.locator('.tab[data-platform="instagram"]').click();
-    await expect(page.locator('.tab[data-platform="instagram"]')).toHaveAttribute('aria-selected', 'true');
+    await expect(page.locator('.tab[data-platform="instagram"]')).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
     await expect(firstTime).toHaveText('12:15 PM');
     await expect(page.locator('.handle')).toHaveText('@your.instagram');
     await page.locator('.tab[data-platform="youtube"]').click();
     await expect(firstTime).toHaveText('12:30 PM');
     await page.reload();
-    await expect(page.locator('.tab[data-platform="youtube"]')).toHaveAttribute('aria-selected', 'true');
+    await expect(page.locator('.tab[data-platform="youtube"]')).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
   });
 
   test('navigates weeks with buttons, Today, arrow keys and First unposted', async ({ page }) => {
@@ -71,6 +80,9 @@ test.describe('calendar', () => {
 
   test('links to GitHub', async ({ page }) => {
     await openDashboard(page);
-    await expect(page.getByRole('link', { name: 'View on GitHub' })).toHaveAttribute('href', 'https://github.com/edison16a/Content-Machine');
+    await expect(page.getByRole('link', { name: 'View on GitHub' })).toHaveAttribute(
+      'href',
+      'https://github.com/edison16a/Content-Machine',
+    );
   });
 });

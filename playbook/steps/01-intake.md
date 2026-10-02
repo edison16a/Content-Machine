@@ -12,9 +12,10 @@ Ask these together in ONE message (use your interactive question tool if you hav
 > 4. **Which channel is it from, and which platform?** (YouTube, Twitch, Kick or other)
 > 5. **Where is the video file on your computer?** And paste the **transcript** (YouTube: "Show transcript", then copy), or give me the path to it.
 > 6. **Do you own this footage or have permission to use it?** (your own video, a clipping program, the creator agreed) And does that cover this type of use?
-> 7. *(Clip only)* **How many days of clips?** (default 7, which is 21 clips at 3 a day)
+> 7. _(Clip only)_ **How many days of clips?** (default 7, which is 21 clips at 3 a day)
 
 Then:
+
 - Create the project: `npm run cm -- new <project>`. Copy or move the video into `projects/<project>/source/`. Save the pasted transcript to `source/<video-name>.transcript.txt`.
 - Set `channel` and `sourcePlatform` in `project.json`.
 - Run `npm run cm -- transcript <project> <video-file>` and note the video's exact duration. If the transcript looks incomplete, tell the user before continuing.

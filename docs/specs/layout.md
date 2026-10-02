@@ -4,14 +4,14 @@
 
 ## Constants
 
-| Name | Value | Why |
-| --- | --- | --- |
-| Canvas | 1080 x 1920 | 9:16 vertical |
-| `SAFE_TOP` | 230 | clear of the platform's top bar |
-| `SAFE_BOTTOM` | 1540 | clear of the caption and buttons at the bottom |
-| `GAP` | 36 | space between title, video and credit |
-| Title block | 198 (two lines at 88px with a 1.12 line pitch, rounded up) | reserved even for one-line titles |
-| Credit block | 64 | logo and channel name |
+| Name          | Value                                                      | Why                                            |
+| ------------- | ---------------------------------------------------------- | ---------------------------------------------- |
+| Canvas        | 1080 x 1920                                                | 9:16 vertical                                  |
+| `SAFE_TOP`    | 230                                                        | clear of the platform's top bar                |
+| `SAFE_BOTTOM` | 1540                                                       | clear of the caption and buttons at the bottom |
+| `GAP`         | 36                                                         | space between title, video and credit          |
+| Title block   | 198 (two lines at 88px with a 1.12 line pitch, rounded up) | reserved even for one-line titles              |
+| Credit block  | 64                                                         | logo and channel name                          |
 
 ## Landscape and square-ish sources (width / height at least 0.7)
 
