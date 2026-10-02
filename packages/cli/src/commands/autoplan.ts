@@ -11,7 +11,7 @@ import {
   type Plan,
   type SourcePlatform,
 } from '@content-machine/core';
-import { detectSilences, probeMedia } from '@content-machine/render';
+import { detectSilences, locateSource, probeMedia } from '@content-machine/render';
 import type { CommandContext } from '../context.js';
 import { readOptional, writeJson } from '../project/files.js';
 import { safeJoin } from '../project/paths.js';
@@ -43,10 +43,11 @@ export async function runAutoplan(
   flags: AutoplanFlags,
 ): Promise<Plan> {
   const { paths } = await openProject(ctx, name);
-  const videoPath = safeJoin(paths.sourceDir, video);
-  if (!(await ctx.fs.exists(videoPath)))
+  safeJoin(paths.sourceDir, video);
+  const videoPath = await locateSource(ctx.fs, paths.sourceDir, video);
+  if (videoPath === undefined)
     throw new UserError('E_FILE_NOT_FOUND', `${video} is not in the source folder.`, {
-      hint: 'Copy the video into source/ first.',
+      hint: 'Copy the video into source/ first, or fetch it from its link.',
     });
   const existing = await readOptional(ctx.fs, planSchema, paths.plan, 'plan/plan.json');
   if (existing !== undefined && existing.mode !== 'sequential')

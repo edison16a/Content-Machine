@@ -1,21 +1,20 @@
-import { basename, extname, join } from 'node:path';
+import { basename, dirname, extname, join } from 'node:path';
 import type { Command } from 'commander';
 import { UserError, formatClock, parseTranscript, type Transcript } from '@content-machine/core';
-import { probeMedia } from '@content-machine/render';
+import { locateSource, probeMedia } from '@content-machine/render';
 import type { CommandContext } from '../context.js';
 import { writeJson } from '../project/files.js';
 import { safeJoin } from '../project/paths.js';
 import { display, openProject } from './shared.js';
 
-/** Accepts both "video1.mp4.transcript.txt" and "video1.transcript.txt". */
-async function findTranscript(
-  ctx: CommandContext,
-  sourceDir: string,
-  video: string,
-): Promise<string> {
+/**
+ * Accepts both "video1.mp4.transcript.txt" and "video1.transcript.txt",
+ * looked up next to the video (source/ or source/downloads/).
+ */
+async function findTranscript(ctx: CommandContext, folder: string, video: string): Promise<string> {
   const stem = basename(video, extname(video));
   for (const name of [`${video}.transcript.txt`, `${stem}.transcript.txt`]) {
-    const path = safeJoin(sourceDir, name);
+    const path = safeJoin(folder, name);
     if (await ctx.fs.exists(path)) return path;
   }
   throw new UserError('E_FILE_NOT_FOUND', `No transcript found for ${video}.`, {
@@ -29,16 +28,17 @@ export async function runTranscript(
   video: string,
 ): Promise<Transcript> {
   const { paths } = await openProject(ctx, name);
-  const videoPath = safeJoin(paths.sourceDir, video);
-  if (!(await ctx.fs.exists(videoPath))) {
+  safeJoin(paths.sourceDir, video);
+  const videoPath = await locateSource(ctx.fs, paths.sourceDir, video);
+  if (videoPath === undefined) {
     throw new UserError(
       'E_FILE_NOT_FOUND',
       `${video} is not in ${display(ctx, paths.sourceDir)}/.`,
-      { hint: 'Copy the video into the source folder first.' },
+      { hint: 'Copy the video into the source folder, or fetch it from its link.' },
     );
   }
   const media = await probeMedia(ctx.runner, videoPath);
-  const transcriptPath = await findTranscript(ctx, paths.sourceDir, video);
+  const transcriptPath = await findTranscript(ctx, dirname(videoPath), video);
   const transcript = parseTranscript(await ctx.fs.readText(transcriptPath), media.duration);
   const out = join(paths.workDir, 'transcripts', `${basename(video, extname(video))}.json`);
   await writeJson(ctx.fs, out, transcript);
