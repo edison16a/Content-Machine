@@ -8,7 +8,7 @@ Content Machine draws platform logos on the credit line of every video and on th
 
 ## What ships in this folder
 
-`youtube.png`, `tiktok.png` and `instagram.png` are the official logos, scaled to 256px tall. They are trademarks of their owners (Google, ByteDance and Meta) and are included only to identify the platform a video comes from or goes to. See `THIRD_PARTY_NOTICES.md`.
+`youtube.png`, `tiktok.png` and `instagram.png` are the official logos, scaled to 256px tall. TikTok uses its app icon: the note on a black square, so it reads on any background. They are trademarks of their owners (Google, ByteDance and Meta) and are included only to identify the platform a video comes from or goes to. See `THIRD_PARTY_NOTICES.md`.
 
 ## Adding or replacing a logo
 
