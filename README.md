@@ -69,7 +69,7 @@ flowchart LR
 
 ## Quick start
 
-**You need:** Node 20 or newer, ffmpeg (`brew install ffmpeg` or `sudo apt install ffmpeg`) and [Claude Code](https://claude.com/claude-code). Optional: the Claude in Chrome extension, for hands-off uploading.
+**You need:** Node 20 or newer, ffmpeg (`brew install ffmpeg` or `sudo apt install ffmpeg`) and [Claude Code](https://claude.com/claude-code). For hands-off uploading, Claude's interactive browser (or the Claude in Chrome extension) with your TikTok, Instagram and YouTube accounts logged in.
 
 ```bash
 git clone https://github.com/edison16a/Content-Machine.git

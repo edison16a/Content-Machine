@@ -1,6 +1,6 @@
 # Step 6: posting through the browser (only after the user says "upload", or when continuing)
 
-- Use the tabs where the user is already logged in. Never ask for or type a password or 2FA code. On a login wall, captcha or verification, stop and hand control back.
+- Post through the interactive browser you can drive (Claude's built-in browser, or the Claude in Chrome extension), in the tabs where the user is already logged in. If you have no browser tool, say so and stop; the user can still post from the dashboard by hand. Never ask for or type a password or 2FA code. On a login wall, captcha or verification, stop and hand control back.
 - Confirm the account shown on screen matches the saved handle before every submit. Never change account settings, bio or profile info.
 - The files to upload are in `projects/<project>/videos/` (`001.mp4`, `002.mp4` and so on), always in id order.
 - **Verify first.** For items whose status is `scheduled` and whose time has passed, check the platform's content list (TikTok Studio, YouTube Studio, Instagram's content page) and run `npm run cm -- mark` to set `posted` if it's live, or `failed` with a note if not.
