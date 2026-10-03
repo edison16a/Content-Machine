@@ -42,6 +42,9 @@ _These are placeholders. Put your handles and links in `docs/accounts.json`, the
   <br><sub>Finished videos: the same layout every time. The dashboard and videos above come from the built-in demo, which uses synthetic footage.</sub>
 </p>
 
+<img width="1117" height="877" alt="image" src="https://github.com/user-attachments/assets/e85f6619-bcde-4240-b99c-b7dd58c5de5e" />
+
+
 ## What it is
 
 You give Claude a link to a long video you have the rights to (or the file and its transcript). Claude downloads it with its captions, reads the transcript and decides where to cut. A local engine renders the cuts as 1080x1920 videos with the same layout every time, gives each one a fixed posting slot (three a day per platform) and fills in a live dashboard where you can watch every video with sound. When you are ready, Claude can enter the videos into each platform's own scheduler through your logged-in browser.
