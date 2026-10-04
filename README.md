@@ -24,7 +24,7 @@
 ## Results
 
 <p align="center">
-<img width="1912" height="959" alt="image" src="https://github.com/user-attachments/assets/8199842a-6fa8-4d9b-b205-a36f8f75628d" />
+<img src="docs/images/dashboard-week.png" alt="The Content Machine dashboard: a week calendar with three timed slots per day, platform tabs and posting stats" width="100%">
 </p>
 
 <table>
