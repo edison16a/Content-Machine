@@ -9,11 +9,17 @@
   https://contentmachine-install.vercel.app
 </p>
 
+**Real accounts running on Content Machine:**
+
+[![TikTok: @contentmachine_clips](https://img.shields.io/badge/TikTok-%40contentmachine__clips-000000?style=for-the-badge&logo=tiktok&logoColor=white)](https://www.tiktok.com/@contentmachine_clips) [![Instagram: contentmachine_clips](https://img.shields.io/badge/Instagram-contentmachine__clips-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/contentmachine_clips) [![YouTube: @contentmachine_clips](https://img.shields.io/badge/YouTube-%40contentmachine__clips-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/@contentmachine_clips)
+
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-35AA0E" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/node-20%2B-35AA0E" alt="Node 20 or newer">
   <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Linux-35AA0E" alt="macOS and Linux">
 </p>
+
+
 
 ## Results
 
