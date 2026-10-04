@@ -21,12 +21,10 @@
   <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Linux-35AA0E" alt="macOS and Linux">
 </p>
 
-
-
 ## Results
 
 <p align="center">
-  <img src="docs/images/dashboard-week.png" alt="The Content Machine dashboard: a week calendar with three timed slots per day, platform tabs and posting stats" width="100%">
+<img width="1912" height="959" alt="image" src="https://github.com/user-attachments/assets/8199842a-6fa8-4d9b-b205-a36f8f75628d" />
 </p>
 
 <table>
