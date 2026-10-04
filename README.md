@@ -16,16 +16,6 @@
 
 ## Results
 
-<!-- ACCOUNTS:START -->
-
-**Real accounts running on Content Machine:**
-
-[![TikTok: @YOUR_TIKTOK_HANDLE](https://img.shields.io/badge/TikTok-%40YOUR__TIKTOK__HANDLE-000000?style=for-the-badge&logo=tiktok&logoColor=white)](https://www.tiktok.com/@YOUR_TIKTOK_HANDLE) [![Instagram: YOUR_INSTAGRAM_HANDLE](https://img.shields.io/badge/Instagram-YOUR__INSTAGRAM__HANDLE-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/YOUR_INSTAGRAM_HANDLE) [![YouTube: @YOUR_YOUTUBE_HANDLE](https://img.shields.io/badge/YouTube-%40YOUR__YOUTUBE__HANDLE-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/@YOUR_YOUTUBE_HANDLE)
-
-_These are placeholders. Put your handles and links in `docs/accounts.json`, then run `npm run docs:accounts`._
-
-<!-- ACCOUNTS:END -->
-
 <p align="center">
   <img src="docs/images/dashboard-week.png" alt="The Content Machine dashboard: a week calendar with three timed slots per day, platform tabs and posting stats" width="100%">
 </p>
