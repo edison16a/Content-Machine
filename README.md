@@ -7,11 +7,11 @@
 <p align="center">
   Turn one long video into a steady, scheduled stream of short vertical videos for TikTok, Instagram Reels and YouTube Shorts.
   https://contentmachine-install.vercel.app
-</p>
-
-**Real accounts running on Content Machine:**
+  
+  **Real accounts running on Content Machine:**
 
 [![TikTok: @contentmachine_clips](https://img.shields.io/badge/TikTok-%40contentmachine__clips-000000?style=for-the-badge&logo=tiktok&logoColor=white)](https://www.tiktok.com/@contentmachine_clips) [![Instagram: contentmachine_clips](https://img.shields.io/badge/Instagram-contentmachine__clips-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/contentmachine_clips) [![YouTube: @contentmachine_clips](https://img.shields.io/badge/YouTube-%40contentmachine__clips-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/@contentmachine_clips)
+</p>
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-35AA0E" alt="MIT license"></a>
