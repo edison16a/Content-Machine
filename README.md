@@ -5,7 +5,7 @@
 <h1 align="center">Content Machine</h1>
 
 <p align="center">
-  Turn one long video into a steady, scheduled stream of short vertical videos for TikTok, Instagram Reels and YouTube Shorts, driven by Claude.
+  Turn one long video into a steady, scheduled stream of short vertical videos for TikTok, Instagram Reels and YouTube Shorts.
 </p>
 
 <p align="center">
