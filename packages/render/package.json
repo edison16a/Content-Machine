@@ -22,7 +22,7 @@
   "dependencies": {
     "@content-machine/core": "^0.1.0",
     "@napi-rs/canvas": "^1.0.10",
-    "simple-icons": "^16.33.0",
+    "simple-icons": "^16.34.0",
     "zod": "^4.6.5"
   },
   "author": "Edison Law"
